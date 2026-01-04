@@ -64,7 +64,7 @@
         );
 
         const SectionHeader = ({ tag, title, subtitle }) => (
-            <div className="mb-16 text-center max-w-4xl mx-auto">
+            <div className="mb-16 text-center max-w-4xl mx-auto px-4">
                 <span className="text-[#fbd24c] font-bold tracking-[0.2em] uppercase text-xs mb-4 block">{tag}</span>
                 <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">{title}</h2>
                 <p className="text-[#94a3b8] text-lg md:text-xl">{subtitle}</p>
@@ -92,6 +92,7 @@
                             <a href="#" className="hover:text-[#fbd24c] transition-colors">Início</a>
                             <a href="#modalidades" className="hover:text-[#fbd24c] transition-colors">Modalidades</a>
                             <a href="#metodologia" className="hover:text-[#fbd24c] transition-colors">Metodologia</a>
+                            <a href="#provas-sociais" className="hover:text-[#fbd24c] transition-colors">Depoimentos</a>
                             <a href="#faq" className="hover:text-[#fbd24c] transition-colors">Dúvidas</a>
                         </div>
 
@@ -258,6 +259,36 @@
                                         <div className="text-4xl mb-4">{item.icon}</div>
                                         <h4 className="font-bold text-xl mb-2">{item.t}</h4>
                                         <p className="text-slate-500 text-sm">{item.d}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* SEÇÃO DE PROVAS SOCIAIS (6 DEPOIMENTOS) */}
+                    <section id="provas-sociais" className="py-24 px-6 bg-[#0f172a] scroll-mt-20">
+                        <div className="max-w-7xl mx-auto">
+                            <SectionHeader 
+                                tag="Transformação Real" 
+                                title="O que dizem nossos alunos" 
+                                subtitle="Profissionais que saíram da teoria para a fluência prática através do treinamento Lexis."
+                            />
+                            <div className="grid md:grid-cols-3 gap-8">
+                                {[
+                                    { n: "Ricardo M.", j: "Diretor Comercial", d: "Tentei 4 escolas tradicionais e nunca saí do 'The book is on the table'. Com 2 semanas de Imersão Lexis, destravei reuniões com a matriz na Alemanha que antes eram um pesadelo." },
+                                    { n: "Ana Clara F.", j: "Arquiteta", d: "O método cíclico The Way foi o único que se adaptou à minha agenda louca. Poder alternar os horários sem perder conteúdo salvou minha fluência." },
+                                    { n: "Gustavo S.", j: "Desenvolvedor Sr.", d: "O foco em automação cognitiva no Maestria Online é bizarro. Eu parei de traduzir mentalmente e as frases começaram a sair naturais em menos de 2 meses." },
+                                    { n: "Juliana T.", j: "Marketing Digital", d: "A Garantia Vitalícia me deu segurança, mas nem precisei. O suporte do Gab AI no WhatsApp é incrível para manter o treino diário." },
+                                    { n: "Felipe R.", j: "Engenheiro de Produção", d: "A imersão presencial foi um divisor de águas. 10 horas por dia focado no esporte cognitivo me deu uma confiança que eu não teria em 2 anos de cursinho." },
+                                    { n: "Patrícia L.", j: "Advogada Internacional", d: "A Lexis não ensina inglês, ela treina você para usar o inglês. A abordagem de Aula Invertida otimiza cada minuto com o professor. Recomendo demais!" }
+                                ].map((test, i) => (
+                                    <div key={i} className="card-glass p-8 rounded-3xl relative overflow-hidden group hover:border-[#fbd24c]/50 transition-all">
+                                        <div className="text-[#fbd24c] text-3xl mb-4">"</div>
+                                        <p className="text-[#94a3b8] mb-8 leading-relaxed italic">{test.d}</p>
+                                        <div className="mt-auto border-t border-white/10 pt-6">
+                                            <p className="font-bold text-white uppercase tracking-wider">{test.n}</p>
+                                            <p className="text-[#fbd24c] text-xs font-semibold">{test.j}</p>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
