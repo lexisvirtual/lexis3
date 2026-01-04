@@ -42,6 +42,8 @@
         .card-glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .text-gradient { background: linear-gradient(to right, #fbd24c, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .navbar-blur { backdrop-filter: blur(12px); background: rgba(15, 23, 42, 0.8); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .module-card { transition: all 0.3s ease; border: 1px solid rgba(251, 210, 76, 0.1); }
+        .module-card:hover { border-color: rgba(251, 210, 76, 0.5); transform: translateY(-5px); }
     </style>
 </head>
 <body class="bg-[#0f172a] text-white antialiased">
@@ -91,9 +93,9 @@
                         <div className="hidden md:flex items-center gap-8 text-sm font-bold uppercase tracking-widest text-[#94a3b8]">
                             <a href="#" className="hover:text-[#fbd24c] transition-colors">Início</a>
                             <a href="#modalidades" className="hover:text-[#fbd24c] transition-colors">Modalidades</a>
-                            <a href="#metodologia" className="hover:text-[#fbd24c] transition-colors">Metodologia</a>
+                            <a href="#caminho" className="hover:text-[#fbd24c] transition-colors">Conteúdo</a>
+                            <a href="#metodologia" className="hover:text-[#fbd24c] transition-colors">Método</a>
                             <a href="#provas-sociais" className="hover:text-[#fbd24c] transition-colors">Depoimentos</a>
-                            <a href="#faq" className="hover:text-[#fbd24c] transition-colors">Dúvidas</a>
                         </div>
 
                         <button 
@@ -240,8 +242,34 @@
                         </div>
                     </section>
 
-                    {/* METODOLOGIA LEXIS */}
-                    <section id="metodologia" className="py-24 px-6 bg-white text-[#0f172a] scroll-mt-20">
+                    {/* SESSÃO CONTEÚDO METODOLÓGICO - O CAMINHO PARA A FLUÊNCIA */}
+                    <section id="caminho" className="py-24 px-6 bg-white text-[#0f172a] scroll-mt-20">
+                        <div className="max-w-7xl mx-auto">
+                            <SectionHeader 
+                                tag="Estrutura de Ensino" 
+                                title="O Caminho para a Fluência" 
+                                subtitle="Nossa metodologia cíclica foi desenvolvida para garantir que você avance de forma sólida, sem pular etapas essenciais."
+                            />
+                            <div className="grid md:grid-cols-4 gap-6">
+                                {[
+                                    { m: "Módulo 1", t: "Start", s: "Fonética", d: "Correção de vícios fonéticos e introdução aos phrasal verbs mais usados." },
+                                    { m: "Módulo 2", t: "Run", s: "Estruturas", d: "Domínio intensivo de estruturas gramaticais simples e complexas." },
+                                    { m: "Módulo 3", t: "Fly", s: "Vocabulário", d: "Expansão com foco nas 600-700 palavras mais usadas no cotidiano." },
+                                    { m: "Módulo 4", t: "Liberty", s: "Conversação", d: "Desenvolvimento da fluência e compreensão auditiva acima de 70%." }
+                                ].map((mod, i) => (
+                                    <div key={i} className="module-card p-8 rounded-3xl bg-slate-50 flex flex-col h-full">
+                                        <span className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">{mod.m}</span>
+                                        <h4 className="text-3xl font-black text-[#0f172a] mb-1">{mod.t}</h4>
+                                        <span className="text-[#8c5414] font-bold text-sm mb-6 uppercase tracking-wider">{mod.s}</span>
+                                        <p className="text-slate-500 text-sm leading-relaxed">{mod.d}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* METODOLOGIA LEXIS - POR QUE FUNCIONA */}
+                    <section id="metodologia" className="py-24 px-6 bg-[#0f172a] text-white scroll-mt-20 border-y border-white/5">
                         <div className="max-w-6xl mx-auto text-center">
                             <SectionHeader 
                                 tag="O Segredo da Eficácia" 
@@ -255,10 +283,10 @@
                                     { t: "Repetição Espaçada", d: "Fixação definitiva sem decoreba.", icon: "🧠" },
                                     { t: "Gamificação", d: "Aprendizado viciante e envolvente.", icon: "🎮" }
                                 ].map((item, i) => (
-                                    <div key={i} className="p-8 bg-slate-50 rounded-3xl border border-slate-100 hover:border-[#fbd24c] transition-all">
+                                    <div key={i} className="p-8 bg-white/5 rounded-3xl border border-white/10 hover:border-[#fbd24c] transition-all">
                                         <div className="text-4xl mb-4">{item.icon}</div>
                                         <h4 className="font-bold text-xl mb-2">{item.t}</h4>
-                                        <p className="text-slate-500 text-sm">{item.d}</p>
+                                        <p className="text-[#94a3b8] text-sm">{item.d}</p>
                                     </div>
                                 ))}
                             </div>
