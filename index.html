@@ -29,6 +29,21 @@
                         highlight: '#8c5414',
                         neutralIcon: '#798c8c',
                         softOverlay: '#f59e0b33',
+                    },
+                    animation: {
+                        'gradient-x': 'gradient-x 15s ease infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        'gradient-x': {
+                            '0%, 100%': { 'background-size': '200% 200%', 'background-position': 'left center' },
+                            '50%': { 'background-size': '200% 200%', 'background-position': 'right center' },
+                        },
+                        'float': {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
                     }
                 }
             }
@@ -39,11 +54,15 @@
         html { scroll-behavior: smooth; }
         body { font-family: 'Inter', sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
         .cta-shadow { box-shadow: 0 10px 25px -5px rgba(251, 210, 76, 0.4); }
-        .card-glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .text-gradient { background: linear-gradient(to right, #fbd24c, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .card-glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s ease; }
+        .card-glass:hover { background: rgba(255, 255, 255, 0.06); border-color: rgba(251, 210, 76, 0.3); transform: translateY(-5px); }
+        .text-gradient { background: linear-gradient(-45deg, #fbd24c, #f59e0b, #8c5414, #fbd24c); background-size: 400% 400%; animation: gradient-x 5s ease infinite; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .navbar-blur { backdrop-filter: blur(12px); background: rgba(15, 23, 42, 0.8); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-        .module-card { transition: all 0.3s ease; border: 1px solid rgba(251, 210, 76, 0.1); }
-        .module-card:hover { border-color: rgba(251, 210, 76, 0.5); transform: translateY(-5px); }
+        .module-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid rgba(251, 210, 76, 0.1); }
+        .module-card:hover { border-color: rgba(251, 210, 76, 0.5); transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 40px -20px rgba(0,0,0,0.5); }
+        .icon-move { display: inline-block; transition: transform 0.3s ease; }
+        .group:hover .icon-move { transform: scale(1.2) rotate(10deg); }
+        .bg-mesh { position: absolute; width: 100%; height: 100%; background-image: radial-gradient(circle at 2px 2px, rgba(251, 210, 76, 0.05) 1px, transparent 0); background-size: 40px 40px; }
     </style>
 </head>
 <body class="bg-[#0f172a] text-white antialiased">
@@ -54,20 +73,23 @@
 
         const Button = ({ children, primary = false, className = "", onClick }) => (
             <button 
-                className={`px-8 py-4 rounded-full font-bold text-lg transition-all active:scale-95 text-center inline-block ${
+                className={`px-8 py-4 rounded-full font-bold text-lg transition-all active:scale-95 text-center inline-block relative overflow-hidden group ${
                     primary 
                     ? "bg-[#fbd24c] text-[#0f172a] cta-shadow hover:bg-yellow-400" 
-                    : "border-2 border-[#fbd24c] text-[#fbd24c] hover:bg-[#fbd24c] hover:text-[#0f172a]"
+                    : "border-2 border-[#fbd24c] text-[#fbd24c] hover:bg-[#fbd24c]/10"
                 } ${className}`}
                 onClick={onClick || (() => window.open('https://wa.me/5516994051552', '_blank'))}
             >
-                {children}
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                    {children}
+                    <span className="group-hover:translate-x-1 transition-transform">→</span>
+                </span>
             </button>
         );
 
         const SectionHeader = ({ tag, title, subtitle }) => (
             <div className="mb-16 text-center max-w-4xl mx-auto px-4">
-                <span className="text-[#fbd24c] font-bold tracking-[0.2em] uppercase text-xs mb-4 block">{tag}</span>
+                <span className="text-[#fbd24c] font-bold tracking-[0.2em] uppercase text-xs mb-4 block animate-pulse">{tag}</span>
                 <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">{title}</h2>
                 <p className="text-[#94a3b8] text-lg md:text-xl">{subtitle}</p>
             </div>
@@ -83,24 +105,25 @@
             }, []);
 
             return (
-                <nav className={`fixed top-0 w-full z-[100] transition-all duration-300 ${scrolled ? "navbar-blur py-3" : "bg-transparent py-6"}`}>
+                <nav className={`fixed top-0 w-full z-[100] transition-all duration-500 ${scrolled ? "navbar-blur py-3 shadow-2xl" : "bg-transparent py-6"}`}>
                     <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-                        <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-[#fbd24c] rounded-lg flex items-center justify-center font-black text-[#0f172a]">L</div>
-                            <span className="font-black text-xl tracking-tighter hidden md:block">LEXIS ACADEMY</span>
+                        <div className="flex items-center gap-2 group cursor-pointer">
+                            <div className="w-8 h-8 bg-[#fbd24c] rounded-lg flex items-center justify-center font-black text-[#0f172a] group-hover:rotate-12 transition-transform">L</div>
+                            <span className="font-black text-xl tracking-tighter hidden md:block group-hover:text-[#fbd24c] transition-colors">LEXIS ACADEMY</span>
                         </div>
                         
                         <div className="hidden md:flex items-center gap-8 text-sm font-bold uppercase tracking-widest text-[#94a3b8]">
-                            <a href="#" className="hover:text-[#fbd24c] transition-colors">Início</a>
-                            <a href="#modalidades" className="hover:text-[#fbd24c] transition-colors">Modalidades</a>
-                            <a href="#caminho" className="hover:text-[#fbd24c] transition-colors">Conteúdo</a>
-                            <a href="#metodologia" className="hover:text-[#fbd24c] transition-colors">Método</a>
-                            <a href="#provas-sociais" className="hover:text-[#fbd24c] transition-colors">Depoimentos</a>
+                            {['Início', 'Modalidades', 'Conteúdo', 'Método', 'Depoimentos'].map((item) => (
+                                <a key={item} href={`#${item.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}`} className="hover:text-[#fbd24c] transition-colors relative group">
+                                    {item}
+                                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#fbd24c] transition-all group-hover:w-full"></span>
+                                </a>
+                            ))}
                         </div>
 
                         <button 
                             onClick={() => window.open('https://wa.me/5516994051552', '_blank')}
-                            className="bg-[#fbd24c] text-[#0f172a] px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-widest hover:bg-yellow-400 transition-all active:scale-95"
+                            className="bg-[#fbd24c] text-[#0f172a] px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-widest hover:bg-yellow-400 transition-all active:scale-95 shadow-lg shadow-yellow-500/20"
                         >
                             Falar com consultor
                         </button>
@@ -117,7 +140,8 @@
                     <Navbar />
 
                     {/* HERO */}
-                    <header className="relative pt-40 pb-32 px-6 overflow-hidden bg-[#0f172a]">
+                    <header id="inicio" className="relative pt-40 pb-32 px-6 overflow-hidden bg-[#0f172a]">
+                        <div className="bg-mesh opacity-30"></div>
                         <div className="max-w-6xl mx-auto text-center relative z-10">
                             <h1 className="text-5xl md:text-8xl font-black mb-8 leading-[1.1]">
                                 Inglês é uma <span className="text-gradient">habilidade.</span><br/>
@@ -132,14 +156,16 @@
                                 <Button onClick={() => document.getElementById('modalidades').scrollIntoView()}>CONHECER AS MODALIDADES</Button>
                             </div>
                         </div>
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[600px] bg-[#fbd24c]/5 rounded-full blur-[120px] pointer-events-none"></div>
+                        {/* Elementos flutuantes animados */}
+                        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[#fbd24c]/10 rounded-full blur-[100px] animate-float"></div>
+                        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-[120px] animate-float" style={{animationDelay: '-3s'}}></div>
                     </header>
 
-                    {/* SEÇÃO: POR QUE TRATAR INGLÊS COMO HABILIDADE (CIÊNCIA) */}
-                    <section className="py-24 px-6 bg-slate-50 text-[#0f172a]">
-                        <div className="max-w-6xl mx-auto">
+                    {/* SEÇÃO: CIÊNCIA - ANIMAÇÕES EM ÍCONES */}
+                    <section className="py-24 px-6 bg-slate-50 text-[#0f172a] relative overflow-hidden">
+                        <div className="max-w-6xl mx-auto relative z-10">
                             <div className="grid md:grid-cols-2 gap-16 items-center">
-                                <div>
+                                <div className="reveal">
                                     <span className="text-[#8c5414] font-bold tracking-widest uppercase text-xs mb-4 block underline decoration-[#fbd24c] decoration-4 underline-offset-8">A Ciência por trás do Método</span>
                                     <h2 className="text-4xl md:text-5xl font-black mb-8 leading-tight">Por que aprender Inglês como uma <span className="text-[#8c5414]">Habilidade</span> é o único caminho inteligente?</h2>
                                     <div className="space-y-6 text-slate-600 text-lg">
@@ -154,10 +180,10 @@
                                         { t: "Tomada de Decisão", d: "Escolha automática de estruturas para expressar ideias complexas.", i: "⚖️" },
                                         { t: "Automação Cognitiva", d: "A resposta sai antes de você 'pensar' a frase em português.", i: "🚀" }
                                     ].map((skill, idx) => (
-                                        <div key={idx} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex gap-6 items-start">
-                                            <div className="text-3xl">{skill.i}</div>
+                                        <div key={idx} className="group bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex gap-6 items-start hover:shadow-xl hover:border-[#fbd24c]/30 transition-all duration-500">
+                                            <div className="text-3xl icon-move">{skill.i}</div>
                                             <div>
-                                                <h4 className="font-black text-[#0f172a] mb-1">{skill.t}</h4>
+                                                <h4 className="font-black text-[#0f172a] mb-1 group-hover:text-[#8c5414] transition-colors">{skill.t}</h4>
                                                 <p className="text-sm text-slate-500">{skill.d}</p>
                                             </div>
                                         </div>
@@ -167,7 +193,7 @@
                         </div>
                     </section>
 
-                    {/* MODALIDADES - SELETOR */}
+                    {/* MODALIDADES - EFEITOS DE TRANSIÇÃO */}
                     <section id="modalidades" className="py-24 px-6 bg-[#0f172a] border-t border-white/5 scroll-mt-20">
                         <div className="max-w-6xl mx-auto">
                             <SectionHeader 
@@ -181,34 +207,35 @@
                                     <button 
                                         key={tab}
                                         onClick={() => setActiveTab(tab)}
-                                        className={`px-8 py-3 rounded-xl font-bold transition-all border ${activeTab === tab ? "bg-[#fbd24c] text-[#0f172a] border-[#fbd24c]" : "bg-white/5 text-white border-white/10 hover:bg-white/10"}`}
+                                        className={`px-8 py-3 rounded-xl font-bold transition-all duration-500 border relative overflow-hidden group ${activeTab === tab ? "bg-[#fbd24c] text-[#0f172a] border-[#fbd24c] scale-110 shadow-lg shadow-yellow-500/20" : "bg-white/5 text-white border-white/10 hover:bg-white/10"}`}
                                     >
-                                        {tab === 'maestria' ? 'Maestria Online' : tab === 'imersao' ? 'Imersão Presencial' : 'The Way Cíclico'}
+                                        <span className="relative z-10">{tab === 'maestria' ? 'Maestria Online' : tab === 'imersao' ? 'Imersão Presencial' : 'The Way Cíclico'}</span>
+                                        {activeTab === tab && <span className="absolute inset-0 bg-white/20 animate-pulse-slow"></span>}
                                     </button>
                                 ))}
                             </div>
 
                             {/* MAESTRIA ONLINE */}
                             {activeTab === 'maestria' && (
-                                <div className="grid md:grid-cols-2 gap-12 items-center animate-in fade-in duration-500">
-                                    <div className="card-glass p-8 md:p-12 rounded-[2rem]">
-                                        <div className="bg-[#fbd24c] text-[#0f172a] px-4 py-1 rounded-md text-xs font-black inline-block mb-6 uppercase">Intensivo 8 Semanas</div>
+                                <div className="grid md:grid-cols-2 gap-12 items-center animate-in slide-in-from-bottom-10 duration-700">
+                                    <div className="card-glass p-8 md:p-12 rounded-[2rem] relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-8 text-6xl opacity-5 group-hover:opacity-20 transition-opacity">⚡</div>
+                                        <div className="bg-[#fbd24c] text-[#0f172a] px-4 py-1 rounded-md text-xs font-black inline-block mb-6 uppercase animate-bounce">Intensivo 8 Semanas</div>
                                         <h3 className="text-3xl font-bold mb-6 italic">Evolua no inglês sem sair de casa.</h3>
                                         <p className="text-[#94a3b8] mb-8 text-lg">Adaptação da nossa metodologia exclusiva para o formato online, com foco em resultados reais em apenas 2 meses.</p>
                                         <ul className="space-y-4 mb-10">
-                                            <li className="flex gap-3 items-center"><span className="text-[#fbd24c]">⚡</span> 120 horas totais de treinamento</li>
-                                            <li className="flex gap-3 items-center"><span className="text-[#fbd24c]">⚡</span> Aulas ao vivo: Seg a Sex (19h às 22h)</li>
-                                            <li className="flex gap-3 items-center"><span className="text-[#fbd24c]">⚡</span> Plataforma Teaches + Gab AI no WhatsApp</li>
-                                            <li className="flex gap-3 items-center"><span className="text-[#fbd24c]">⚡</span> <strong>Garantia Vitalícia:</strong> refaça sem custos.</li>
+                                            {["120 horas totais de treinamento", "Aulas ao vivo: Seg a Sex (19h às 22h)", "Plataforma Teaches + Gab AI no WhatsApp", "Garantia Vitalícia: refaça sem custos."].map((li, i) => (
+                                                <li key={i} className="flex gap-3 items-center group/item"><span className="text-[#fbd24c] group-hover/item:scale-150 transition-transform">⚡</span> {li}</li>
+                                            ))}
                                         </ul>
                                         <Button primary className="w-full">GARANTIR MINHA VAGA ONLINE</Button>
                                     </div>
                                     <div className="space-y-6">
-                                        <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+                                        <div className="bg-white/5 p-6 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
                                             <h4 className="font-bold text-[#fbd24c] mb-2 uppercase text-sm tracking-widest">Conteúdo Programático</h4>
                                             <p className="text-sm text-[#94a3b8]">Start (Fonética) → Run (Estruturas) → Fly (Vocabulário) → Liberty (Conversação). Foco em 600-700 palavras essenciais e 70% de compreensão auditiva.</p>
                                         </div>
-                                        <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+                                        <div className="bg-white/5 p-6 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
                                             <h4 className="font-bold text-[#fbd24c] mb-2 uppercase text-sm tracking-widest">Público Recomendado</h4>
                                             <p className="text-sm text-[#94a3b8]">Básico a Intermediário (Baixo-Médio). Ideal para profissionais que precisam de competitividade imediata.</p>
                                         </div>
@@ -218,25 +245,25 @@
 
                             {/* IMERSÃO PRESENCIAL */}
                             {activeTab === 'imersao' && (
-                                <div className="grid md:grid-cols-2 gap-12 items-center animate-in fade-in duration-500">
-                                    <div className="card-glass p-8 md:p-12 rounded-[2rem]">
-                                        <div className="bg-red-500 text-white px-4 py-1 rounded-md text-xs font-black inline-block mb-6 uppercase">Elite: 2 Semanas</div>
+                                <div className="grid md:grid-cols-2 gap-12 items-center animate-in slide-in-from-bottom-10 duration-700">
+                                    <div className="card-glass p-8 md:p-12 rounded-[2rem] relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-8 text-6xl opacity-5 group-hover:opacity-20 transition-opacity text-red-500">🔥</div>
+                                        <div className="bg-red-500 text-white px-4 py-1 rounded-md text-xs font-black inline-block mb-6 uppercase animate-pulse">Elite: 2 Semanas</div>
                                         <h3 className="text-3xl font-bold mb-6 italic">Mastery em 14 dias de imersão total.</h3>
                                         <p className="text-[#94a3b8] mb-8 text-lg">O programa mais poderoso da Lexis. 10 horas diárias de prática intensa em São Carlos-SP.</p>
                                         <ul className="space-y-4 mb-10">
-                                            <li className="flex gap-3 items-center"><span className="text-[#fbd24c]">🔥</span> 120h em 2 semanas (Seg a Sáb, 8h às 19h)</li>
-                                            <li className="flex gap-3 items-center"><span className="text-[#fbd24c]">🔥</span> Resultados que levariam anos no tradicional</li>
-                                            <li className="flex gap-3 items-center"><span className="text-[#fbd24c]">🔥</span> Ambiente de imersão total e suporte 1:1</li>
-                                            <li className="flex gap-3 items-center"><span className="text-[#fbd24c]">🔥</span> Material 100% digital e sustentável</li>
+                                            {["120h em 2 semanas (Seg a Sáb, 8h às 19h)", "Resultados que levariam anos no tradicional", "Ambiente de imersão total e suporte 1:1", "Material 100% digital e sustentável"].map((li, i) => (
+                                                <li key={i} className="flex gap-3 items-center group/item"><span className="text-[#fbd24c] group-hover/item:scale-150 transition-transform">🔥</span> {li}</li>
+                                            ))}
                                         </ul>
                                         <Button primary className="w-full">AGENDAR MINHA IMERSÃO</Button>
                                     </div>
                                     <div className="space-y-6">
-                                        <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+                                        <div className="bg-white/5 p-6 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
                                             <h4 className="font-bold text-[#fbd24c] mb-2 uppercase text-sm tracking-widest">Objetivo Final</h4>
                                             <p className="text-sm text-[#94a3b8]">Capacitar conversações reais, entrevistas e reuniões internacionais em apenas duas semanas. Reset total do seu aprendizado.</p>
                                         </div>
-                                        <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+                                        <div className="bg-white/5 p-6 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
                                             <h4 className="font-bold text-[#fbd24c] mb-2 uppercase text-sm tracking-widest">Logística</h4>
                                             <p className="text-sm text-[#94a3b8]">Realizado em São Carlos-SP. Oferecemos indicação de hospedagem e suporte total de localização.</p>
                                         </div>
@@ -246,25 +273,25 @@
 
                             {/* THE WAY CÍCLICO */}
                             {activeTab === 'theway' && (
-                                <div className="grid md:grid-cols-2 gap-12 items-center animate-in fade-in duration-500">
-                                    <div className="card-glass p-8 md:p-12 rounded-[2rem]">
+                                <div className="grid md:grid-cols-2 gap-12 items-center animate-in slide-in-from-bottom-10 duration-700">
+                                    <div className="card-glass p-8 md:p-12 rounded-[2rem] relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-8 text-6xl opacity-5 group-hover:opacity-20 transition-opacity text-blue-500">🌀</div>
                                         <div className="bg-blue-500 text-white px-4 py-1 rounded-md text-xs font-black inline-block mb-6 uppercase">Flexibilidade Infinita</div>
                                         <h3 className="text-3xl font-bold mb-6 italic">O curso que se adapta à sua vida.</h3>
                                         <p className="text-[#94a3b8] mb-8 text-lg">Início imediato em qualquer data. Abordagem cíclica em espiral ascendente para dominar o inglês no seu tempo.</p>
                                         <ul className="space-y-4 mb-10">
-                                            <li className="flex gap-3 items-center"><span className="text-[#fbd24c]">🌀</span> 5 horários ao vivo (7h, 12h, 18h, 20h, 21h)</li>
-                                            <li className="flex gap-3 items-center"><span className="text-[#fbd24c]">🌀</span> Modelo cíclico: entre a qualquer momento</li>
-                                            <li className="flex gap-3 items-center"><span className="text-[#fbd24c]">🌀</span> Sem perda de conteúdo: alterne horários livremente</li>
-                                            <li className="flex gap-3 items-center"><span className="text-[#fbd24c]">🌀</span> Garantia de adaptação: reembolso total em 5 aulas</li>
+                                            {["5 horários ao vivo (7h, 12h, 18h, 20h, 21h)", "Modelo cíclico: entre a qualquer momento", "Sem perda de conteúdo: alterne horários livremente", "Garantia de adaptação: reembolso total em 5 aulas"].map((li, i) => (
+                                                <li key={i} className="flex gap-3 items-center group/item"><span className="text-[#fbd24c] group-hover/item:scale-150 transition-transform group-hover/item:rotate-180 transition-transform">🌀</span> {li}</li>
+                                            ))}
                                         </ul>
                                         <Button primary className="w-full">INICIAR AGORA (THE WAY)</Button>
                                     </div>
                                     <div className="space-y-6">
-                                        <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+                                        <div className="bg-white/5 p-6 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
                                             <h4 className="font-bold text-[#fbd24c] mb-2 uppercase text-sm tracking-widest">O Diferencial Cíclico</h4>
                                             <p className="text-sm text-[#94a3b8]">As mesmas aulas em todos os horários do dia. Perdeu uma? Assista em outro horário ou reveja a gravação na plataforma.</p>
                                         </div>
-                                        <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+                                        <div className="bg-white/5 p-6 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
                                             <h4 className="font-bold text-[#fbd24c] mb-2 uppercase text-sm tracking-widest">Duração e Foco</h4>
                                             <p className="text-sm text-[#94a3b8]">10 a 12 meses de treinamento consistente. Fluência funcional garantida com progressão natural de habilidades.</p>
                                         </div>
@@ -274,8 +301,8 @@
                         </div>
                     </section>
 
-                    {/* SESSÃO CONTEÚDO METODOLÓGICO - O CAMINHO PARA A FLUÊNCIA */}
-                    <section id="caminho" className="py-24 px-6 bg-white text-[#0f172a] scroll-mt-20">
+                    {/* CONTEÚDO METODOLÓGICO - MOVIMENTO EM MÓDULOS */}
+                    <section id="conteudo" className="py-24 px-6 bg-white text-[#0f172a] scroll-mt-20 relative">
                         <div className="max-w-7xl mx-auto">
                             <SectionHeader 
                                 tag="Estrutura de Ensino" 
@@ -284,14 +311,14 @@
                             />
                             <div className="grid md:grid-cols-4 gap-6">
                                 {[
-                                    { m: "Módulo 1", t: "Start", s: "Fonética", d: "Correção de vícios fonéticos e introdução aos phrasal verbs mais usados." },
-                                    { m: "Módulo 2", t: "Run", s: "Estruturas", d: "Domínio intensivo de estruturas gramaticais simples e complexas." },
-                                    { m: "Módulo 3", t: "Fly", s: "Vocabulário", d: "Expansão com foco nas 600-700 palavras mais usadas no cotidiano." },
-                                    { m: "Módulo 4", t: "Liberty", s: "Conversação", d: "Desenvolvimento da fluência e compreensão auditiva acima de 70%." }
+                                    { m: "Módulo 1", t: "Start", s: "Fonética", d: "Correção de vícios fonéticos e introdução aos phrasal verbs mais usados.", c: "from-[#fbd24c]/20" },
+                                    { m: "Módulo 2", t: "Run", s: "Estruturas", d: "Domínio intensivo de estruturas gramaticais simples e complexas.", c: "from-blue-500/10" },
+                                    { m: "Módulo 3", t: "Fly", s: "Vocabulário", d: "Expansão com foco nas 600-700 palavras mais usadas no cotidiano.", c: "from-green-500/10" },
+                                    { m: "Módulo 4", t: "Liberty", s: "Conversação", d: "Desenvolvimento da fluência e compreensão auditiva acima de 70%.", c: "from-purple-500/10" }
                                 ].map((mod, i) => (
-                                    <div key={i} className="module-card p-8 rounded-3xl bg-slate-50 flex flex-col h-full">
-                                        <span className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">{mod.m}</span>
-                                        <h4 className="text-3xl font-black text-[#0f172a] mb-1">{mod.t}</h4>
+                                    <div key={i} className={`module-card p-8 rounded-3xl bg-slate-50 flex flex-col h-full bg-gradient-to-br ${mod.c} to-transparent border border-slate-100 group`}>
+                                        <span className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 group-hover:text-[#8c5414] transition-colors">{mod.m}</span>
+                                        <h4 className="text-3xl font-black text-[#0f172a] mb-1 group-hover:scale-110 origin-left transition-transform">{mod.t}</h4>
                                         <span className="text-[#8c5414] font-bold text-sm mb-6 uppercase tracking-wider">{mod.s}</span>
                                         <p className="text-slate-500 text-sm leading-relaxed">{mod.d}</p>
                                     </div>
@@ -300,16 +327,16 @@
                         </div>
                     </section>
 
-                    {/* METODOLOGIA LEXIS - POR QUE FUNCIONA + BENEFÍCIOS ATIVOS */}
-                    <section id="metodologia" className="py-24 px-6 bg-[#0f172a] text-white scroll-mt-20 border-y border-white/5">
-                        <div className="max-w-6xl mx-auto text-center">
+                    {/* METODOLOGIA - MOVIMENTO NAS CORES E ÍCONES */}
+                    <section id="metodo" className="py-24 px-6 bg-[#0f172a] text-white scroll-mt-20 border-y border-white/5 relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-[#fbd24c]/5 to-transparent pointer-events-none"></div>
+                        <div className="max-w-6xl mx-auto text-center relative z-10">
                             <SectionHeader 
                                 tag="O Segredo da Eficácia" 
                                 title="Por que o Método Lexis Funciona?" 
                                 subtitle="Baseado em neurociência e aprendizado acelerado, focamos na automação, não na teoria."
                             />
                             
-                            {/* 4 Pilares Técnicos */}
                             <div className="grid md:grid-cols-4 gap-8 mb-20">
                                 {[
                                     { t: "Aula Invertida", d: "Estude antes, pratique muito mais em aula.", icon: "🔄" },
@@ -317,15 +344,14 @@
                                     { t: "Repetição Espaçada", d: "Fixação definitiva sem decoreba.", icon: "🧠" },
                                     { t: "Gamificação", d: "Aprendizado viciante e envolvente.", icon: "🎮" }
                                 ].map((item, i) => (
-                                    <div key={i} className="p-8 bg-white/5 rounded-3xl border border-white/10 hover:border-[#fbd24c] transition-all">
-                                        <div className="text-4xl mb-4">{item.icon}</div>
-                                        <h4 className="font-bold text-xl mb-2">{item.t}</h4>
+                                    <div key={i} className="p-8 bg-white/5 rounded-3xl border border-white/10 hover:border-[#fbd24c] hover:bg-white/10 transition-all group">
+                                        <div className="text-4xl mb-4 group-hover:rotate-12 transition-transform inline-block">{item.icon}</div>
+                                        <h4 className="font-bold text-xl mb-2 group-hover:text-[#fbd24c] transition-colors">{item.t}</h4>
                                         <p className="text-[#94a3b8] text-sm">{item.d}</p>
                                     </div>
                                 ))}
                             </div>
 
-                            {/* 4 Benefícios da Metodologia Ativa */}
                             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                                 {[
                                     { b: "Processamento Rápido", d: "Treinamos seu cérebro para responder sem precisar traduzir cada palavra mentalmente.", icon: "⚡" },
@@ -333,8 +359,8 @@
                                     { b: "Confiança em Tempo Real", d: "Simulamos situações reais de pressão para que você fale com naturalidade em qualquer cenário.", icon: "🛡️" },
                                     { b: "Aprendizado Personalizado", d: "O foco é na sua necessidade, corrigindo vícios fonéticos e acelerando suas metas específicas.", icon: "🎯" }
                                 ].map((benefit, i) => (
-                                    <div key={i} className="bg-gradient-to-br from-white/5 to-transparent p-6 rounded-2xl border border-white/5 text-left">
-                                        <div className="text-2xl mb-3">{benefit.icon}</div>
+                                    <div key={i} className="bg-gradient-to-br from-white/5 to-transparent p-6 rounded-2xl border border-white/5 text-left hover:border-[#fbd24c]/20 transition-all hover:scale-105">
+                                        <div className="text-2xl mb-3 animate-pulse">{benefit.icon}</div>
                                         <h5 className="font-black text-[#fbd24c] text-sm uppercase mb-2 tracking-tighter">{benefit.b}</h5>
                                         <p className="text-[#94a3b8] text-xs leading-relaxed">{benefit.d}</p>
                                     </div>
@@ -343,8 +369,8 @@
                         </div>
                     </section>
 
-                    {/* SEÇÃO DE PROVAS SOCIAIS (6 DEPOIMENTOS) */}
-                    <section id="provas-sociais" className="py-24 px-6 bg-[#0f172a] scroll-mt-20">
+                    {/* DEPOIMENTOS - MOVIMENTO AO HOVER */}
+                    <section id="depoimentos" className="py-24 px-6 bg-[#0f172a] scroll-mt-20">
                         <div className="max-w-7xl mx-auto">
                             <SectionHeader 
                                 tag="Transformação Real" 
@@ -360,12 +386,15 @@
                                     { n: "Felipe R.", j: "Engenheiro de Produção", d: "A imersão presencial foi um divisor de águas. 10 horas por dia focado no esporte cognitivo me deu uma confiança que eu não teria em 2 anos de cursinho." },
                                     { n: "Patrícia L.", j: "Advogada Internacional", d: "A Lexis não ensina inglês, ela treina você para usar o inglês. A abordagem de Aula Invertida otimiza cada minuto com o professor. Recomendo demais!" }
                                 ].map((test, i) => (
-                                    <div key={i} className="card-glass p-8 rounded-3xl relative overflow-hidden group hover:border-[#fbd24c]/50 transition-all">
-                                        <div className="text-[#fbd24c] text-3xl mb-4">"</div>
-                                        <p className="text-[#94a3b8] mb-8 leading-relaxed italic">{test.d}</p>
-                                        <div className="mt-auto border-t border-white/10 pt-6">
-                                            <p className="font-bold text-white uppercase tracking-wider">{test.n}</p>
-                                            <p className="text-[#fbd24c] text-xs font-semibold">{test.j}</p>
+                                    <div key={i} className="card-glass p-8 rounded-3xl relative overflow-hidden group hover:border-[#fbd24c]/50 transition-all duration-500 hover:shadow-2xl hover:shadow-yellow-500/10">
+                                        <div className="text-[#fbd24c] text-3xl mb-4 group-hover:scale-125 transition-transform inline-block">"</div>
+                                        <p className="text-[#94a3b8] mb-8 leading-relaxed italic relative z-10">{test.d}</p>
+                                        <div className="mt-auto border-t border-white/10 pt-6 flex justify-between items-center">
+                                            <div>
+                                                <p className="font-bold text-white uppercase tracking-wider">{test.n}</p>
+                                                <p className="text-[#fbd24c] text-xs font-semibold">{test.j}</p>
+                                            </div>
+                                            <div className="w-8 h-8 rounded-full bg-[#fbd24c]/10 flex items-center justify-center text-[#fbd24c] opacity-0 group-hover:opacity-100 transition-opacity">★</div>
                                         </div>
                                     </div>
                                 ))}
@@ -373,10 +402,10 @@
                         </div>
                     </section>
 
-                    {/* OBJEÇÕES & FAQ INTEGRADO */}
+                    {/* FAQ - EFEITO DE LISTA DINÂMICA */}
                     <section id="faq" className="py-24 px-6 bg-slate-50 text-[#0f172a] scroll-mt-20">
                         <div className="max-w-4xl mx-auto">
-                            <h3 className="text-3xl font-black mb-12 text-center uppercase tracking-widest">Dúvidas sobre o Investimento e Tempo</h3>
+                            <h3 className="text-3xl font-black mb-12 text-center uppercase tracking-widest animate-pulse">Dúvidas sobre o Investimento e Tempo</h3>
                             <div className="space-y-4">
                                 {[
                                     { q: "Não tenho tempo para estudar todos os dias.", a: "Nossas aulas têm horários flexíveis e recursos complementares que permitem estudar no seu ritmo. A imersão e o intensivo aceleram o que levaria anos." },
@@ -384,8 +413,11 @@
                                     { q: "Já tentei outros cursos e não aprendi.", a: "Lexis é treino, não estudo acadêmico. Nossa metodologia ativa quebra a barreira da teoria e te coloca no campo prático desde o primeiro minuto." },
                                     { q: "E se eu precisar pausar ou desistir?", a: "No The Way, você retorna no próximo ciclo sem custos. Oferecemos Garantia de Adaptação e Garantia Vitalícia para que seu risco seja zero." }
                                 ].map((item, i) => (
-                                    <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                                        <h4 className="font-bold text-lg mb-2">"{item.q}"</h4>
+                                    <div key={i} className="group bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:border-[#fbd24c] transition-all duration-300">
+                                        <h4 className="font-bold text-lg mb-2 group-hover:text-[#8c5414] transition-colors flex items-center gap-3">
+                                            <span className="text-[#fbd24c] group-hover:rotate-12 transition-transform italic font-black">?</span> 
+                                            "{item.q}"
+                                        </h4>
                                         <p className="text-slate-600 text-sm leading-relaxed">{item.a}</p>
                                     </div>
                                 ))}
@@ -393,37 +425,38 @@
                         </div>
                     </section>
 
-                    {/* CTA FINAL */}
-                    <section className="py-24 px-6 bg-[#0f172a] text-white text-center">
-                        <div className="max-w-3xl mx-auto">
-                            <h2 className="text-4xl md:text-6xl font-black mb-8">Pare de adiar o seu <span className="text-[#fbd24c]">sucesso global.</span></h2>
+                    {/* CTA FINAL - ANIMADO */}
+                    <section className="py-24 px-6 bg-[#0f172a] text-white text-center relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent"></div>
+                        <div className="max-w-3xl mx-auto relative z-10">
+                            <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight">Pare de adiar o seu <span className="text-gradient">sucesso global.</span></h2>
                             <p className="text-[#94a3b8] text-xl mb-12 italic">"O inglês não é o destino, é o passaporte para uma vida plena e conectada."</p>
-                            <Button primary className="text-2xl py-6 px-12">RECEBER ORIENTAÇÃO PERSONALIZADA</Button>
-                            <p className="mt-8 text-xs text-slate-500 font-bold uppercase tracking-[0.3em]">Consulte o calendário de turmas 2026</p>
+                            <Button primary className="text-2xl py-6 px-12 scale-110 hover:scale-125 transition-transform">RECEBER ORIENTAÇÃO PERSONALIZADA</Button>
+                            <p className="mt-8 text-xs text-slate-500 font-bold uppercase tracking-[0.3em] animate-pulse">Consulte o calendário de turmas 2026</p>
                         </div>
                     </section>
 
                     {/* FOOTER */}
                     <footer className="py-12 px-6 bg-slate-900 text-[#94a3b8] border-t border-white/5">
                         <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-12 text-sm">
-                            <div className="text-center md:text-left">
-                                <h5 className="text-white font-black mb-4">LEXIS ENGLISH ACADEMY</h5>
+                            <div className="text-center md:text-left group">
+                                <h5 className="text-white font-black mb-4 group-hover:text-[#fbd24c] transition-colors">LEXIS ENGLISH ACADEMY</h5>
                                 <p>Rua Visconde de Inhaúma, 1295<br/>São Carlos-SP</p>
                                 <p className="mt-2">WhatsApp: (16) 99405-1552</p>
                             </div>
                             <div className="text-center">
                                 <h5 className="text-white font-black mb-4">MODALIDADES</h5>
                                 <ul className="space-y-2">
-                                    <li>Maestria Online (8 semanas)</li>
-                                    <li>Imersão Presencial (2 semanas)</li>
-                                    <li>The Way Cíclico (Flexível)</li>
+                                    {['Maestria Online (8 semanas)', 'Imersão Presencial (2 semanas)', 'The Way Cíclico (Flexível)'].map(item => (
+                                        <li key={item} className="hover:text-white transition-colors cursor-default">{item}</li>
+                                    ))}
                                 </ul>
                             </div>
                             <div className="text-center md:text-right">
                                 <h5 className="text-white font-black mb-4">GARANTIAS</h5>
                                 <p>Garantia Vitalícia Lexis</p>
                                 <p>Reembolso de Adaptação (The Way)</p>
-                                <p className="mt-4 opacity-50">CNPJ: 38.229.678/0001-13</p>
+                                <p className="mt-4 opacity-30 text-xs">CNPJ: 38.229.678/0001-13</p>
                             </div>
                         </div>
                     </footer>
