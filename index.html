@@ -8,9 +8,9 @@
     <meta name="description" content="Domine o inglês com a metodologia Lexis em https://lexis.academy. Cursos Intensivos Online, Imersão Presencial de 2 semanas e o inovador modelo Cíclico The Way.">
     
     <!-- Favicon Corrections -->
-    <link rel="icon" type="image/png" href="./favicon.png">
-    <link rel="shortcut icon" type="image/png" href="./favicon.png">
-    <link rel="apple-touch-icon" href="./favicon.png">
+    <link rel="icon" type="image/png" href="./logo.png">
+    <link rel="shortcut icon" type="image/png" href="./logo.png">
+    <link rel="apple-touch-icon" href="./logo.png">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://lexis.academy/" />
@@ -235,8 +235,10 @@
             return (
                 <nav className={`fixed top-0 w-full z-[100] transition-all duration-500 ${scrolled ? "navbar-blur py-3 shadow-2xl" : "bg-transparent py-6"}`}>
                     <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-                        <div className="flex items-center gap-2 group cursor-pointer">
-                            <div className="w-8 h-8 bg-[#fbd24c] rounded-lg flex items-center justify-center font-black text-[#0f172a] group-hover:rotate-12 transition-transform">L</div>
+                        <div className="flex items-center gap-3 group cursor-pointer">
+                            <div className="w-12 h-12 flex items-center justify-center group-hover:rotate-12 transition-transform overflow-hidden">
+                                <img src="./logo.png" alt="Lexis Logo" className="w-full h-full object-contain" />
+                            </div>
                             <span className="font-black text-xl tracking-tighter hidden md:block group-hover:text-[#fbd24c] transition-colors">LEXIS ACADEMY</span>
                         </div>
                         
@@ -575,8 +577,11 @@
                     {/* FOOTER */}
                     <footer className="py-12 px-6 bg-slate-900 text-[#94a3b8] border-t border-white/5">
                         <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-12 text-sm">
-                            <div className="text-center md:text-left group">
-                                <h5 className="text-white font-black mb-4 group-hover:text-[#fbd24c] transition-colors">LEXIS ENGLISH ACADEMY</h5>
+                            <div className="text-center md:text-left group flex flex-col items-center md:items-start">
+                                <div className="w-20 h-20 mb-4 overflow-hidden">
+                                    <img src="./logo.png" alt="Lexis Logo" className="w-full h-full object-contain" />
+                                </div>
+                                <h5 className="text-white font-black mb-2 group-hover:text-[#fbd24c] transition-colors">LEXIS ENGLISH ACADEMY</h5>
                                 <p>Rua Visconde de Inhaúma, 1295<br/>São Carlos-SP</p>
                                 <p className="mt-2">WhatsApp: (16) 99405-1552</p>
                             </div>
