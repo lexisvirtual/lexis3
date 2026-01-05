@@ -72,6 +72,14 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
+        // Lista de números para distribuição randômica
+        const WHATSAPP_NUMBERS = [
+            "5516988183210",
+            "5516993051154",
+            "5517996507647",
+            "5516996385145"
+        ];
+
         const LeadModal = ({ isOpen, onClose, defaultCourse = "" }) => {
             const [formData, setFormData] = useState({ name: '', email: '', phone: '', course: defaultCourse });
             const [isSubmitting, setIsSubmitting] = useState(false);
@@ -88,9 +96,13 @@
                 
                 const message = `Olá! Meu nome é ${formData.name}. Gostaria de mais informações sobre o curso: ${formData.course}. \nE-mail: ${formData.email}\nWhatsApp: ${formData.phone}`;
                 const encodedMessage = encodeURIComponent(message);
+
+                // Sistema de distribuição randômica
+                const randomIndex = Math.floor(Math.random() * WHATSAPP_NUMBERS.length);
+                const selectedNumber = WHATSAPP_NUMBERS[randomIndex];
                 
                 setTimeout(() => {
-                    window.open(`https://wa.me/5516994051552?text=${encodedMessage}`, '_blank');
+                    window.open(`https://wa.me/${selectedNumber}?text=${encodedMessage}`, '_blank');
                     setIsSubmitting(false);
                     onClose();
                 }, 800);
