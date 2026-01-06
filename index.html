@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lexis English Academy | Treinamneto para alta performace</title>
+    <title>Lexis English Academy | Maestria, Imersão e The Way</title>
     <meta name="description" content="Domine o inglês com a metodologia Lexis. Cursos Intensivos Online, Imersão Presencial de 2 semanas e o inovador modelo Cíclico The Way. Resultados reais e rápidos.">
     
     <!-- Favicon -->
@@ -67,6 +67,7 @@
         .group:hover .icon-move { transform: scale(1.2) rotate(10deg); }
         .bg-mesh { position: absolute; width: 100%; height: 100%; background-image: radial-gradient(circle at 2px 2px, rgba(251, 210, 76, 0.05) 1px, transparent 0); background-size: 40px 40px; }
         .modal-overlay { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(8px); }
+        .benefit-badge { background: rgba(251, 210, 76, 0.1); border: 1px solid rgba(251, 210, 76, 0.2); color: #fbd24c; padding: 4px 12px; border-radius: 99px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
     </style>
 </head>
 <body class="bg-[#0f172a] text-white antialiased">
@@ -186,12 +187,26 @@
                         </div>
                         
                         <div className="hidden md:flex items-center gap-8 text-sm font-bold uppercase tracking-widest text-[#94a3b8]">
-                            {['Início', 'Modalidades', 'Conteúdo', 'Método', 'Depoimentos'].map((item) => (
-                                <a key={item} href={`#${item.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}`} className="hover:text-[#fbd24c] transition-colors relative group">
-                                    {item}
-                                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#fbd24c] transition-all group-hover:w-full"></span>
-                                </a>
-                            ))}
+                            <a href="#inicio" className="hover:text-[#fbd24c] transition-colors relative group">
+                                Início
+                                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#fbd24c] transition-all group-hover:w-full"></span>
+                            </a>
+                            <a href="#modalidades" className="hover:text-[#fbd24c] transition-colors relative group">
+                                Modalidades
+                                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#fbd24c] transition-all group-hover:w-full"></span>
+                            </a>
+                            <a href="#conteudo" className="hover:text-[#fbd24c] transition-colors relative group">
+                                Conteúdo
+                                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#fbd24c] transition-all group-hover:w-full"></span>
+                            </a>
+                            <a href="#metodo" className="hover:text-[#fbd24c] transition-colors relative group">
+                                Método
+                                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#fbd24c] transition-all group-hover:w-full"></span>
+                            </a>
+                            <a href="#depoimentos" className="hover:text-[#fbd24c] transition-colors relative group">
+                                Depoimentos
+                                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#fbd24c] transition-all group-hover:w-full"></span>
+                            </a>
                         </div>
 
                         <button onClick={() => onOpenModal()} className="bg-[#fbd24c] text-[#0f172a] px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-widest hover:bg-yellow-400 transition-all active:scale-95 shadow-lg shadow-yellow-500/20">
@@ -232,8 +247,8 @@
                         <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[#fbd24c]/10 rounded-full blur-[100px] animate-float"></div>
                     </header>
 
-                    {/* SEÇÃO: CIÊNCIA */}
-                    <section className="py-24 px-6 bg-slate-50 text-[#0f172a] relative overflow-hidden">
+                    {/* SEÇÃO: CIÊNCIA (REFERENCIADA COMO MÉTODO) */}
+                    <section id="metodo" className="py-24 px-6 bg-slate-50 text-[#0f172a] relative overflow-hidden scroll-mt-20">
                         <div className="max-w-6xl mx-auto relative z-10">
                             <div className="grid md:grid-cols-2 gap-16 items-center">
                                 <div>
@@ -264,53 +279,174 @@
                         </div>
                     </section>
 
-                    {/* MODALIDADES */}
-                    <section id="modalidades" className="py-24 px-6 bg-[#0f172a] border-t border-white/5 scroll-mt-20">
-                        <div className="max-w-6xl mx-auto">
-                            <SectionHeader tag="Nossos Programas" title="Encontre o Treinamento Ideal" subtitle="Seja para urgência total, foco intensivo ou flexibilidade máxima, temos o método validado para o seu perfil." />
-                            <div className="flex flex-wrap justify-center gap-4 mb-16">
-                                {['maestria', 'imersao', 'theway'].map(tab => (
-                                    <button key={tab} onClick={() => setActiveTab(tab)} className={`px-8 py-3 rounded-xl font-bold transition-all duration-500 border relative overflow-hidden group ${activeTab === tab ? "bg-[#fbd24c] text-[#0f172a] border-[#fbd24c] scale-110 shadow-lg shadow-yellow-500/20" : "bg-white/5 text-white border-white/10 hover:bg-white/10"}`}>
-                                        <span className="relative z-10">{tab === 'maestria' ? 'Maestria Online' : tab === 'imersao' ? 'Imersão Presencial' : 'The Way Cíclico'}</span>
+                    {/* MODALIDADES - REFINADA */}
+                    <section id="modalidades" className="py-24 px-6 bg-[#0f172a] border-t border-white/5 scroll-mt-20 relative">
+                        <div className="bg-mesh opacity-10"></div>
+                        <div className="max-w-7xl mx-auto relative z-10">
+                            <SectionHeader 
+                                tag="Ecossistema de Treinamento" 
+                                title="Arquiteturas de Aprendizado" 
+                                subtitle="Desenvolvemos três caminhos estratégicos baseados em sua disponibilidade e urgência de resultados profissionais." 
+                            />
+                            
+                            <div className="flex flex-wrap justify-center gap-3 mb-16">
+                                {[
+                                    { id: 'maestria', label: 'Maestria Online', icon: '🌐' },
+                                    { id: 'imersao', label: 'Imersão Presencial', icon: '🏫' },
+                                    { id: 'theway', label: 'The Way Cíclico', icon: '🔄' }
+                                ].map(tab => (
+                                    <button 
+                                        key={tab.id} 
+                                        onClick={() => setActiveTab(tab.id)} 
+                                        className={`px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-[11px] border transition-all flex items-center gap-3 ${activeTab === tab.id ? "bg-[#fbd24c] text-[#0f172a] border-[#fbd24c] shadow-2xl shadow-yellow-500/30 -translate-y-1" : "bg-white/5 text-white border-white/10 hover:border-white/30"}`}
+                                    >
+                                        <span className="text-base">{tab.icon}</span>
+                                        {tab.label}
                                     </button>
                                 ))}
                             </div>
-                            {activeTab === 'maestria' && (
-                                <div className="grid md:grid-cols-2 gap-12 items-center animate-in slide-in-from-bottom-10 duration-700">
-                                    <div className="card-glass p-8 md:p-12 rounded-[2rem] relative overflow-hidden group">
-                                        <div className="bg-[#fbd24c] text-[#0f172a] px-4 py-1 rounded-md text-xs font-black inline-block mb-6 uppercase">Intensivo 8 Semanas</div>
-                                        <h3 className="text-3xl font-bold mb-6 italic">Evolua no inglês sem sair de casa.</h3>
-                                        <p className="text-[#94a3b8] mb-8 text-lg">Adaptação da nossa metodologia exclusiva para o formato online, com foco em resultados reais em apenas 2 meses.</p>
-                                        <Button primary className="w-full" onClick={() => openModal('Maestria Online')}>GARANTIR MINHA VAGA ONLINE</Button>
-                                    </div>
-                                    <div className="space-y-6">
-                                        <div className="bg-white/5 p-6 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
-                                            <h4 className="font-bold text-[#fbd24c] mb-2 uppercase text-sm tracking-widest">Conteúdo Programático</h4>
-                                            <p className="text-sm text-[#94a3b8]">Start (Fonética) → Run (Estruturas) → Fly (Vocabulário) → Liberty (Conversação).</p>
+
+                            <div className="min-h-[500px]">
+                                {activeTab === 'maestria' && (
+                                    <div className="grid lg:grid-cols-12 gap-12 items-stretch animate-in slide-in-from-bottom-8 duration-500">
+                                        <div className="lg:col-span-7 flex flex-col justify-center">
+                                            <div className="card-glass p-8 md:p-14 rounded-[3rem] border-l-8 border-[#fbd24c] h-full">
+                                                <div className="flex items-center gap-4 mb-6">
+                                                    <span className="bg-[#fbd24c] text-[#0f172a] px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter">100% Digital</span>
+                                                    <span className="text-[#fbd24c] font-black text-xs uppercase tracking-widest">Duração: 8 Semanas</span>
+                                                </div>
+                                                <h3 className="text-4xl md:text-5xl font-black mb-8 italic tracking-tighter leading-tight">MAESTRIA ONLINE:<br/><span className="text-gradient">Automação em Casa</span></h3>
+                                                <p className="text-[#94a3b8] mb-10 text-xl font-light leading-relaxed">Nossa tecnologia exclusiva de pontes cognitivas disponível em uma plataforma de alta performance. O ambiente ideal para quem precisa de resultados rápidos com a flexibilidade do digital.</p>
+                                                
+                                                <div className="grid md:grid-cols-2 gap-6 mb-12">
+                                                    <div className="flex items-start gap-4">
+                                                        <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[#fbd24c] border border-white/10">✓</div>
+                                                        <p className="text-sm text-white/80 font-bold uppercase tracking-widest">Treino de Fonética Assistida</p>
+                                                    </div>
+                                                    <div className="flex items-start gap-4">
+                                                        <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[#fbd24c] border border-white/10">✓</div>
+                                                        <p className="text-sm text-white/80 font-bold uppercase tracking-widest">Expansão de Vocabulário Ativa</p>
+                                                    </div>
+                                                    <div className="flex items-start gap-4">
+                                                        <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[#fbd24c] border border-white/10">✓</div>
+                                                        <p className="text-sm text-white/80 font-bold uppercase tracking-widest">Mentoria Individual Semanal</p>
+                                                    </div>
+                                                    <div className="flex items-start gap-4">
+                                                        <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[#fbd24c] border border-white/10">✓</div>
+                                                        <p className="text-sm text-white/80 font-bold uppercase tracking-widest">Suporte Nativo 24/7</p>
+                                                    </div>
+                                                </div>
+                                                <Button primary className="w-full text-sm py-6" onClick={() => openModal('Maestria Online')}>SOLICITAR ACESSO À MAESTRIA</Button>
+                                            </div>
+                                        </div>
+                                        <div className="lg:col-span-5 flex flex-col gap-6">
+                                            <div className="bg-gradient-to-br from-white/10 to-transparent p-10 rounded-[3rem] border border-white/10 flex-1 flex flex-col justify-center">
+                                                <div className="text-4xl mb-6">⚡</div>
+                                                <h4 className="text-xl font-black mb-4 uppercase italic">Vantagem Digital</h4>
+                                                <p className="text-[#94a3b8] text-sm leading-relaxed">Treine nos mesmos moldes dos nossos cursos presenciais, utilizando a neurociência para hackear o tempo de aprendizado tradicional.</p>
+                                            </div>
+                                            <div className="bg-[#fbd24c]/5 p-10 rounded-[3rem] border border-[#fbd24c]/20 flex-1 flex flex-col justify-center">
+                                                <div className="text-4xl mb-6">🏆</div>
+                                                <h4 className="text-xl font-black mb-4 uppercase italic text-[#fbd24c]">Selo de Eficácia</h4>
+                                                <p className="text-[#94a3b8] text-sm leading-relaxed">Garantia Lexis de evolução auditiva e fala fluida em até 60 dias úteis de treinamento contínuo.</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            )}
-                            {activeTab === 'imersao' && (
-                                <div className="grid md:grid-cols-2 gap-12 items-center animate-in slide-in-from-bottom-10 duration-700">
-                                    <div className="card-glass p-8 md:p-12 rounded-[2rem] relative overflow-hidden group">
-                                        <div className="bg-red-500 text-white px-4 py-1 rounded-md text-xs font-black inline-block mb-6 uppercase">Elite: 2 Semanas</div>
-                                        <h3 className="text-3xl font-bold mb-6 italic">Mastery em 14 dias de imersão total.</h3>
-                                        <p className="text-[#94a3b8] mb-8 text-lg">O programa mais poderoso da Lexis. 10 horas diárias de prática intensa em São Carlos-SP.</p>
-                                        <Button primary className="w-full" onClick={() => openModal('Imersão Presencial')}>AGENDAR MINHA IMERSÃO</Button>
+                                )}
+                                {activeTab === 'imersao' && (
+                                    <div className="grid lg:grid-cols-12 gap-12 items-stretch animate-in slide-in-from-bottom-8 duration-500">
+                                        <div className="lg:col-span-7 flex flex-col justify-center">
+                                            <div className="card-glass p-8 md:p-14 rounded-[3rem] border-l-8 border-red-500 h-full relative overflow-hidden">
+                                                <div className="absolute -right-8 -top-8 w-32 h-32 bg-red-500/10 blur-3xl"></div>
+                                                <div className="flex items-center gap-4 mb-6">
+                                                    <span className="bg-red-500 text-white px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter">Elite Performance</span>
+                                                    <span className="text-red-500 font-black text-xs uppercase tracking-widest">Duração: 14 Dias</span>
+                                                </div>
+                                                <h3 className="text-4xl md:text-5xl font-black mb-8 italic tracking-tighter leading-tight">IMERSÃO TOTAL:<br/><span className="text-gradient">O Ponto de Virada</span></h3>
+                                                <p className="text-[#94a3b8] mb-10 text-xl font-light leading-relaxed">Em São Carlos-SP, você vivencia o inglês como sua única língua. 10 horas diárias de prática dirigida para quebrar qualquer barreira de fala e compreensão.</p>
+                                                
+                                                <div className="grid md:grid-cols-2 gap-6 mb-12">
+                                                    <div className="flex items-start gap-4">
+                                                        <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center text-red-500 border border-red-500/20 italic font-black">!</div>
+                                                        <p className="text-sm text-white/80 font-bold uppercase tracking-widest">Vivência Real 24h</p>
+                                                    </div>
+                                                    <div className="flex items-start gap-4">
+                                                        <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center text-red-500 border border-red-500/20 italic font-black">!</div>
+                                                        <p className="text-sm text-white/80 font-bold uppercase tracking-widest">Foco em Inglês de Negócios</p>
+                                                    </div>
+                                                    <div className="flex items-start gap-4">
+                                                        <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center text-red-500 border border-red-500/20 italic font-black">!</div>
+                                                        <p className="text-sm text-white/80 font-bold uppercase tracking-widest">Feedback Instantâneo</p>
+                                                    </div>
+                                                    <div className="flex items-start gap-4">
+                                                        <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center text-red-500 border border-red-500/20 italic font-black">!</div>
+                                                        <p className="text-sm text-white/80 font-bold uppercase tracking-widest">Rede Executiva de Alunos</p>
+                                                    </div>
+                                                </div>
+                                                <Button primary className="w-full text-sm py-6 bg-red-500 hover:bg-red-600 border-red-500" onClick={() => openModal('Imersão Presencial')}>RESERVAR MINHA IMERSÃO</Button>
+                                            </div>
+                                        </div>
+                                        <div className="lg:col-span-5 flex flex-col gap-6">
+                                            <div className="bg-red-500/5 p-10 rounded-[3rem] border border-red-500/20 flex-1 flex flex-col justify-center">
+                                                <div className="text-4xl mb-6">🏢</div>
+                                                <h4 className="text-xl font-black mb-4 uppercase italic text-red-500">Localização Estratégica</h4>
+                                                <p className="text-[#94a3b8] text-sm leading-relaxed">Unidade própria em São Carlos-SP, desenhada para total isolamento linguístico e conforto profissional.</p>
+                                            </div>
+                                            <div className="bg-white/5 p-10 rounded-[3rem] border border-white/10 flex-1 flex flex-col justify-center">
+                                                <div className="text-4xl mb-6">📅</div>
+                                                <h4 className="text-xl font-black mb-4 uppercase italic">Vagas Escassas</h4>
+                                                <p className="text-[#94a3b8] text-sm leading-relaxed">Grupos ultra reduzidos para garantir que cada minuto de treinamento seja focado na sua evolução individual.</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            )}
-                            {activeTab === 'theway' && (
-                                <div className="grid md:grid-cols-2 gap-12 items-center animate-in slide-in-from-bottom-10 duration-700">
-                                    <div className="card-glass p-8 md:p-12 rounded-[2rem] relative overflow-hidden group">
-                                        <div className="bg-blue-500 text-white px-4 py-1 rounded-md text-xs font-black inline-block mb-6 uppercase">Flexibilidade Infinita</div>
-                                        <h3 className="text-3xl font-bold mb-6 italic">O curso que se adapta à sua vida.</h3>
-                                        <p className="text-[#94a3b8] mb-8 text-lg">Início imediato em qualquer data. Abordagem cíclica em espiral ascendente.</p>
-                                        <Button primary className="w-full" onClick={() => openModal('The Way Cíclico')}>INICIAR AGORA (THE WAY)</Button>
+                                )}
+                                {activeTab === 'theway' && (
+                                    <div className="grid lg:grid-cols-12 gap-12 items-stretch animate-in slide-in-from-bottom-8 duration-500">
+                                        <div className="lg:col-span-7 flex flex-col justify-center">
+                                            <div className="card-glass p-8 md:p-14 rounded-[3rem] border-l-8 border-blue-500 h-full">
+                                                <div className="flex items-center gap-4 mb-6">
+                                                    <span className="bg-blue-500 text-white px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter">Flexibilidade Total</span>
+                                                    <span className="text-blue-500 font-black text-xs uppercase tracking-widest">Início Imediato</span>
+                                                </div>
+                                                <h3 className="text-4xl md:text-5xl font-black mb-8 italic tracking-tighter leading-tight">THE WAY:<br/><span className="text-gradient">O Fluxo Contínuo</span></h3>
+                                                <p className="text-[#94a3b8] mb-10 text-xl font-light leading-relaxed">Uma arquitetura de ensino cíclica que respeita seu tempo. Avance em espiral por todas as competências do idioma sem depender de calendários fixos.</p>
+                                                
+                                                <div className="grid md:grid-cols-2 gap-6 mb-12">
+                                                    <div className="flex items-start gap-4">
+                                                        <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20">↺</div>
+                                                        <p className="text-sm text-white/80 font-bold uppercase tracking-widest">Aprendizado Adaptativo</p>
+                                                    </div>
+                                                    <div className="flex items-start gap-4">
+                                                        <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20">↺</div>
+                                                        <p className="text-sm text-white/80 font-bold uppercase tracking-widest">Grade Semanal Flexível</p>
+                                                    </div>
+                                                    <div className="flex items-start gap-4">
+                                                        <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20">↺</div>
+                                                        <p className="text-sm text-white/80 font-bold uppercase tracking-widest">Material Digital Incluído</p>
+                                                    </div>
+                                                    <div className="flex items-start gap-4">
+                                                        <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20">↺</div>
+                                                        <p className="text-sm text-white/80 font-bold uppercase tracking-widest">Início em Qualquer Módulo</p>
+                                                    </div>
+                                                </div>
+                                                <Button primary className="w-full text-sm py-6 bg-blue-500 hover:bg-blue-600 border-blue-500" onClick={() => openModal('The Way Cíclico')}>ENTRAR NO FLUXO (THE WAY)</Button>
+                                            </div>
+                                        </div>
+                                        <div className="lg:col-span-5 flex flex-col gap-6">
+                                            <div className="bg-blue-500/5 p-10 rounded-[3rem] border border-blue-500/20 flex-1 flex flex-col justify-center">
+                                                <div className="text-4xl mb-6">🌀</div>
+                                                <h4 className="text-xl font-black mb-4 uppercase italic text-blue-500">Modelo Espiral</h4>
+                                                <p className="text-[#94a3b8] text-sm leading-relaxed">Os conteúdos se revisitam e se aprofundam a cada ciclo, garantindo que nada seja esquecido.</p>
+                                            </div>
+                                            <div className="bg-white/5 p-10 rounded-[3rem] border border-white/10 flex-1 flex flex-col justify-center">
+                                                <div className="text-4xl mb-6">⏰</div>
+                                                <h4 className="text-xl font-black mb-4 uppercase italic">Tempo Otimizado</h4>
+                                                <p className="text-[#94a3b8] text-sm leading-relaxed">Foco exclusivo no que você precisa para se comunicar. Sem perda de tempo com gramática irrelevante.</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            )}
+                                )}
+                            </div>
                         </div>
                     </section>
 
