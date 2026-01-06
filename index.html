@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lexis English Academy | Maestria, Imersão e The Way</title>
-    <meta name="description" content="Domine o inglês com a metodologia Lexis. Cursos Intensivos Online, Imersão Presencial de 2 semanas e o inovador modelo Cíclico The Way. Resultados reais e rápidos.">
+    <meta name="description" content="Domine o inglês com a metodologia Lexis. Use o português de forma estratégica para acelerar sua fluência. Resultados reais e rápidos.">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="favicon.png">
@@ -12,7 +12,7 @@
 
     <!-- OpenGraph -->
     <meta property="og:title" content="Lexis English Academy - Treinamento de Alta Performance">
-    <meta property="og:description" content="Aprenda inglês como uma habilidade. Treinamento intensivo, imersão presencial e flexibilidade total.">
+    <meta property="og:description" content="Aprenda inglês como uma habilidade. Aceleração via uso estratégico da língua materna para resultados de elite.">
     <meta property="og:type" content="website">
     
     <!-- Scripts -->
@@ -36,7 +36,7 @@
                     animation: {
                         'gradient-x': 'gradient-x 15s ease infinite',
                         'float': 'float 6s ease-in-out infinite',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'pulse-slow': 'pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
                         'gradient-x': {
@@ -46,6 +46,10 @@
                         'float': {
                             '0%, 100%': { transform: 'translateY(0)' },
                             '50%': { transform: 'translateY(-20px)' },
+                        },
+                        'pulse-slow': {
+                          '0%, 100%': { opacity: '0.1' },
+                          '50%': { opacity: '0.2' },
                         }
                     }
                 }
@@ -63,10 +67,9 @@
         .navbar-blur { backdrop-filter: blur(12px); background: rgba(15, 23, 42, 0.8); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
         .module-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid rgba(251, 210, 76, 0.1); }
         .module-card:hover { border-color: rgba(251, 210, 76, 0.5); transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 40px -20px rgba(0,0,0,0.5); }
-        .icon-move { display: inline-block; transition: transform 0.3s ease; }
-        .group:hover .icon-move { transform: scale(1.2) rotate(10deg); }
         .bg-mesh { position: absolute; width: 100%; height: 100%; background-image: radial-gradient(circle at 2px 2px, rgba(251, 210, 76, 0.05) 1px, transparent 0); background-size: 40px 40px; }
         .modal-overlay { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(8px); }
+        .advantage-pill { background: rgba(251, 210, 76, 0.1); border: 1px solid rgba(251, 210, 76, 0.2); font-size: 10px; font-weight: 800; text-transform: uppercase; padding: 4px 10px; border-radius: 99px; color: #fbd24c; }
     </style>
 </head>
 <body class="bg-[#0f172a] text-white antialiased">
@@ -75,12 +78,7 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        const WHATSAPP_NUMBERS = [
-            "5516988183210",
-            "5516993051154",
-            "5517996507647",
-            "5516996385145"
-        ];
+        const WHATSAPP_NUMBERS = ["5516988183210", "5516993051154", "5517996507647", "5516996385145"];
 
         const LeadModal = ({ isOpen, onClose, defaultCourse = "" }) => {
             const [formData, setFormData] = useState({ name: '', email: '', phone: '', course: defaultCourse });
@@ -92,17 +90,13 @@
 
             if (!isOpen) return null;
 
-            const handleSubmit = async (e) => {
+            const handleSubmit = (e) => {
                 e.preventDefault();
                 setIsSubmitting(true);
-                
                 const message = `Olá! Meu nome é ${formData.name}. Gostaria de mais informações sobre o curso: ${formData.course}. \nE-mail: ${formData.email}\nWhatsApp: ${formData.phone}`;
-                const encodedMessage = encodeURIComponent(message);
                 const randomIndex = Math.floor(Math.random() * WHATSAPP_NUMBERS.length);
-                const selectedNumber = WHATSAPP_NUMBERS[randomIndex];
-                
                 setTimeout(() => {
-                    window.open(`https://wa.me/${selectedNumber}?text=${encodedMessage}`, '_blank');
+                    window.open(`https://wa.me/${WHATSAPP_NUMBERS[randomIndex]}?text=${encodeURIComponent(message)}`, '_blank');
                     setIsSubmitting(false);
                     onClose();
                 }, 800);
@@ -110,41 +104,33 @@
 
             return (
                 <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-300">
-                    <div className="bg-[#0f172a] border border-white/10 w-full max-w-md rounded-[2.5rem] p-8 relative shadow-2xl overflow-hidden max-h-[95vh] overflow-y-auto">
+                    <div className="bg-[#0f172a] border border-white/10 w-full max-w-md rounded-[2.5rem] p-8 relative shadow-2xl overflow-y-auto max-h-[95vh]">
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#fbd24c] to-[#f59e0b]"></div>
                         <button onClick={onClose} className="absolute top-6 right-6 text-white/40 hover:text-[#fbd24c] transition-colors">
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
-                        
                         <div className="text-center mb-8">
-                            <h3 className="text-2xl font-black mb-2">Solicitar Proposta</h3>
-                            <p className="text-white/60 text-sm">Preencha os dados abaixo para iniciar seu treinamento.</p>
+                            <h3 className="text-2xl font-black mb-2 uppercase tracking-tighter">Solicitar Proposta</h3>
+                            <p className="text-white/60 text-sm">Dados seguros para seu atendimento personalizado.</p>
                         </div>
-
                         <form onSubmit={handleSubmit} className="space-y-4">
-                            <div>
-                                <label className="block text-xs font-bold uppercase tracking-widest text-[#fbd24c] mb-1.5">Nome Completo</label>
-                                <input required type="text" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-[#fbd24c] focus:outline-none transition-colors" placeholder="Ex: João Silva" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
-                            </div>
-                            <div>
-                                <label className="block text-xs font-bold uppercase tracking-widest text-[#fbd24c] mb-1.5">E-mail</label>
-                                <input required type="email" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-[#fbd24c] focus:outline-none transition-colors" placeholder="Ex: joao@email.com" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
-                            </div>
-                            <div>
-                                <label className="block text-xs font-bold uppercase tracking-widest text-[#fbd24c] mb-1.5">WhatsApp</label>
-                                <input required type="tel" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-[#fbd24c] focus:outline-none transition-colors" placeholder="(00) 00000-0000" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
-                            </div>
+                            {['name', 'email', 'phone'].map(field => (
+                                <div key={field}>
+                                    <label className="block text-xs font-bold uppercase tracking-widest text-[#fbd24c] mb-1.5">{field === 'name' ? 'Nome' : field === 'email' ? 'E-mail' : 'WhatsApp'}</label>
+                                    <input required type={field === 'email' ? 'email' : 'text'} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-[#fbd24c] focus:outline-none transition-colors" placeholder={field === 'phone' ? '(00) 00000-0000' : ''} value={formData[field]} onChange={e => setFormData({...formData, [field]: e.target.value})} />
+                                </div>
+                            ))}
                             <div>
                                 <label className="block text-xs font-bold uppercase tracking-widest text-[#fbd24c] mb-1.5">Curso de Interesse</label>
-                                <select required className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-[#fbd24c] focus:outline-none transition-colors appearance-none" value={formData.course} onChange={e => setFormData({...formData, course: e.target.value})}>
+                                <select required className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-[#fbd24c] focus:outline-none appearance-none" value={formData.course} onChange={e => setFormData({...formData, course: e.target.value})}>
                                     <option value="" className="bg-[#0f172a]">Selecione um curso</option>
-                                    <option value="Maestria Online" className="bg-[#0f172a]">Maestria Online (Intensivo)</option>
-                                    <option value="Imersão Presencial" className="bg-[#0f172a]">Imersão Presencial (S. Carlos)</option>
-                                    <option value="The Way Cíclico" className="bg-[#0f172a]">The Way Cíclico (Flexível)</option>
+                                    <option value="Maestria Online" className="bg-[#0f172a]">Maestria Online</option>
+                                    <option value="Imersão Presencial" className="bg-[#0f172a]">Imersão Presencial</option>
+                                    <option value="The Way Cíclico" className="bg-[#0f172a]">The Way Cíclico</option>
                                 </select>
                             </div>
-                            <button type="submit" disabled={isSubmitting} className={`w-full bg-[#fbd24c] text-[#0f172a] py-4 rounded-xl font-black uppercase tracking-widest hover:bg-yellow-400 transition-all shadow-lg shadow-yellow-500/20 active:scale-95 flex items-center justify-center gap-3 mt-4 ${isSubmitting ? 'opacity-70 cursor-wait' : ''}`}>
-                                {isSubmitting ? "Processando..." : "Receber Proposta via WhatsApp"}
+                            <button type="submit" disabled={isSubmitting} className="w-full bg-[#fbd24c] text-[#0f172a] py-4 rounded-xl font-black uppercase tracking-widest hover:bg-yellow-400 transition-all shadow-lg active:scale-95 mt-4">
+                                {isSubmitting ? "Processando..." : "Receber Proposta"}
                             </button>
                         </form>
                     </div>
@@ -153,8 +139,8 @@
         };
 
         const Button = ({ children, primary = false, className = "", onClick }) => (
-            <button className={`px-8 py-4 rounded-full font-bold text-lg transition-all active:scale-95 text-center inline-block relative overflow-hidden group ${primary ? "bg-[#fbd24c] text-[#0f172a] cta-shadow hover:bg-yellow-400" : "border-2 border-[#fbd24c] text-[#fbd24c] hover:bg-[#fbd24c]/10"} ${className}`} onClick={onClick}>
-                <span className="relative z-10 flex items-center justify-center gap-2">
+            <button className={`px-8 py-4 rounded-full font-bold transition-all active:scale-95 text-center inline-block group ${primary ? "bg-[#fbd24c] text-[#0f172a] cta-shadow hover:bg-yellow-400" : "border-2 border-[#fbd24c] text-[#fbd24c] hover:bg-[#fbd24c]/10"} ${className}`} onClick={onClick}>
+                <span className="flex items-center justify-center gap-2 uppercase tracking-widest text-sm italic">
                     {children}
                     <span className="group-hover:translate-x-1 transition-transform">→</span>
                 </span>
@@ -164,43 +150,10 @@
         const SectionHeader = ({ tag, title, subtitle }) => (
             <div className="mb-16 text-center max-w-4xl mx-auto px-4">
                 <span className="text-[#fbd24c] font-bold tracking-[0.2em] uppercase text-xs mb-4 block animate-pulse">{tag}</span>
-                <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">{title}</h2>
-                <p className="text-[#94a3b8] text-lg md:text-xl">{subtitle}</p>
+                <h2 className="text-4xl md:text-6xl font-black mb-6 leading-tight uppercase tracking-tighter italic">{title}</h2>
+                <p className="text-[#94a3b8] text-lg md:text-xl font-light">{subtitle}</p>
             </div>
         );
-
-        const Navbar = ({ onOpenModal }) => {
-            const [scrolled, setScrolled] = useState(false);
-            useEffect(() => {
-                const handleScroll = () => setScrolled(window.scrollY > 20);
-                window.addEventListener("scroll", handleScroll);
-                return () => window.removeEventListener("scroll", handleScroll);
-            }, []);
-
-            return (
-                <nav className={`fixed top-0 w-full z-[100] transition-all duration-500 ${scrolled ? "navbar-blur py-3 shadow-2xl" : "bg-transparent py-6"}`}>
-                    <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-                        <div className="flex items-center gap-3 group cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
-                            <img src="logo.png" alt="Lexis Logo" className="w-10 h-10 object-contain group-hover:rotate-12 transition-transform duration-300" />
-                            <span className="font-black text-xl tracking-tighter hidden md:block group-hover:text-[#fbd24c] transition-colors uppercase">Lexis Academy</span>
-                        </div>
-                        
-                        <div className="hidden md:flex items-center gap-8 text-sm font-bold uppercase tracking-widest text-[#94a3b8]">
-                            {['Início', 'Modalidades', 'Conteúdo', 'Método', 'Depoimentos'].map((item) => (
-                                <a key={item} href={`#${item.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}`} className="hover:text-[#fbd24c] transition-colors relative group">
-                                    {item}
-                                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#fbd24c] transition-all group-hover:w-full"></span>
-                                </a>
-                            ))}
-                        </div>
-
-                        <button onClick={() => onOpenModal()} className="bg-[#fbd24c] text-[#0f172a] px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-widest hover:bg-yellow-400 transition-all active:scale-95 shadow-lg shadow-yellow-500/20">
-                            Falar com consultor
-                        </button>
-                    </div>
-                </nav>
-            );
-        };
 
         const App = () => {
             const [activeTab, setActiveTab] = useState('maestria');
@@ -210,125 +163,188 @@
 
             return (
                 <div className="flex flex-col w-full min-h-screen">
-                    <Navbar onOpenModal={openModal} />
+                    <nav className="fixed top-0 w-full z-[100] navbar-blur py-4 shadow-2xl">
+                        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+                            <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+                                <img src="logo.png" alt="Lexis Logo" className="w-10 h-10 object-contain" />
+                                <span className="font-black text-xl tracking-tighter uppercase">Lexis Academy</span>
+                            </div>
+                            <div className="hidden md:flex items-center gap-8 text-[11px] font-bold uppercase tracking-widest text-[#secondary]">
+                                {['Início', 'Modalidades', 'Método', 'Conteúdo', 'Depoimentos'].map(item => (
+                                    <a key={item} href={`#${item.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}`} className="hover:text-[#fbd24c] transition-colors">{item}</a>
+                                ))}
+                            </div>
+                            <button onClick={() => openModal()} className="bg-[#fbd24c] text-[#0f172a] px-6 py-2 rounded-full font-bold text-xs uppercase tracking-widest shadow-lg shadow-yellow-500/20 active:scale-95">Falar com consultor</button>
+                        </div>
+                    </nav>
+
                     <LeadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} defaultCourse={selectedCourse} />
 
                     {/* HERO */}
                     <header id="inicio" className="relative pt-40 pb-32 px-6 overflow-hidden bg-[#0f172a]">
                         <div className="bg-mesh opacity-30"></div>
                         <div className="max-w-6xl mx-auto text-center relative z-10">
-                            <h1 className="text-4xl md:text-6xl font-black mb-8 leading-[1.1]">
+                            <h1 className="text-4xl md:text-7xl font-black mb-8 leading-[1.1] uppercase tracking-tighter italic">
                                 Inglês é uma <span className="text-gradient">habilidade.</span><br/>
-                                Treine como um atleta.
+                                <span className="opacity-40">Treine como um atleta.</span>
                             </h1>
-                            <p className="text-[#94a3b8] text-xl md:text-2xl max-w-3xl mx-auto mb-12 leading-relaxed">
-                                A Lexis English Academy transforma o aprendizado em automação cognitiva. Escolha seu caminho e alcance a fluência real em tempo recorde.
+                            <p className="text-[#94a3b8] text-xl md:text-2xl max-w-3xl mx-auto mb-12 leading-relaxed font-light">
+                                Use o português como sua maior ferramenta de aceleração cognitiva. Atravessamos o bloqueio de tradução usando seu cérebro de forma estratégica.
                             </p>
                             <div className="flex flex-col md:flex-row gap-6 justify-center">
-                                <Button primary onClick={() => openModal()}>FALAR COM UM ESPECIALISTA</Button>
+                                <Button primary onClick={() => openModal()}>RECEBER ORIENTAÇÃO PERSONALIZADA</Button>
                                 <Button onClick={() => document.getElementById('modalidades').scrollIntoView()}>CONHECER AS MODALIDADES</Button>
                             </div>
                         </div>
-                        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[#fbd24c]/10 rounded-full blur-[100px] animate-float"></div>
                     </header>
 
-                    {/* SEÇÃO: CIÊNCIA */}
-                    <section className="py-24 px-6 bg-slate-50 text-[#0f172a] relative overflow-hidden">
-                        <div className="max-w-6xl mx-auto relative z-10">
-                            <div className="grid md:grid-cols-2 gap-16 items-center">
-                                <div>
-                                    <span className="text-[#8c5414] font-bold tracking-widest uppercase text-xs mb-4 block underline decoration-[#fbd24c] decoration-4 underline-offset-8">A Ciência por trás do Método</span>
-                                    <h2 className="text-4xl md:text-5xl font-black mb-8 leading-tight">Por que aprender Inglês como uma <span className="text-[#8c5414]">Habilidade</span> é o único caminho inteligente?</h2>
-                                    <div className="space-y-6 text-slate-600 text-lg">
-                                        <p>Idiomas não são matérias escolares para serem "estudadas". Eles residem na mesma área do cérebro que controla <strong>habilidades motoras e esportes cognitivos.</strong></p>
-                                        <p>Saber regras gramaticais não faz ninguém falar, do mesmo jeito que ler sobre natação não faz ninguém nadar.</p>
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-1 gap-4">
-                                    {[
-                                        { t: "Processamento em Tempo Real", d: "Coordenação instantânea entre ouvir, pensar e responder, sem travas.", i: "🧠" },
-                                        { t: "Coordenação Motora Fina", d: "Treino dos músculos faciais para fonética perfeita e natural.", i: "🗣️" },
-                                        { t: "Tomada de Decisão", d: "Escolha automática de estruturas para expressar ideias complexas.", i: "⚖️" },
-                                        { t: "Automação Cognitiva", d: "A resposta sai antes de você 'pensar' a frase em português.", i: "🚀" }
-                                    ].map((skill, idx) => (
-                                        <div key={idx} className="group bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex gap-6 items-start hover:shadow-xl hover:border-[#fbd24c]/30 transition-all duration-500">
-                                            <div className="text-3xl icon-move">{skill.i}</div>
-                                            <div>
-                                                <h4 className="font-black text-[#0f172a] mb-1 group-hover:text-[#8c5414] transition-colors">{skill.t}</h4>
-                                                <p className="text-sm text-slate-500">{skill.d}</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
                     {/* MODALIDADES */}
-                    <section id="modalidades" className="py-24 px-6 bg-[#0f172a] border-t border-white/5 scroll-mt-20">
-                        <div className="max-w-6xl mx-auto">
-                            <SectionHeader tag="Nossos Programas" title="Encontre o Treinamento Ideal" subtitle="Seja para urgência total, foco intensivo ou flexibilidade máxima, temos o método validado para o seu perfil." />
-                            <div className="flex flex-wrap justify-center gap-4 mb-16">
-                                {['maestria', 'imersao', 'theway'].map(tab => (
-                                    <button key={tab} onClick={() => setActiveTab(tab)} className={`px-8 py-3 rounded-xl font-bold transition-all duration-500 border relative overflow-hidden group ${activeTab === tab ? "bg-[#fbd24c] text-[#0f172a] border-[#fbd24c] scale-110 shadow-lg shadow-yellow-500/20" : "bg-white/5 text-white border-white/10 hover:bg-white/10"}`}>
-                                        <span className="relative z-10">{tab === 'maestria' ? 'Maestria Online' : tab === 'imersao' ? 'Imersão Presencial' : 'The Way Cíclico'}</span>
+                    <section id="modalidades" className="py-32 px-6 bg-[#0f172a] scroll-mt-20">
+                        <div className="max-w-7xl mx-auto">
+                            <SectionHeader tag="Nossos Caminhos" title="Treinamentos de Alta Performance" subtitle="Aceleração total através do uso estratégico da língua materna para fluência rápida." />
+                            <div className="flex flex-wrap justify-center gap-3 mb-16">
+                                {[
+                                    {id: 'maestria', label: 'Maestria Online'},
+                                    {id: 'imersao', label: 'Imersão Presencial'},
+                                    {id: 'theway', label: 'The Way Cíclico'}
+                                ].map(tab => (
+                                    <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`px-8 py-4 rounded-2xl font-black border uppercase tracking-widest text-[10px] transition-all ${activeTab === tab.id ? "bg-[#fbd24c] text-[#0f172a] border-[#fbd24c]" : "bg-white/5 text-white border-white/10 hover:bg-white/10"}`}>
+                                        {tab.label}
                                     </button>
                                 ))}
                             </div>
-                            {activeTab === 'maestria' && (
-                                <div className="grid md:grid-cols-2 gap-12 items-center animate-in slide-in-from-bottom-10 duration-700">
-                                    <div className="card-glass p-8 md:p-12 rounded-[2rem] relative overflow-hidden group">
-                                        <div className="bg-[#fbd24c] text-[#0f172a] px-4 py-1 rounded-md text-xs font-black inline-block mb-6 uppercase">Intensivo 8 Semanas</div>
-                                        <h3 className="text-3xl font-bold mb-6 italic">Evolua no inglês sem sair de casa.</h3>
-                                        <p className="text-[#94a3b8] mb-8 text-lg">Adaptação da nossa metodologia exclusiva para o formato online, com foco em resultados reais em apenas 2 meses.</p>
-                                        <Button primary className="w-full" onClick={() => openModal('Maestria Online')}>GARANTIR MINHA VAGA ONLINE</Button>
-                                    </div>
-                                    <div className="space-y-6">
-                                        <div className="bg-white/5 p-6 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
-                                            <h4 className="font-bold text-[#fbd24c] mb-2 uppercase text-sm tracking-widest">Conteúdo Programático</h4>
-                                            <p className="text-sm text-[#94a3b8]">Start (Fonética) → Run (Estruturas) → Fly (Vocabulário) → Liberty (Conversação).</p>
+                            <div className="min-h-[500px]">
+                                {activeTab === 'maestria' && (
+                                    <div className="grid lg:grid-cols-2 gap-12 items-center animate-in fade-in slide-in-from-bottom-8 duration-700">
+                                        <div className="card-glass p-10 md:p-14 rounded-[3.5rem] border-l-4 border-l-[#fbd24c]">
+                                            <span className="advantage-pill mb-6 inline-block">8 Semanas de Aceleração</span>
+                                            <h3 className="text-5xl font-black italic tracking-tighter uppercase mb-6 leading-none">Maestria Online</h3>
+                                            <p className="text-white/80 mb-10 text-xl font-light italic leading-relaxed">Foco total em converter o que você já sabe em português para automação instantânea no inglês.</p>
+                                            <Button primary className="w-full" onClick={() => openModal('Maestria Online')}>GARANTIR MINHA VAGA ONLINE</Button>
+                                        </div>
+                                        <div className="space-y-6">
+                                            {["✓ Pontes Cognitivas (PT -> EN)", "✓ Treino de Fonética com IA (Gab Teacher)", "✓ Aulas Gravadas para Revisão Vitalícia", "✓ Certificado de Competência"].map(f => (
+                                                <div key={f} className="bg-white/5 p-6 rounded-2xl border border-white/10 font-bold uppercase text-xs tracking-widest">{f}</div>
+                                            ))}
                                         </div>
                                     </div>
-                                </div>
-                            )}
-                            {activeTab === 'imersao' && (
-                                <div className="grid md:grid-cols-2 gap-12 items-center animate-in slide-in-from-bottom-10 duration-700">
-                                    <div className="card-glass p-8 md:p-12 rounded-[2rem] relative overflow-hidden group">
-                                        <div className="bg-red-500 text-white px-4 py-1 rounded-md text-xs font-black inline-block mb-6 uppercase">Elite: 2 Semanas</div>
-                                        <h3 className="text-3xl font-bold mb-6 italic">Mastery em 14 dias de imersão total.</h3>
-                                        <p className="text-[#94a3b8] mb-8 text-lg">O programa mais poderoso da Lexis. 10 horas diárias de prática intensa em São Carlos-SP.</p>
-                                        <Button primary className="w-full" onClick={() => openModal('Imersão Presencial')}>AGENDAR MINHA IMERSÃO</Button>
+                                )}
+                                {activeTab === 'imersao' && (
+                                    <div className="grid lg:grid-cols-2 gap-12 items-center animate-in fade-in slide-in-from-bottom-8 duration-700">
+                                        <div className="card-glass p-10 md:p-14 rounded-[3.5rem] border-l-4 border-l-[#8c5414]">
+                                            <span className="advantage-pill bg-[#8c5414]/10 text-[#8c5414] border-[#8c5414]/20 mb-6 inline-block">14 Dias de Automação</span>
+                                            <h3 className="text-5xl font-black italic tracking-tighter uppercase mb-6 leading-none">Imersão Presencial</h3>
+                                            <p className="text-white/80 mb-10 text-xl font-light italic leading-relaxed">Treinamento intensivo em São Carlos-SP. Usamos o português para explicar a lógica e o treino prático para automatizar o inglês.</p>
+                                            <Button primary className="w-full bg-[#8c5414] border-[#8c5414] text-white hover:bg-[#a66b26]" onClick={() => openModal('Imersão Presencial')}>RESERVAR MINHA IMERSÃO</Button>
+                                        </div>
+                                        <div className="bg-white/5 p-12 rounded-[3.5rem] border border-white/5 text-center">
+                                            <div className="text-7xl mb-6">🏢</div>
+                                            <h4 className="text-2xl font-black uppercase mb-2">São Carlos - SP</h4>
+                                            <p className="text-white/50 italic mb-6">"Uso estratégico da língua materna para destravar o cérebro em tempo recorde."</p>
+                                        </div>
                                     </div>
-                                </div>
-                            )}
-                            {activeTab === 'theway' && (
-                                <div className="grid md:grid-cols-2 gap-12 items-center animate-in slide-in-from-bottom-10 duration-700">
-                                    <div className="card-glass p-8 md:p-12 rounded-[2rem] relative overflow-hidden group">
-                                        <div className="bg-blue-500 text-white px-4 py-1 rounded-md text-xs font-black inline-block mb-6 uppercase">Flexibilidade Infinita</div>
-                                        <h3 className="text-3xl font-bold mb-6 italic">O curso que se adapta à sua vida.</h3>
-                                        <p className="text-[#94a3b8] mb-8 text-lg">Início imediato em qualquer data. Abordagem cíclica em espiral ascendente.</p>
-                                        <Button primary className="w-full" onClick={() => openModal('The Way Cíclico')}>INICIAR AGORA (THE WAY)</Button>
+                                )}
+                                {activeTab === 'theway' && (
+                                    <div className="grid lg:grid-cols-2 gap-12 items-center animate-in fade-in slide-in-from-bottom-8 duration-700">
+                                        <div className="card-glass p-10 md:p-14 rounded-[3.5rem] border-l-4 border-l-blue-500">
+                                            <span className="advantage-pill bg-blue-500/10 text-blue-500 border-blue-500/20 mb-6 inline-block">Aprendizado Lógico</span>
+                                            <h3 className="text-5xl font-black italic tracking-tighter uppercase mb-6 leading-none">The Way Cíclico</h3>
+                                            <p className="text-white/80 mb-10 text-xl font-light italic leading-relaxed">Aprenda a lógica do inglês através do que você já domina no português. Sem decoreba, apenas conexões.</p>
+                                            <Button primary className="w-full bg-blue-500 border-blue-500 text-white" onClick={() => openModal('The Way Cíclico')}>COMEÇAR HOJE MESMO</Button>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            {[["🔄", "Modelo Cíclico"], ["🕒", "5 Horários/Dia"], ["📱", "App Exclusivo"], ["💰", "Reembolso em 5 Aulas"]].map(item => (
+                                                <div key={item[1]} className="bg-white/5 p-8 rounded-3xl border border-white/10 text-center">
+                                                    <div className="text-3xl mb-3">{item[0]}</div>
+                                                    <p className="text-[10px] font-black uppercase tracking-widest">{item[1]}</p>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
-                            )}
+                                )}
+                            </div>
                         </div>
                     </section>
 
-                    {/* CONTEÚDO METODOLÓGICO */}
-                    <section id="conteudo" className="py-24 px-6 bg-white text-[#0f172a] scroll-mt-20 relative">
+                    {/* SEÇÃO MÉTODO REESTRUTURADA */}
+                    <section id="metodo" className="py-32 px-6 bg-slate-50 text-[#0f172a] relative overflow-hidden scroll-mt-20">
+                        <div className="max-w-6xl mx-auto relative z-10">
+                            <div className="text-center mb-24">
+                                <span className="text-[#8c5414] font-black tracking-[0.3em] uppercase text-xs mb-6 block">Filosofia de Treinamento Lexis</span>
+                                <h2 className="text-5xl md:text-8xl font-black mb-8 leading-[0.9] uppercase tracking-tighter italic">Inglês não é conhecimento. <span className="text-[#8c5414]">É habilidade.</span></h2>
+                                <p className="text-xl md:text-2xl text-slate-500 max-w-4xl mx-auto font-light leading-relaxed">Idioma não se aprende, se treina. Saber regras gramaticais ou teorias linguísticas não faz ninguém falar inglês, do mesmo jeito que:</p>
+                            </div>
+
+                            <div className="grid md:grid-cols-3 gap-8 mb-32">
+                                {[
+                                    { icon: "🏊", text: "Ler sobre natação não faz alguém nadar" },
+                                    { icon: "🎹", text: "Estudar teoria musical não faz alguém tocar um instrumento" },
+                                    { icon: "⚽", text: "Conhecer regras do futebol não faz alguém jogar bem" }
+                                ].map((item, i) => (
+                                    <div key={i} className="bg-white p-10 rounded-[3rem] shadow-xl border border-slate-100 text-center flex flex-col items-center group hover:-translate-y-2 transition-transform">
+                                        <div className="text-5xl mb-6">{item.icon}</div>
+                                        <p className="font-bold text-slate-700 uppercase tracking-tight leading-tight">{item.text}</p>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="grid lg:grid-cols-2 gap-20 items-center mb-32">
+                                <div className="space-y-10">
+                                    <h3 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Por que tratar inglês como habilidade?</h3>
+                                    <div className="space-y-6">
+                                        {[
+                                            { t: "Processamento Rápido", d: "Coordenação instantânea entre o que você ouve e o que responde." },
+                                            { t: "Tomada de Decisão", d: "Escolha automática de estruturas em tempo real, sem pensar." },
+                                            { t: "Automatização", d: "Falar sem reflexão consciente, como você faz no português." }
+                                        ].map((skill, i) => (
+                                            <div key={i} className="flex gap-6 items-start">
+                                                <div className="w-12 h-12 rounded-2xl bg-[#8c5414] text-white flex items-center justify-center font-black shrink-0 shadow-lg">0{i+1}</div>
+                                                <div>
+                                                    <h4 className="font-black uppercase text-sm mb-1">{skill.t}</h4>
+                                                    <p className="text-slate-500 text-sm font-light">{skill.d}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <p className="text-xl font-bold text-[#8c5414] italic leading-relaxed bg-[#8c5414]/5 p-8 rounded-[2rem] border-l-4 border-[#8c5414]">
+                                        "Quando o aluno tenta pensar a frase antes de falar, ele trava. Quando ele treina a fala, a resposta sai automática."
+                                    </p>
+                                </div>
+                                <div className="bg-[#0f172a] p-12 md:p-16 rounded-[4rem] text-white shadow-2xl relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 w-64 h-64 bg-[#fbd24c]/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+                                    <h3 className="text-[#fbd24c] font-black uppercase text-xs tracking-widest mb-10 border-b border-white/10 pb-6">O que a ciência diz</h3>
+                                    <div className="space-y-12">
+                                        <div>
+                                            <h4 className="text-2xl font-black uppercase tracking-tighter italic mb-4">Aquisição ≠ Aprendizagem</h4>
+                                            <p className="text-sm font-light opacity-60 leading-relaxed mb-4">Stephen Krashen demonstra: aprender regras conscientemente gera um "monitor" que te faz travar. Adquirir linguagem pelo uso gera comunicação real.</p>
+                                            <p className="text-xs font-black text-[#fbd24c] uppercase tracking-widest">O cérebro não acessa gramática ao falar. Ele acessa padrões praticados.</p>
+                                        </div>
+                                        <div>
+                                            <h4 className="text-2xl font-black uppercase tracking-tighter italic mb-4">Memória Procedural</h4>
+                                            <p className="text-sm font-light opacity-60 leading-relaxed mb-4">Conhecimento teórico (Declarativa) é volátil. Habilidades (Procedural) são permanentes. Você não "lembra" como anda de bicicleta. Você executa.</p>
+                                            <p className="text-xs font-black text-[#fbd24c] uppercase tracking-widest">A Lexis treina memória procedural, não decoreba.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* CONTEÚDO MODULAR */}
+                    <section id="conteudo" className="py-24 px-6 bg-white text-[#0f172a] scroll-mt-20">
                         <div className="max-w-7xl mx-auto">
-                            <SectionHeader tag="Estrutura de Ensino" title="O Caminho para a Fluência" subtitle="Nossa metodologia cíclica foi desenvolvida para garantir que você avance de forma sólida." />
+                            <SectionHeader tag="Nossa Jornada" title="Módulos de Maestria" subtitle="Treinamento focado em transformar sua base lógica em fluência instintiva." />
                             <div className="grid md:grid-cols-4 gap-6">
                                 {[
-                                    { m: "Módulo 1", t: "Start", s: "Fonética", d: "Correção de vícios fonéticos e introdução aos phrasal verbs.", c: "from-[#fbd24c]/20" },
-                                    { m: "Módulo 2", t: "Run", s: "Estruturas", d: "Domínio intensivo de estruturas simples e complexas.", c: "from-blue-500/10" },
-                                    { m: "Módulo 3", t: "Fly", s: "Vocabulário", d: "Expansão com foco nas 700 palavras mais usadas.", c: "from-green-500/10" },
-                                    { m: "Módulo 4", t: "Liberty", s: "Conversação", d: "Fluência e compreensão auditiva acima de 70%.", c: "from-purple-500/10" }
+                                    { t: "START", s: "Fonética Lógica", d: "Conexão entre sons do PT e EN.", c: "bg-yellow-50" },
+                                    { t: "RUN", s: "Estruturas", d: "Domínio via tradução estratégica.", c: "bg-blue-50" },
+                                    { t: "FLY", s: "Vocabulário", d: "Expansão via campos semânticos lógicos.", c: "bg-green-50" },
+                                    { t: "LIBERTY", s: "Conversação", d: "Automação total e independência do PT.", c: "bg-purple-50" }
                                 ].map((mod, i) => (
-                                    <div key={i} className={`module-card p-8 rounded-3xl bg-slate-50 flex flex-col h-full bg-gradient-to-br ${mod.c} to-transparent border border-slate-100 group`}>
-                                        <span className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 group-hover:text-[#8c5414] transition-colors">{mod.m}</span>
-                                        <h4 className="text-3xl font-black text-[#0f172a] mb-1 group-hover:scale-110 origin-left transition-transform">{mod.t}</h4>
-                                        <span className="text-[#8c5414] font-bold text-sm mb-6 uppercase tracking-wider">{mod.s}</span>
+                                    <div key={i} className={`module-card p-10 rounded-[2.5rem] ${mod.c} border border-slate-100 flex flex-col h-full`}>
+                                        <span className="text-[10px] font-black opacity-30 mb-2">FASE 0{i+1}</span>
+                                        <h4 className="text-4xl font-black uppercase tracking-tighter italic mb-1">{mod.t}</h4>
+                                        <span className="text-[#8c5414] font-bold text-xs uppercase mb-6 tracking-widest">{mod.s}</span>
                                         <p className="text-slate-500 text-sm leading-relaxed">{mod.d}</p>
                                     </div>
                                 ))}
@@ -337,23 +353,24 @@
                     </section>
 
                     {/* DEPOIMENTOS */}
-                    <section id="depoimentos" className="py-24 px-6 bg-[#0f172a] scroll-mt-20">
+                    <section id="depoimentos" className="py-32 px-6 bg-[#0f172a] scroll-mt-20">
                         <div className="max-w-7xl mx-auto">
-                            <SectionHeader tag="Transformação Real" title="O que dizem nossos alunos" subtitle="Profissionais que saíram da teoria para a fluência prática através do treinamento Lexis." />
+                            <SectionHeader tag="O Impacto Real" title="Seis Provas de Aceleração" subtitle="Quem usou o português como aliado para dominar o inglês em tempo recorde." />
                             <div className="grid md:grid-cols-3 gap-8">
                                 {[
-                                    { n: "Ricardo M.", j: "Diretor Comercial", d: "Tentei 4 escolas tradicionais e nunca saí do zero. Com a Imersão Lexis, destravei reuniões internacionais em 2 semanas." },
-                                    { n: "Ana Clara F.", j: "Arquiteta", d: "O método cíclico The Way foi o único que se adaptou à minha agenda. Poder alternar horários salvou meu aprendizado." },
-                                    { n: "Gustavo S.", j: "Desenvolvedor Sr.", d: "Parei de traduzir mentalmente. As frases começaram a sair naturais em menos de 2 meses no Maestria." }
+                                    { n: "Ricardo M.", j: "Diretor Comercial", d: "O segredo foi entender a lógica. Quando usei o português como ferramenta, o inglês parou de parecer impossível." },
+                                    { n: "Ana Clara F.", j: "Arquiteta", d: "A Lexis não finge que eu não falo português. Ela usa o que eu já sei para me ensinar o que eu não sei." },
+                                    { n: "Gustavo S.", j: "Dev Sr.", d: "Parei de lutar contra a tradução e comecei a usá-la a meu favor. A fluência veio muito mais rápido." },
+                                    { n: "Mariana L.", j: "Médica", d: "As pontes cognitivas são fantásticas. Entender o porquê técnico em português me deu segurança para falar." },
+                                    { n: "Felipe O.", j: "Gerente", d: "O uso estratégico da língua materna eliminou minha ansiedade. Eu finalmente entendi o que estava fazendo." },
+                                    { n: "Bia R.", j: "Intercambista", d: "Minha base em português foi o que me permitiu avançar 3 níveis em apenas 2 meses de Lexis." }
                                 ].map((test, i) => (
-                                    <div key={i} className="card-glass p-8 rounded-3xl relative overflow-hidden group hover:border-[#fbd24c]/50 transition-all duration-500">
-                                        <div className="text-[#fbd24c] text-3xl mb-4">"</div>
-                                        <p className="text-[#94a3b8] mb-8 leading-relaxed italic">{test.d}</p>
-                                        <div className="mt-auto border-t border-white/10 pt-6 flex justify-between items-center">
-                                            <div>
-                                                <p className="font-bold text-white uppercase tracking-wider">{test.n}</p>
-                                                <p className="text-[#fbd24c] text-xs font-semibold">{test.j}</p>
-                                            </div>
+                                    <div key={i} className="card-glass p-10 rounded-[3rem] group hover:border-[#fbd24c]/50 transition-all flex flex-col h-full">
+                                        <div className="text-[#fbd24c] text-5xl mb-6 font-serif italic">"</div>
+                                        <p className="text-white/70 mb-10 italic leading-relaxed flex-grow">{test.d}</p>
+                                        <div className="pt-6 border-t border-white/10">
+                                            <p className="font-bold text-sm uppercase tracking-widest text-white">{test.n}</p>
+                                            <p className="text-[#fbd24c] text-[10px] font-black uppercase tracking-widest">{test.j}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -362,28 +379,28 @@
                     </section>
 
                     {/* CTA FINAL */}
-                    <section className="py-24 px-6 bg-[#0f172a] text-white text-center relative overflow-hidden">
-                        <div className="max-w-3xl mx-auto relative z-10">
-                            <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight">Pare de adiar o seu <span className="text-gradient">sucesso global.</span></h2>
-                            <Button primary className="text-2xl py-6 px-12 scale-110 hover:scale-125 transition-transform" onClick={() => openModal()}>RECEBER ORIENTAÇÃO PERSONALIZADA</Button>
+                    <section className="py-32 px-6 bg-[#0f172a] text-center border-t border-white/5 relative overflow-hidden">
+                        <div className="max-w-4xl mx-auto relative z-10">
+                            <h2 className="text-5xl md:text-8xl font-black mb-12 uppercase tracking-tighter italic leading-[0.9]">Ative sua <span className="text-gradient">Fluência Lógica.</span></h2>
+                            <Button primary className="text-2xl py-8 px-16 scale-110 hover:scale-125 transition-transform" onClick={() => openModal()}>RESERVAR MINHA AVALIAÇÃO COGNITIVA</Button>
                         </div>
                     </section>
 
                     {/* FOOTER */}
-                    <footer className="py-12 px-6 bg-slate-900 text-[#94a3b8] border-t border-white/5">
-                        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-12 text-sm">
-                            <div className="text-center md:text-left group">
-                                <h5 className="text-white font-black mb-4">LEXIS ENGLISH ACADEMY</h5>
-                                <p>Rua Visconde de Inhaúma, 1295<br/>São Carlos-SP</p>
+                    <footer className="py-20 px-6 bg-slate-900 text-[#94a3b8] border-t border-white/5">
+                        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-16 text-xs uppercase tracking-widest font-black">
+                            <div>
+                                <h5 className="text-white mb-6">LEXIS ACADEMY</h5>
+                                <p className="opacity-40 leading-relaxed italic">Especialistas em aceleração cognitiva via língua materna.</p>
                             </div>
-                            <div className="text-center">
-                                <h5 className="text-white font-black mb-4 uppercase">Garantias</h5>
-                                <p>Garantia Vitalícia Lexis</p>
-                                <p>Reembolso de Adaptação</p>
+                            <div>
+                                <h5 className="text-white mb-6">Unidade Física</h5>
+                                <p className="opacity-40">Rua Visconde de Inhaúma, 1295<br/>São Carlos-SP</p>
                             </div>
-                            <div className="text-center md:text-right">
-                                <p className="opacity-30 text-xs">CNPJ: 38.229.678/0001-13</p>
-                                <p className="mt-2 italic">© 2025 Lexis Academy.</p>
+                            <div className="md:text-right">
+                                <h5 className="text-[#fbd24c] mb-6">Suporte & Garantias</h5>
+                                <p className="opacity-40">Garantia de Aceleração Cognitiva</p>
+                                <p className="mt-4 italic opacity-20">© 2025 Lexis Academy.</p>
                             </div>
                         </div>
                     </footer>
@@ -391,8 +408,7 @@
             );
         };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
     </script>
 </body>
 </html>
