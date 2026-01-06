@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -327,7 +326,7 @@
                     <Navbar onOpenModal={openModal} />
                     <LeadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} defaultCourse={selectedCourse} />
 
-                    {/* HERO SECTION REFINED TO MATCH REFERENCE */}
+                    {/* HERO SECTION */}
                     <header id="inicio" className="relative pt-60 pb-48 px-6 overflow-hidden bg-[#0f172a]">
                         <div className="bg-mesh opacity-40"></div>
                         <div className="max-w-6xl mx-auto text-center relative z-10 reveal">
@@ -343,7 +342,6 @@
                                 <Button onClick={() => document.getElementById('modalidades').scrollIntoView({behavior: 'smooth'})}>Conhecer as modalidades</Button>
                             </div>
                         </div>
-                        {/* Decorative background blur */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-500/5 rounded-full blur-[140px] pointer-events-none"></div>
                     </header>
 
@@ -390,24 +388,20 @@
                                             </div>
                                         ))}
                                     </div>
-                                    <div className="mt-10 p-6 bg-white/5 rounded-2xl border border-white/10 italic text-sm text-[#94a3b8]">
-                                        "Quando o aluno tenta pensar na frase antes de falar, ele trava. Quando ele treina a fala, a resposta sai automática."
-                                    </div>
                                 </div>
                             </div>
 
-                            {/* SEÇÃO: POR QUE A CIÊNCIA PROVA ISSO */}
                             <div className="reveal">
                                 <div className="text-center mb-16">
                                     <h3 className="text-3xl md:text-4xl font-black mb-6">Por que tratar o Inglês como <br/><span className="text-[#8c5414]">Habilidade</span> acelera seu resultado?</h3>
-                                    <p className="text-slate-500 max-w-2xl mx-auto font-medium">O estudo passivo é o caminho mais lento. O treinamento orientado foca onde a fluência realmente acontece: na biologia do seu cérebro.</p>
+                                    <p className="text-slate-500 max-w-2xl mx-auto font-medium">O estudo passivo é o caminho mais lento. O treinamento orientado foca onde a fluência realmente acontece.</p>
                                 </div>
 
                                 <div className="grid md:grid-cols-2 gap-10">
                                     <div className="bg-white p-10 rounded-[2.5rem] border border-slate-200 shadow-sm flex flex-col h-full group hover:border-[#fbd24c] transition-colors">
                                         <div className="text-3xl mb-6">🧠</div>
                                         <h4 className="text-xl font-black mb-4 text-[#0f172a] uppercase tracking-tight">1. Aquisição ≠ Aprendizagem</h4>
-                                        <p className="text-slate-600 text-sm mb-6 leading-relaxed">Stephen Krashen, mestre em linguística, demonstra: aprender regras conscientemente <strong>não gera fluência</strong>. O cérebro só acessa padrões que foram adquiridos pelo uso real e contextualizado.</p>
+                                        <p className="text-slate-600 text-sm mb-6 leading-relaxed">Stephen Krashen demonstra: aprender regras conscientemente não gera fluência. O cérebro só acessa padrões adquiridos pelo uso real.</p>
                                         <div className="mt-auto pt-6 border-t border-slate-100 flex items-center gap-3">
                                             <span className="w-2 h-2 rounded-full bg-[#fbd24c]"></span>
                                             <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Conversação Autônoma</span>
@@ -417,7 +411,7 @@
                                     <div className="bg-white p-10 rounded-[2.5rem] border border-slate-200 shadow-sm flex flex-col h-full group hover:border-[#fbd24c] transition-colors">
                                         <div className="text-3xl mb-6">⚡</div>
                                         <h4 className="text-xl font-black mb-4 text-[#0f172a] uppercase tracking-tight">2. Memória Procedural</h4>
-                                        <p className="text-slate-600 text-sm mb-6 leading-relaxed">Conhecimento teórico fica na memória declarativa (decoreba). Habilidades ficam na memória procedural. Você não "lembra" como andar de bicicleta; você <strong>executa</strong>. A Lexis treina sua execução.</p>
+                                        <p className="text-slate-600 text-sm mb-6 leading-relaxed">Habilidades ficam na memória procedural. Você não "lembra" como andar de bicicleta; você executa. A Lexis treina sua execução.</p>
                                         <div className="mt-auto pt-6 border-t border-slate-100 flex items-center gap-3">
                                             <span className="w-2 h-2 rounded-full bg-[#fbd24c]"></span>
                                             <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Ação sem Tradução</span>
@@ -437,7 +431,7 @@
                             <SectionHeader 
                                 tag="Onde a Mágica Acontece" 
                                 title="Arquiteturas de Sucesso" 
-                                subtitle="Sistemas de treinamento desenhados para hackear sua fluência com máxima eficiência temporal e cognitiva." 
+                                subtitle="Sistemas de treinamento desenhados para hackear sua fluência." 
                             />
                             
                             <div className="grid lg:grid-cols-3 gap-8 items-stretch">
@@ -452,41 +446,16 @@
                                             </div>
                                             <div className="flex flex-col items-end">
                                                 <span className="bg-amber-400/20 text-amber-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter mb-2">Híbrido Digital</span>
-                                                <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Nível: Básico a Médio</span>
                                             </div>
                                         </div>
                                         <h3 className="text-3xl font-black mb-4 uppercase tracking-tight text-white group-hover:text-amber-400 transition-colors leading-none">Maestria<br/><span className="text-amber-400/80">Online</span></h3>
-                                        <p className="text-slate-400 text-sm font-medium mb-8 leading-relaxed">Metodologia acelerada via Aula Invertida e Repetição Espaçada aplicada ao digital.</p>
-                                        
-                                        <div className="space-y-4 mb-10 flex-grow">
-                                            {[
-                                                { text: "120 Horas de Treino Ativo", color: "bg-amber-400" },
-                                                { text: "IA 'Gab' p/ Conversação WhatsApp", color: "bg-amber-400" },
-                                                { text: "Plataforma Teaches Centralizada", color: "bg-amber-400" },
-                                                { text: "Gamificação e Grupos Operativos", color: "bg-amber-400" }
-                                            ].map((b, i) => (
-                                                <div key={i} className="flex items-center text-[10px] font-extrabold text-slate-300 uppercase tracking-widest">
-                                                    <span className={`benefit-dot ${b.color}`}></span>
-                                                    {b.text}
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        <div className="pt-8 border-t border-white/5">
-                                            <div className="flex items-center justify-between mb-6">
-                                                <span className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">Carga Horária</span>
-                                                <span className="text-amber-400 font-black text-sm uppercase">8 Semanas</span>
-                                            </div>
-                                            <button onClick={() => openModal('Maestria Online')} className="w-full bg-white/5 hover:bg-amber-400 hover:text-[#0f172a] text-white py-5 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all border border-white/10 hover:border-amber-400">
-                                                Garantir Vaga
-                                            </button>
-                                        </div>
+                                        <p className="text-slate-400 text-sm font-medium mb-8 leading-relaxed">Metodologia acelerada aplicada ao digital.</p>
+                                        <button onClick={() => openModal('Maestria Online')} className="w-full bg-white/5 hover:bg-amber-400 hover:text-[#0f172a] text-white py-5 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all border border-white/10 mt-auto">Garantir Vaga</button>
                                     </div>
                                 </div>
 
                                 {/* IMERSÃO PRESENCIAL */}
                                 <div className="modality-card bg-slate-900 border-lexisPurple/30 ring-1 ring-lexisPurple/20 flex flex-col h-full group reveal reveal-delay-1 scale-105 z-20 shadow-2xl shadow-lexisPurple/10">
-                                    <div className="absolute top-0 right-10 bg-lexisPurple text-white px-4 py-1 rounded-b-xl text-[9px] font-black uppercase tracking-widest">Elite Executiva</div>
                                     <div className="p-8 md:p-10 flex flex-col h-full">
                                         <div className="flex justify-between items-start mb-10">
                                             <div className="w-16 h-16 rounded-2xl bg-lexisPurple/10 flex items-center justify-center text-lexisPurple shadow-inner">
@@ -495,36 +464,12 @@
                                                 </svg>
                                             </div>
                                             <div className="flex flex-col items-end">
-                                                <span className="bg-lexisPurple text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter shadow-lg shadow-lexisPurple/30 mb-2">Presencial</span>
-                                                <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Foco em Resultados</span>
+                                                <span className="bg-lexisPurple text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter mb-2">Presencial</span>
                                             </div>
                                         </div>
                                         <h3 className="text-3xl font-black mb-4 uppercase tracking-tight text-white group-hover:text-lexisPurple transition-colors leading-none">Imersão<br/><span className="text-lexisPurple/80">Lexis</span></h3>
-                                        <p className="text-slate-400 text-sm font-medium mb-8 leading-relaxed">Shock cognitivo de 14 dias presenciais em São Carlos-SP com 10h de prática diária.</p>
-                                        
-                                        <div className="space-y-4 mb-10 flex-grow">
-                                            {[
-                                                { text: "10 Horas Diárias de Foco Real", color: "bg-lexisPurple" },
-                                                { text: "Ambiente 100% Imersivo", color: "bg-lexisPurple" },
-                                                { text: "Simulações de Entrevista/Negócios", color: "bg-lexisPurple" },
-                                                { text: "Material Digital Sustentável", color: "bg-lexisPurple" }
-                                            ].map((b, i) => (
-                                                <div key={i} className="flex items-center text-[10px] font-extrabold text-white uppercase tracking-widest">
-                                                    <span className={`benefit-dot ${b.color} shadow-lg shadow-lexisPurple/50`}></span>
-                                                    {b.text}
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        <div className="pt-8 border-t border-white/10">
-                                            <div className="flex items-center justify-between mb-6">
-                                                <span className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">Carga Horária</span>
-                                                <span className="text-lexisPurple font-black text-sm uppercase">14 Dias</span>
-                                            </div>
-                                            <button onClick={() => openModal('Imersão Presencial')} className="w-full bg-lexisPurple hover:bg-[#6c08ad] text-white py-5 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all shadow-xl shadow-lexisPurple/30 active:scale-95">
-                                                Reservar Período
-                                            </button>
-                                        </div>
+                                        <p className="text-slate-400 text-sm font-medium mb-8 leading-relaxed">Shock cognitivo de 14 dias presenciais.</p>
+                                        <button onClick={() => openModal('Imersão Presencial')} className="w-full bg-lexisPurple hover:bg-[#6c08ad] text-white py-5 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all shadow-xl shadow-lexisPurple/30 mt-auto">Reservar Período</button>
                                     </div>
                                 </div>
 
@@ -539,35 +484,11 @@
                                             </div>
                                             <div className="flex flex-col items-end">
                                                 <span className="bg-blue-500/20 text-blue-500 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter mb-2">Fluxo Contínuo</span>
-                                                <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Liberdade de Agenda</span>
                                             </div>
                                         </div>
                                         <h3 className="text-3xl font-black mb-4 uppercase tracking-tight text-white group-hover:text-blue-500 transition-colors leading-none">The Way<br/><span className="text-blue-500/80">Cíclico</span></h3>
-                                        <p className="text-slate-400 text-sm font-medium mb-8 leading-relaxed">Modelo espiral ascendente. Entre em qualquer momento e avance conforme sua maestria.</p>
-                                        
-                                        <div className="space-y-4 mb-10 flex-grow">
-                                            {[
-                                                { text: "5 Opções de Horários p/ Aula", color: "bg-blue-500" },
-                                                { text: "Progressão Natural p/ Níveis", color: "bg-blue-500" },
-                                                { text: "Reembolso p/ Inadaptação (5 aulas)", color: "bg-blue-500" },
-                                                { text: "Foco 100% Conversação Liberty", color: "bg-blue-500" }
-                                            ].map((b, i) => (
-                                                <div key={i} className="flex items-center text-[10px] font-extrabold text-slate-300 uppercase tracking-widest">
-                                                    <span className={`benefit-dot ${b.color}`}></span>
-                                                    {b.text}
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        <div className="pt-8 border-t border-white/5">
-                                            <div className="flex items-center justify-between mb-6">
-                                                <span className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">Carga Horária</span>
-                                                <span className="text-blue-500 font-black text-sm uppercase">10 a 12 Meses</span>
-                                            </div>
-                                            <button onClick={() => openModal('The Way Cíclico')} className="w-full bg-white/5 hover:bg-blue-500 hover:text-white text-white py-5 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all border border-white/10 hover:border-blue-500">
-                                                Iniciar Jornada
-                                            </button>
-                                        </div>
+                                        <p className="text-slate-400 text-sm font-medium mb-8 leading-relaxed">Modelo espiral ascendente.</p>
+                                        <button onClick={() => openModal('The Way Cíclico')} className="w-full bg-white/5 hover:bg-blue-500 hover:text-white text-white py-5 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all border border-white/10 mt-auto">Iniciar Jornada</button>
                                     </div>
                                 </div>
                             </div>
@@ -577,24 +498,19 @@
                     {/* DEPOIMENTOS */}
                     <section id="depoimentos" className="py-32 px-6 bg-[#0f172a] scroll-mt-20">
                         <div className="max-w-7xl mx-auto">
-                            <SectionHeader tag="Evolução Validada" title="O que dizem os alunos" subtitle="Profissionais que saíram da teoria para a segurança prática através do treino Lexis." />
+                            <SectionHeader tag="Evolução Validada" title="O que dizem os alunos" subtitle="Profissionais que saíram da teoria para a segurança prática." />
                             <div className="grid md:grid-cols-3 gap-8 text-white">
                                 {[
                                     { n: "Ricardo M.", j: "Diretor Comercial", d: "Tentei 4 escolas e nunca saí do zero. Com a Imersão Lexis, em 14 dias destravei reuniões internacionais." },
                                     { n: "Ana Clara F.", j: "Arquiteta", d: "Finalmente entendi que inglês é treino muscular e não estudo de gramática. Fluência veio sem pressão." },
-                                    { n: "Gustavo S.", j: "Dev Sr.", d: "Parei de traduzir mentalmente. As frases começaram a sair naturais em menos de 2 meses no Maestria." },
-                                    { n: "Marcelo P.", j: "Gerente de Logística", d: "A abordagem Lexis é disruptiva. Pela primeira vez senti que estava usando o inglês em vez de apenas preencher lacunas de exercícios." },
-                                    { n: "Bárbara S.", j: "Engenheira de Dados", d: "O suporte dos mentores é o grande diferencial. Eles corrigem sua fonética em tempo real, evitando vícios que escolas comuns ignoram." },
-                                    { n: "Juliana K.", j: "Consultora Financeira", d: "A Imersão Lexis mudou minha vida profissional. Em 2 semanas adquiri a confiança que anos de cursinho tradicional não me deram." }
+                                    { n: "Gustavo S.", j: "Dev Sr.", d: "Parei de traduzir mentalmente. As frases começaram a sair naturais em menos de 2 meses no Maestria." }
                                 ].map((test, i) => (
                                     <div key={i} className={`card-glass p-10 rounded-[2.5rem] relative overflow-hidden group hover:border-[#fbd24c]/50 transition-all duration-500 reveal reveal-delay-${(i % 3) + 1}`}>
                                         <div className="text-[#fbd24c] text-3xl mb-6 font-serif">"</div>
                                         <p className="text-[#94a3b8] mb-10 leading-relaxed font-medium italic">{test.d}</p>
-                                        <div className="mt-auto border-t border-white/10 pt-8 flex justify-between items-center">
-                                            <div>
-                                                <p className="font-extrabold text-white uppercase tracking-widest text-xs">{test.n}</p>
-                                                <p className="text-[#fbd24c] text-[10px] font-black uppercase tracking-widest mt-1">{test.j}</p>
-                                            </div>
+                                        <div className="mt-auto border-t border-white/10 pt-8">
+                                            <p className="font-extrabold text-white uppercase tracking-widest text-xs">{test.n}</p>
+                                            <p className="text-[#fbd24c] text-[10px] font-black uppercase tracking-widest mt-1">{test.j}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -605,11 +521,7 @@
                     {/* FAQ SECTION */}
                     <section id="faq" className="py-32 px-6 bg-[#0f172a] border-t border-white/5 scroll-mt-20">
                         <div className="max-w-4xl mx-auto">
-                            <SectionHeader 
-                                tag="Base de Conhecimento" 
-                                title="Perguntas Frequentes" 
-                                subtitle="Informações essenciais para acelerar sua tomada de decisão profissional." 
-                            />
+                            <SectionHeader tag="Base de Conhecimento" title="Perguntas Frequentes" subtitle="Informações essenciais." />
                             <div className="space-y-6">
                                 {faqs.map((faq, idx) => (
                                     <FAQItem key={idx} index={idx} question={faq.q} answer={faq.a} />
@@ -618,27 +530,33 @@
                         </div>
                     </section>
 
-                    {/* CTA FINAL */}
-                    <section className="py-32 px-6 bg-[#020617] text-white text-center relative overflow-hidden">
-                        <div className="max-w-3xl mx-auto relative z-10 reveal text-white">
-                            <h2 className="text-4xl md:text-7xl font-black mb-10 leading-tight tracking-tight uppercase italic text-white leading-none">Treine. Domine.<br/><span className="text-gradient">Evolua Globalmente.</span></h2>
-                            <Button primary className="text-lg py-6 px-12 scale-110 hover:scale-125 transition-transform" onClick={() => openModal()}>RECEBER ORIENTAÇÃO</Button>
+                    {/* CTA FINAL - REFINED TO MATCH HERO STYLE */}
+                    <section className="py-40 px-6 bg-[#020617] text-white text-center relative overflow-hidden">
+                        <div className="max-w-4xl mx-auto relative z-10 reveal text-white">
+                            <h2 className="text-4xl md:text-7xl font-extrabold mb-14 leading-[1.1] tracking-tight">
+                                Treine. Domine. <br/> 
+                                Evolua <span className="text-[#fbd24c]">Globalmente.</span>
+                            </h2>
+                            <Button primary className="text-lg py-6 px-14 scale-110 hover:scale-125 transition-all shadow-yellow-500/20 shadow-2xl" onClick={() => openModal()}>
+                                RECEBER ORIENTAÇÃO
+                            </Button>
                         </div>
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#fbd24c]/5 rounded-full blur-[120px] pointer-events-none"></div>
                     </section>
 
                     {/* FOOTER */}
                     <footer className="py-20 px-6 bg-[#020617] text-[#94a3b8] border-t border-white/5">
-                        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-16 text-sm text-[#94a3b8]">
-                            <div className="text-center md:text-left group reveal-left">
+                        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-16 text-sm">
+                            <div className="text-center md:text-left">
                                 <h5 className="text-white font-black mb-6 uppercase tracking-widest">LEXIS ACADEMY</h5>
                                 <p className="font-medium">Rua Visconde de Inhaúma, 1295<br/>São Carlos-SP</p>
                             </div>
-                            <div className="text-center reveal">
+                            <div className="text-center">
                                 <h5 className="text-white font-black mb-6 uppercase tracking-widest">Diferenciais</h5>
-                                <p className="font-medium">Selo de Garantia Vitalícia</p>
-                                <p className="font-medium">Metodologia Neuro-Acelerada</p>
+                                <p className="font-medium">Garantia Vitalícia</p>
+                                <p className="font-medium">Neuro-Acelerada</p>
                             </div>
-                            <div className="text-center md:text-right reveal">
+                            <div className="text-center md:text-right">
                                 <p className="opacity-30 text-xs font-bold uppercase tracking-widest">CNPJ: 38.229.678/0001-13</p>
                                 <p className="mt-3 font-extrabold italic text-white/50 tracking-widest">© 2025 Lexis Academy.</p>
                             </div>
