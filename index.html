@@ -32,6 +32,7 @@
                         highlight: '#8c5414',
                         neutralIcon: '#798c8c',
                         softOverlay: '#f59e0b33',
+                        lexisPurple: '#820AD1',
                     },
                     fontFamily: {
                         sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],
@@ -90,10 +91,17 @@
         .reveal-left { opacity: 0; transform: translateX(-30px); transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
         .reveal-left.active { opacity: 1; transform: translateX(0); }
 
-        /* Novo estilo para as Modalidades */
         .modality-card { position: relative; border-radius: 2.5rem; overflow: hidden; transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); border: 1px solid rgba(255,255,255,0.05); }
         .modality-card:hover { transform: translateY(-10px); }
         .benefit-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 12px; }
+        
+        .modality-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top right, rgba(255,255,255,0.05), transparent);
+            pointer-events: none;
+        }
     </style>
 </head>
 <body class="bg-[#0f172a] text-white antialiased">
@@ -264,7 +272,6 @@
         };
 
         const App = () => {
-            const [activeTab, setActiveTab] = useState('maestria');
             const [isModalOpen, setIsModalOpen] = useState(false);
             const [selectedCourse, setSelectedCourse] = useState('');
             const openModal = (course = '') => { setSelectedCourse(course); setIsModalOpen(true); };
@@ -288,7 +295,7 @@
                     <header id="inicio" className="relative pt-48 pb-40 px-6 overflow-hidden bg-[#0f172a]">
                         <div className="bg-mesh opacity-30"></div>
                         <div className="max-w-6xl mx-auto text-center relative z-10 reveal">
-                            <h1 className="text-5xl md:text-[5.5rem] font-black mb-10 leading-[1.05] tracking-tight text-white">
+                            <h1 className="text-5xl md:text-[5.5rem] font-black mb-10 leading-[1.05] tracking-tight text-white uppercase">
                                 Inglês é uma <span className="text-gradient italic font-extrabold italic">habilidade.</span><br/>
                                 Treine como um atleta.
                             </h1>
@@ -335,16 +342,16 @@
                         </div>
                     </section>
 
-                    {/* MODALIDADES - REFINED & ENERGIZED */}
-                    <section id="modalidades" className="py-32 px-6 bg-[#020617] scroll-mt-20 relative overflow-hidden">
+                    {/* MODALIDADES - REFINED & SPECIFIC ICONS */}
+                    <section id="modalidades" className="py-32 px-6 bg-[#020617] scroll-mt-20 relative overflow-hidden text-white">
                         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px]"></div>
                         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#fbd24c]/5 rounded-full blur-[120px]"></div>
                         
                         <div className="max-w-7xl mx-auto relative z-10">
                             <SectionHeader 
                                 tag="Onde a Mágica Acontece" 
-                                title="Escolha seu Ecossistema" 
-                                subtitle="Três arquiteturas de treinamento desenhadas para hackear sua fluência com o máximo de ROI temporal." 
+                                title="Arquiteturas de Sucesso" 
+                                subtitle="Sistemas de treinamento desenhados para hackear sua fluência com máxima eficiência temporal e cognitiva." 
                             />
                             
                             <div className="grid lg:grid-cols-3 gap-8 items-stretch">
@@ -352,20 +359,27 @@
                                 <div className="modality-card bg-slate-900/40 backdrop-blur-xl border-white/5 flex flex-col group reveal">
                                     <div className="p-8 md:p-10 flex flex-col h-full">
                                         <div className="flex justify-between items-start mb-10">
-                                            <div className="w-16 h-16 rounded-2xl bg-amber-400/10 flex items-center justify-center text-amber-400 text-3xl shadow-inner">🌐</div>
-                                            <span className="bg-amber-400/20 text-amber-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter">100% Digital</span>
+                                            <div className="w-16 h-16 rounded-2xl bg-amber-400/10 flex items-center justify-center text-amber-400 shadow-inner">
+                                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                                </svg>
+                                            </div>
+                                            <div className="flex flex-col items-end">
+                                                <span className="bg-amber-400/20 text-amber-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter mb-2">Híbrido Digital</span>
+                                                <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Nível: Básico a Médio</span>
+                                            </div>
                                         </div>
-                                        <h3 className="text-3xl font-black mb-4 uppercase tracking-tight text-white group-hover:text-amber-400 transition-colors">Maestria Online</h3>
-                                        <p className="text-slate-400 text-sm font-medium mb-8 leading-relaxed">A flexibilidade do digital com o rigor do treinamento de elite. Ideal para profissionais em movimento.</p>
+                                        <h3 className="text-3xl font-black mb-4 uppercase tracking-tight text-white group-hover:text-amber-400 transition-colors leading-none">Maestria<br/><span className="text-amber-400/80">Online</span></h3>
+                                        <p className="text-slate-400 text-sm font-medium mb-8 leading-relaxed">Flexibilidade radical com rigor de elite. Metodologia acelerada via Aula Invertida e Repetição Espaçada.</p>
                                         
                                         <div className="space-y-4 mb-10 flex-grow">
                                             {[
-                                                { text: "Treinamento Diário Adaptativo", color: "bg-amber-400" },
-                                                { text: "Mentoria Individual em Tempo Real", color: "bg-amber-400" },
-                                                { text: "Laboratório de Fonética Assistida", color: "bg-amber-400" },
-                                                { text: "Ecossistema de Imersão em Casa", color: "bg-amber-400" }
+                                                { text: "120 Horas de Treino Ativo", color: "bg-amber-400" },
+                                                { text: "IA 'Gab' p/ Conversação WhatsApp", color: "bg-amber-400" },
+                                                { text: "Plataforma Teaches Centralizada", color: "bg-amber-400" },
+                                                { text: "Gamificação e Grupos Operativos", color: "bg-amber-400" }
                                             ].map((b, i) => (
-                                                <div key={i} className="flex items-center text-xs font-bold text-slate-300 uppercase tracking-widest">
+                                                <div key={i} className="flex items-center text-[10px] font-extrabold text-slate-300 uppercase tracking-widest">
                                                     <span className={`benefit-dot ${b.color}`}></span>
                                                     {b.text}
                                                 </div>
@@ -374,36 +388,43 @@
 
                                         <div className="pt-8 border-t border-white/5">
                                             <div className="flex items-center justify-between mb-6">
-                                                <span className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">Tempo de Fluência</span>
+                                                <span className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">Carga Horária</span>
                                                 <span className="text-amber-400 font-black text-sm uppercase">8 Semanas</span>
                                             </div>
                                             <button onClick={() => openModal('Maestria Online')} className="w-full bg-white/5 hover:bg-amber-400 hover:text-[#0f172a] text-white py-5 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all border border-white/10 hover:border-amber-400">
-                                                Garantir meu Acesso
+                                                Garantir Vaga
                                             </button>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* IMERSÃO PRESENCIAL */}
-                                <div className="modality-card bg-slate-900 border-rose-500/30 ring-1 ring-rose-500/20 flex flex-col group reveal reveal-delay-1 scale-105 z-20 shadow-2xl shadow-rose-500/10">
-                                    <div className="absolute top-0 right-10 bg-rose-500 text-white px-4 py-1 rounded-b-xl text-[9px] font-black uppercase tracking-widest">Mais Procurado</div>
+                                {/* IMERSÃO PRESENCIAL - Lexis Purple #820AD1 */}
+                                <div className="modality-card bg-slate-900 border-lexisPurple/30 ring-1 ring-lexisPurple/20 flex flex-col group reveal reveal-delay-1 scale-105 z-20 shadow-2xl shadow-lexisPurple/10">
+                                    <div className="absolute top-0 right-10 bg-lexisPurple text-white px-4 py-1 rounded-b-xl text-[9px] font-black uppercase tracking-widest">Elite Executiva</div>
                                     <div className="p-8 md:p-10 flex flex-col h-full">
                                         <div className="flex justify-between items-start mb-10">
-                                            <div className="w-16 h-16 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-500 text-3xl shadow-inner">🏫</div>
-                                            <span className="bg-rose-500 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter shadow-lg shadow-rose-500/30">Extreme Focus</span>
+                                            <div className="w-16 h-16 rounded-2xl bg-lexisPurple/10 flex items-center justify-center text-lexisPurple shadow-inner">
+                                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                                </svg>
+                                            </div>
+                                            <div className="flex flex-col items-end">
+                                                <span className="bg-lexisPurple text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter shadow-lg shadow-lexisPurple/30 mb-2">Presencial</span>
+                                                <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Foco em Resultados</span>
+                                            </div>
                                         </div>
-                                        <h3 className="text-3xl font-black mb-4 uppercase tracking-tight text-white group-hover:text-rose-500 transition-colors">Imersão Total</h3>
-                                        <p className="text-slate-400 text-sm font-medium mb-8 leading-relaxed">Experiência radical em São Carlos-SP. O ponto de virada definitivo para sua carreira internacional.</p>
+                                        <h3 className="text-3xl font-black mb-4 uppercase tracking-tight text-white group-hover:text-lexisPurple transition-colors leading-none">Imersão<br/><span className="text-lexisPurple/80">Lexis</span></h3>
+                                        <p className="text-slate-400 text-sm font-medium mb-8 leading-relaxed">Reset linguístico em São Carlos-SP. 10h/dia de imersão total para atingir fluência funcional em tempo recorde.</p>
                                         
                                         <div className="space-y-4 mb-10 flex-grow">
                                             {[
-                                                { text: "10 Horas Diárias de Prática Real", color: "bg-rose-500" },
-                                                { text: "Isolamento Linguístico Absoluto", color: "bg-rose-500" },
-                                                { text: "Network de Alto Nível (C-Level)", color: "bg-rose-500" },
-                                                { text: "Feedback Biométrico de Fala", color: "bg-rose-500" }
+                                                { text: "10 Horas Diárias de Foco Real", color: "bg-lexisPurple" },
+                                                { text: "Ambiente 100% Imersivo", color: "bg-lexisPurple" },
+                                                { text: "Simulações de Entrevista/Negócios", color: "bg-lexisPurple" },
+                                                { text: "Material Digital Sustentável", color: "bg-lexisPurple" }
                                             ].map((b, i) => (
-                                                <div key={i} className="flex items-center text-xs font-bold text-white uppercase tracking-widest">
-                                                    <span className={`benefit-dot ${b.color} shadow-lg shadow-rose-500/50`}></span>
+                                                <div key={i} className="flex items-center text-[10px] font-extrabold text-white uppercase tracking-widest">
+                                                    <span className={`benefit-dot ${b.color} shadow-lg shadow-lexisPurple/50`}></span>
                                                     {b.text}
                                                 </div>
                                             ))}
@@ -411,11 +432,11 @@
 
                                         <div className="pt-8 border-t border-white/10">
                                             <div className="flex items-center justify-between mb-6">
-                                                <span className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">Tempo de Fluência</span>
-                                                <span className="text-rose-500 font-black text-sm uppercase">14 Dias</span>
+                                                <span className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">Carga Horária</span>
+                                                <span className="text-lexisPurple font-black text-sm uppercase">14 Dias</span>
                                             </div>
-                                            <button onClick={() => openModal('Imersão Presencial')} className="w-full bg-rose-500 hover:bg-rose-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all shadow-xl shadow-rose-500/20 active:scale-95">
-                                                Ver Disponibilidade
+                                            <button onClick={() => openModal('Imersão Presencial')} className="w-full bg-lexisPurple hover:bg-[#6c08ad] text-white py-5 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all shadow-xl shadow-lexisPurple/30 active:scale-95">
+                                                Reservar Período
                                             </button>
                                         </div>
                                     </div>
@@ -425,20 +446,27 @@
                                 <div className="modality-card bg-slate-900/40 backdrop-blur-xl border-white/5 flex flex-col group reveal reveal-delay-2">
                                     <div className="p-8 md:p-10 flex flex-col h-full">
                                         <div className="flex justify-between items-start mb-10">
-                                            <div className="w-16 h-16 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 text-3xl shadow-inner">🔄</div>
-                                            <span className="bg-blue-500/20 text-blue-500 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter">Full Flexibility</span>
+                                            <div className="w-16 h-16 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 shadow-inner">
+                                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                                </svg>
+                                            </div>
+                                            <div className="flex flex-col items-end">
+                                                <span className="bg-blue-500/20 text-blue-500 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter mb-2">Fluxo Contínuo</span>
+                                                <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Liberdade de Agenda</span>
+                                            </div>
                                         </div>
-                                        <h3 className="text-3xl font-black mb-4 uppercase tracking-tight text-white group-hover:text-blue-500 transition-colors">The Way Cíclico</h3>
-                                        <p className="text-slate-400 text-sm font-medium mb-8 leading-relaxed">O aprendizado que se molda à sua vida. Comece hoje e evolua em espiral contínua.</p>
+                                        <h3 className="text-3xl font-black mb-4 uppercase tracking-tight text-white group-hover:text-blue-500 transition-colors leading-none">The Way<br/><span className="text-blue-500/80">Cíclico</span></h3>
+                                        <p className="text-slate-400 text-sm font-medium mb-8 leading-relaxed">Modelo espiral ascendente. Entre em qualquer momento e avance conforme sua maestria.</p>
                                         
                                         <div className="space-y-4 mb-10 flex-grow">
                                             {[
-                                                { text: "Entrada em Qualquer Módulo", color: "bg-blue-500" },
-                                                { text: "Grade de Horários Flutuante", color: "bg-blue-500" },
-                                                { text: "Reforço Cíclico Permanente", color: "bg-blue-500" },
-                                                { text: "Material Didático Inteligente", color: "bg-blue-500" }
+                                                { text: "5 Opções de Horários p/ Aula", color: "bg-blue-500" },
+                                                { text: "Progressão Natural p/ Níveis", color: "bg-blue-500" },
+                                                { text: "Reembolso p/ Inadaptação (5 aulas)", color: "bg-blue-500" },
+                                                { text: "Foco 100% Conversação Liberty", color: "bg-blue-500" }
                                             ].map((b, i) => (
-                                                <div key={i} className="flex items-center text-xs font-bold text-slate-300 uppercase tracking-widest">
+                                                <div key={i} className="flex items-center text-[10px] font-extrabold text-slate-300 uppercase tracking-widest">
                                                     <span className={`benefit-dot ${b.color}`}></span>
                                                     {b.text}
                                                 </div>
@@ -447,11 +475,11 @@
 
                                         <div className="pt-8 border-t border-white/5">
                                             <div className="flex items-center justify-between mb-6">
-                                                <span className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">Tempo de Fluência</span>
-                                                <span className="text-blue-500 font-black text-sm uppercase">Ritmo Personalizado</span>
+                                                <span className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">Carga Horária</span>
+                                                <span className="text-blue-500 font-black text-sm uppercase">10 a 12 Meses</span>
                                             </div>
                                             <button onClick={() => openModal('The Way Cíclico')} className="w-full bg-white/5 hover:bg-blue-500 hover:text-white text-white py-5 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all border border-white/10 hover:border-blue-500">
-                                                Entrar no Fluxo
+                                                Iniciar Jornada
                                             </button>
                                         </div>
                                     </div>
@@ -460,16 +488,16 @@
                         </div>
                     </section>
 
-                    {/* CONTEÚDO */}
+                    {/* CONTEÚDO METODOLÓGICO */}
                     <section id="conteudo" className="py-32 px-6 bg-white text-[#0f172a] scroll-mt-20 relative">
                         <div className="max-w-7xl mx-auto">
                             <SectionHeader tag="Mastery Roadmap" title="O Caminho da Fluência" subtitle="Nossa jornada cíclica foi desenhada para garantir evolução sólida e segurança na fala." />
                             <div className="grid md:grid-cols-4 gap-6">
                                 {[
-                                    { m: "Módulo 1", t: "Start", s: "Fonética", d: "Correção de vícios auditivos e fonéticos primários.", c: "from-[#fbd24c]/20" },
-                                    { m: "Módulo 2", t: "Run", s: "Estruturas", d: "Domínio intensivo de estruturas e blocos lógicos motoras.", c: "from-blue-500/10" },
-                                    { m: "Módulo 3", t: "Fly", s: "Vocabulário", d: "Expansão ativa focada no uso real de mercado.", c: "from-green-500/10" },
-                                    { m: "Módulo 4", t: "Liberty", s: "Conversação", d: "Fluência cognitiva e compreensão total acima de 70%.", c: "from-purple-500/10" }
+                                    { m: "Módulo 1", t: "Start", s: "Fonética", d: "Correção de vícios auditivos e fonéticos primários através de técnicas de coordenação motora.", c: "from-[#fbd24c]/20" },
+                                    { m: "Módulo 2", t: "Run", s: "Estruturas", d: "Domínio intensivo de blocos lógicos motoras e conectivos para fala fluida.", c: "from-blue-500/10" },
+                                    { m: "Módulo 3", t: "Fly", s: "Vocabulário", d: "Expansão ativa focada nas 700 palavras mais usadas no mercado de trabalho.", c: "from-green-500/10" },
+                                    { m: "Módulo 4", t: "Liberty", s: "Conversação", d: "Automação cognitiva total com compreensão auditiva acima de 70% em situações reais.", c: "from-purple-500/10" }
                                 ].map((mod, i) => (
                                     <div key={i} className={`module-card p-10 rounded-[2.5rem] bg-slate-50 flex flex-col h-full bg-gradient-to-br ${mod.c} to-transparent border border-slate-100 group reveal reveal-delay-${i+1}`}>
                                         <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-3 group-hover:text-[#8c5414] transition-colors">{mod.m}</span>
@@ -528,27 +556,27 @@
 
                     {/* CTA FINAL */}
                     <section className="py-32 px-6 bg-[#020617] text-white text-center relative overflow-hidden">
-                        <div className="max-w-3xl mx-auto relative z-10 reveal">
-                            <h2 className="text-4xl md:text-7xl font-black mb-10 leading-tight tracking-tight uppercase italic text-white">Treine. Domine.<br/><span className="text-gradient">Evolua.</span></h2>
+                        <div className="max-w-3xl mx-auto relative z-10 reveal text-white">
+                            <h2 className="text-4xl md:text-7xl font-black mb-10 leading-tight tracking-tight uppercase italic text-white leading-none">Treine. Domine.<br/><span className="text-gradient">Evolua Globalmente.</span></h2>
                             <Button primary className="text-lg py-6 px-12 scale-110 hover:scale-125 transition-transform" onClick={() => openModal()}>RECEBER ORIENTAÇÃO</Button>
                         </div>
                     </section>
 
                     {/* FOOTER */}
                     <footer className="py-20 px-6 bg-[#020617] text-[#94a3b8] border-t border-white/5">
-                        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-16 text-sm">
+                        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-16 text-sm text-[#94a3b8]">
                             <div className="text-center md:text-left group reveal-left">
                                 <h5 className="text-white font-black mb-6 uppercase tracking-widest text-white">LEXIS ACADEMY</h5>
-                                <p className="font-medium">Rua Visconde de Inhaúma, 1295<br/>São Carlos-SP</p>
+                                <p className="font-medium text-[#94a3b8]">Rua Visconde de Inhaúma, 1295<br/>São Carlos-SP</p>
                             </div>
                             <div className="text-center reveal">
-                                <h5 className="text-white font-black mb-6 uppercase tracking-widest text-white">Garantias</h5>
-                                <p className="font-medium">Selo Vitalício Lexis</p>
-                                <p className="font-medium">Satisfação Adaptativa</p>
+                                <h5 className="text-white font-black mb-6 uppercase tracking-widest text-white">Diferenciais</h5>
+                                <p className="font-medium text-[#94a3b8]">Selo de Garantia Vitalícia</p>
+                                <p className="font-medium text-[#94a3b8]">Metodologia Neuro-Acelerada</p>
                             </div>
                             <div className="text-center md:text-right reveal">
-                                <p className="opacity-30 text-xs font-bold uppercase tracking-widest">CNPJ: 38.229.678/0001-13</p>
-                                <p className="mt-3 font-extrabold italic text-white/50 tracking-widest">© 2025 Lexis Academy.</p>
+                                <p className="opacity-30 text-xs font-bold uppercase tracking-widest text-[#94a3b8]">CNPJ: 38.229.678/0001-13</p>
+                                <p className="mt-3 font-extrabold italic text-white/50 tracking-widest text-white">© 2025 Lexis Academy.</p>
                             </div>
                         </div>
                     </footer>
