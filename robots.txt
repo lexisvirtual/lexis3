@@ -1,0 +1,29 @@
+# Robots.txt para Lexis Academy
+# https://lexis.academy/
+
+# Permitir todos os bots de busca
+User-agent: *
+Allow: /
+
+# Google Bot
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# Bing Bot
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Bloquear acesso a arquivos de sistema/configuração
+Disallow: /package.json
+Disallow: /tsconfig.json
+Disallow: /vite.config.ts
+Disallow: /.git/
+Disallow: /node_modules/
+
+# Sitemap
+Sitemap: https://lexis.academy/sitemap.xml
+
+# Host preferencial
+Host: https://lexis.academy
