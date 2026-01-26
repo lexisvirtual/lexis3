@@ -1,4 +1,5 @@
 import React from 'react';
+import lexisLogo from '../assets/logo.png';
 
 const Footer = () => {
     return (
@@ -6,7 +7,7 @@ const Footer = () => {
             <div className="max-w-7xl mx-auto relative z-10">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-10">
                     <div className="flex items-center gap-4">
-                        <img src="/logo.png" alt="Lexis Academy" className="w-12 h-12 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500" />
+                        <img src={lexisLogo} alt="Lexis Academy" className="w-12 h-12 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500" />
                         <div className="text-left">
                             <p className="text-white font-extrabold tracking-tight">LEXIS ACADEMY</p>
                             <p className="text-slate-500 text-xs text-[#fbd24c]">English as a Skill</p>
