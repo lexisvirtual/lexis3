@@ -266,10 +266,14 @@ const Home = () => {
                         subtitle="Histórias de profissionais que destravaram a carreira através da fluência real."
                     />
 
-                    <div className="grid md:grid-cols-2 gap-8">
+                    <div className="grid md:grid-cols-3 gap-8">
                         {[
-                            { name: "João Silva", role: "Engenheiro de Software", text: "Eu entendia a gramática, mas travava na daily. A imersão em 14 dias foi o desbloqueio que eu precisava. Hoje lidero times internacionais." },
-                            { name: "Maria Oliveira", role: "Executiva de Vendas", text: "O Maestria Online encaixou na minha agenda louca. A metodologia não é sobre estudar, é sobre praticar. Foi a melhor decisão da minha carreira." }
+                            { name: "Ricardo M.", role: "Diretor Comercial", text: "Tentei 4 escolas tradicionais e nunca saí do 'The book is on the table'. Com 2 semanas de Imersão Lexis, destravei reuniões com a matriz na Alemanha que antes eram um pesadelo." },
+                            { name: "Ana Clara F.", role: "Arquiteta", text: "O método cíclico The Way foi o único que se adaptou à minha agenda louca. Poder alternar os horários sem perder conteúdo salvou minha fluência." },
+                            { name: "Gustavo S.", role: "Desenvolvedor Sr.", text: "O foco em automação cognitiva no Maestria Online é bizarro. Eu parei de traduzir mentalmente e as frases começaram a sair naturais em menos de 2 meses." },
+                            { name: "Juliana T.", role: "Marketing Digital", text: "A Garantia Vitalícia me deu segurança, mas nem precisei. O suporte do Gab AI no WhatsApp é incrível para manter o treino diário." },
+                            { name: "Felipe R.", role: "Engenheiro de Produção", text: "A imersão presencial foi um divisor de águas. 10 horas por dia focado no esporte cognitivo me deu uma confiança que eu não teria em 2 anos de cursinho." },
+                            { name: "Patrícia L.", role: "Advogada Internacional", text: "A Lexis não ensina inglês, ela treina você para usar o inglês. A abordagem de Aula Invertida otimiza cada minuto com o professor. Recomendo demais!" }
                         ].map((testimony, idx) => (
                             <div key={idx} className="bg-white/5 p-10 rounded-[2rem] border border-white/5 hover:border-[#fbd24c]/30 transition-colors reveal">
                                 <div className="flex text-[#fbd24c] mb-6">★★★★★</div>
