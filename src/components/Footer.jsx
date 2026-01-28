@@ -13,10 +13,13 @@ const Footer = () => {
                             <p className="text-slate-500 text-xs text-[#fbd24c]">English as a Skill</p>
                         </div>
                     </div>
-                    <div className="flex gap-8 text-sm font-bold text-slate-500">
-                        <a href="#" className="hover:text-white transition-colors">Instagram</a>
-                        <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
-                        <a href="#" className="hover:text-white transition-colors">WhatsApp</a>
+                    <div className="flex flex-wrap justify-center md:justify-end gap-6 text-sm font-bold text-slate-500">
+                        <a href="https://www.instagram.com/lexis.ea" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Instagram</a>
+                        <a href="https://www.linkedin.com/in/lexisenglish/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">LinkedIn</a>
+                        <a href="https://www.facebook.com/LexisEA/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Facebook</a>
+                        <a href="https://www.youtube.com/lexisvirtual" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">YouTube</a>
+                        <a href="https://g.page/LexisEA/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Maps</a>
+                        <a href="https://g.co/kgs/aCZixEw" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Google</a>
                     </div>
                 </div>
                 <div className="mt-10 pt-10 border-t border-white/5 text-center text-slate-600 text-xs">
