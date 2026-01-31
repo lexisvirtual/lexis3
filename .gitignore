@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 
 public/404.html
+index.html
