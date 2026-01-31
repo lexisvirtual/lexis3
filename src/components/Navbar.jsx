@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import lexisLogo from '../assets/logo.png';
+import lexisLogo from '../assets/logo-I1hQKAi8.png';
 
 const Navbar = ({ onOpenModal }) => {
     const [scrolled, setScrolled] = useState(false);
