@@ -1,22 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
   <head>
-    <title>Redirecting...</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Redirecting...</title>
     <script>
-      // Store the path to redirect to after the app loads
-      const path = window.location.pathname;
-      const search = window.location.search;
+      // Save the requested path for React Router to handle
+      const path = window.location.pathname + window.location.search;
+      sessionStorage.setItem('spa_redirect', path);
       
-      // Store in sessionStorage to be read by the app
-      sessionStorage.setItem('redirectPath', path + search);
-      
-      // Redirect to index.html
-      window.location.replace('/');
+      // Redirect to home - React Router will take over
+      window.location.href = '/';
     </script>
   </head>
   <body>
-    <p>Redirecting...</p>
+    <p>Carregando...</p>
   </body>
 </html>
