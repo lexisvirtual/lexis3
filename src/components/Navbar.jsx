@@ -24,7 +24,7 @@ const Navbar = ({ onOpenModal }) => {
         <nav className={`fixed top-0 w-full z-[100] transition-all duration-500 ${scrolled ? "navbar-blur py-3 shadow-2xl" : "bg-transparent py-8"}`}>
             <div className="max-w-7xl mx-auto px-8 flex justify-between items-center">
                 <Link to="/" className="flex items-center gap-3 group cursor-pointer" onClick={(e) => handleAnchorClick(e, 'inicio')}>
-                    <img src="/logo.png" alt="Logo Lexis Academy" className="w-10 h-10 object-contain group-hover:rotate-12 transition-transform duration-300" loading="eager" />
+                    <img src="/logo.png" alt="Logo Lexis Academy" className="w-16 h-16 object-contain group-hover:rotate-12 transition-transform duration-300" loading="eager" />
                     <span className="font-extrabold text-lg tracking-tighter hidden md:block group-hover:text-[#fbd24c] transition-colors uppercase text-white">Lexis Academy</span>
                 </Link>
                 <div className="hidden md:flex items-center gap-6 text-[11px] font-extrabold uppercase tracking-[0.15em] text-[#94a3b8]">
