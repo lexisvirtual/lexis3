@@ -5,7 +5,7 @@ const Footer = () => {
         <footer className="py-20 px-6 bg-[#0f172a] border-t border-white/5 relative overflow-hidden">
             <div className="max-w-7xl mx-auto relative z-10">
                 <div className="flex items-center gap-4">
-                    <img src="/logo.png" alt="Lexis Academy" className="w-12 h-12 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500" />
+                    <img src="/logo.png" alt="Lexis Academy" className="w-20 h-20 object-contain hover:scale-110 transition-all duration-500" />
                     <div className="text-left">
                         <p className="text-white font-extrabold tracking-tight">LEXIS ACADEMY</p>
                         <p className="text-slate-500 text-xs text-[#fbd24c]">English as a Skill</p>
