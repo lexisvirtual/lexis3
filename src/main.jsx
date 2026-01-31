@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
 
+console.log('Lexis App v0.0.1 Loaded - Blog Enabled');
+
 // Handle SPA routing from 404.html redirect
 const redirectPath = sessionStorage.getItem('spa_redirect');
 if (redirectPath && redirectPath !== '/') {
@@ -11,7 +13,7 @@ if (redirectPath && redirectPath !== '/') {
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-    <React.StrictMode>
-        <App />
-    </React.StrictMode>,
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
 )
