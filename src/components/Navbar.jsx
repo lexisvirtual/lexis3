@@ -32,6 +32,7 @@ const Navbar = ({ onOpenModal }) => {
                     <Link to="/imersao" className={`hover:text-[#fbd24c] transition-colors ${location.pathname === '/imersao' ? 'text-[#fbd24c]' : ''}`}>Imersão</Link>
                     <Link to="/maestria" className={`hover:text-[#fbd24c] transition-colors ${location.pathname === '/maestria' ? 'text-[#fbd24c]' : ''}`}>Maestria</Link>
                     <Link to="/the-way" className={`hover:text-[#fbd24c] transition-colors ${location.pathname === '/the-way' ? 'text-[#fbd24c]' : ''}`}>The Way</Link>
+                    <Link to="/blog" className={`hover:text-[#fbd24c] transition-colors ${location.pathname.startsWith('/blog') ? 'text-[#fbd24c]' : ''}`}>Blog</Link>
                     <Link to={isHome ? "#metodo" : "/#metodo"} onClick={(e) => handleAnchorClick(e, 'metodo')} className="hover:text-[#fbd24c] transition-colors">Método</Link>
                     <Link to={isHome ? "#depoimentos" : "/#depoimentos"} onClick={(e) => handleAnchorClick(e, 'depoimentos')} className="hover:text-[#fbd24c] transition-colors">Depoimentos</Link>
                 </div>
