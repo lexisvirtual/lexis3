@@ -1,0 +1,15 @@
+name = "lexis-publisher"
+main = "src/index.js"
+compatibility_date = "2024-03-20"
+
+
+# Vamos usar variáveis de ambiente para o Token do GitHub (segurança primeiro!)
+[vars]
+GITHUB_OWNER = "lexisvirtual"
+GITHUB_REPO = "lexis3"
+GITHUB_BRANCH = "main"
+
+# Habilitar Workers AI
+[ai]
+binding = "AI"
+
