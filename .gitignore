@@ -25,3 +25,8 @@ dist-ssr
 
 public/404.html
 index.html
+
+# Secrets
+.dev.vars
+worker/.dev.vars
+.env

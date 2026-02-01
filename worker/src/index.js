@@ -4,21 +4,31 @@ export default {
     async fetch(request, env, ctx) {
         const url = new URL(request.url);
 
-        // 1. Adicionar pauta
+        // 1. Adicionar Pauta (ETAPA 1: Input Rico)
         if (url.pathname === "/add-topic") {
             if (request.method !== "POST") return new Response("Use POST", { status: 405 });
 
             const body = await request.json().catch(() => ({}));
-            if (!body.topic) return new Response("JSON deve ter { topic: '...' }", { status: 400 });
 
-            // Configuração avançada da pauta (default values)
+            // Validação de Schema (ETAPA 1.2)
+            if (!body.topic || !body.cluster) {
+                return new Response(JSON.stringify({
+                    error: "Schema Inválido. Obrigatório: 'topic' e 'cluster'.",
+                    required: { query: "string", cluster: "string", intent: "informacional|dor|decisao" }
+                }), { status: 400, headers: { "Content-Type": "application/json" } });
+            }
+
             const jobData = {
-                topic: body.topic,
-                type: body.type || "evergreen", // ou 'trending'
+                topic: body.topic.trim(),
+                cluster: body.cluster.trim().toLowerCase(),
+                intent: body.intent || "informacional",
+                type: body.type || "evergreen",
+                priority: body.priority || 1,
                 status: 'pending',
                 created_at: new Date().toISOString()
             };
 
+            // Salva com prioridade invertida no ID para ordenação simples (na listagem futura)
             const id = Date.now().toString();
             await env.LEXIS_PAUTA.put(`job:${id}`, JSON.stringify(jobData));
 
@@ -38,23 +48,24 @@ export default {
             return new Response(JSON.stringify(jobs, null, 2), { headers: { "Content-Type": "application/json" } });
         }
 
-        // 3. Forçar Processamento (Manual Trigger)
+        // 3. Forçar Processamento
         if (url.pathname === "/process-queue") {
             return await processNextJob(env);
         }
 
-        // Compatibilidade Legada (Teste Direto)
-        if (url.pathname === "/auto-blog") {
-            const topic = url.searchParams.get("topic");
-            if (!topic) return new Response("Use ?topic=...", { status: 400 });
-            // Cria job temporário e processa
-            return await generateAndPublishPost(env, { topic, type: "manual" });
+        // 4. LIMPEZA TOTAL (NUCLEAR - TEMP)
+        if (url.pathname === "/purge") {
+            const list = await env.LEXIS_PAUTA.list({ prefix: "job:" });
+            for (const key of list.keys) {
+                await env.LEXIS_PAUTA.delete(key.name);
+            }
+            return new Response("Fila limpa! Zero items.", { status: 200 });
         }
 
-        return new Response("Lexis Publisher 4.0 (Anti-Duplication + Filter) Ativo!", { status: 200 });
+        return new Response("Lexis Publisher V5.0 (The Weaver) Ativo", { status: 200 });
     },
 
-    // --- TRIGGERS AGENDADOS (CRON Auto) ---
+    // --- TRIGGERS AGENDADOS ---
     async scheduled(event, env, ctx) {
         ctx.waitUntil(processNextJob(env));
     }
@@ -63,45 +74,48 @@ export default {
 // --- ORQUESTRADOR ---
 
 async function processNextJob(env) {
-    // Pega 1 item da fila
     const list = await env.LEXIS_PAUTA.list({ prefix: "job:", limit: 1 });
 
     if (list.keys.length === 0) {
-        console.log("Fila vazia.");
         return new Response("Fila vazia", { status: 200 });
     }
 
     const jobKey = list.keys[0].name;
-    const jobData = JSON.parse(await env.LEXIS_PAUTA.get(jobKey));
+    const rawValue = await env.LEXIS_PAUTA.get(jobKey);
 
-    console.log(`[ORCHESTRATOR] Iniciando job: ${jobData.topic}`);
-
-    // 1. FILTRO DE PALAVRAS FRACAS (Economia de Recursos)
-    const weakKeywords = ["o que é", "significado", "traducao", "grátis", "pdf", "baixar"];
-    const isWeak = weakKeywords.some(w => jobData.topic.toLowerCase().includes(w));
-
-    if (isWeak) {
-        console.warn(`[DISCARD] Tópico fraco descartado: ${jobData.topic}`);
+    // SELF-HEALING: Se o valor for nulo (Zumbi), deleta e segue
+    if (!rawValue) {
+        console.warn(`[ZOMBIE] Limpando item vazio: ${jobKey}`);
         await env.LEXIS_PAUTA.delete(jobKey);
-        return new Response(`Descartado (Weak Query): ${jobData.topic}`, { status: 200 });
+        return new Response("Item fantasma removido. Tente novamente.", { status: 200 });
     }
+
+    const jobData = JSON.parse(rawValue);
+    console.log(`[ORCHESTRATOR] Iniciando: ${jobData.topic} (Cluster: ${jobData.cluster})`);
 
     try {
         const result = await generateAndPublishPost(env, jobData);
 
         if (result.success) {
-            await env.LEXIS_PAUTA.delete(jobKey); // Remove da fila se sucesso
+            await env.LEXIS_PAUTA.delete(jobKey);
+            // Indexação (ETAPA 9 - Cache Warming / Metadata)
+            // Salvamos o post no índice do cluster para interlink futuro
+            await addToClusterIndex(env, jobData.cluster, {
+                title: result.title,
+                slug: result.slug,
+                intent: jobData.intent
+            });
+
             return new Response(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
         } else {
-            // Tratamento especial para duplicatas: remove da fila também (já foi feito antes)
-            if (result.reason === "DUPLICATE_SLUG") {
-                console.warn(`[SKIP] Duplicata detectada: ${jobData.topic}`);
-                await env.LEXIS_PAUTA.delete(jobKey);
-                return new Response(JSON.stringify(result), { status: 200, headers: { "Content-Type": "application/json" } });
-            }
+            console.error(`[FAIL] ${result.error}`);
+            // Lógica de Retentativa Corrigida: Deleta se for qualquer erro de validação ou Parsing
+            const isValidationError = ["Short Content", "No Structure (H2)", "Missing Fields", "Parsing Failed"].includes(result.error) || result.reason === "DUPLICATE_SLUG";
 
-            console.error(`[FAIL] Job ${jobKey} erro: ${result.error}`);
-            // Mantém na fila para retry se for erro técnico
+            if (isValidationError) {
+                console.warn(`[DELETE] Removendo job inválido da fila: ${jobData.topic}`);
+                await env.LEXIS_PAUTA.delete(jobKey);
+            }
             return new Response(JSON.stringify(result), { status: 422, headers: { "Content-Type": "application/json" } });
         }
     } catch (e) {
@@ -112,35 +126,45 @@ async function processNextJob(env) {
 // --- NÚCLEO INTELIGENTE (IA + VALIDAÇÃO) ---
 
 async function generateAndPublishPost(env, job) {
-    console.log(`[AI] Gerando conteúdo para: ${job.topic}`);
+    // ETAPA 7: INTERLINK PROGRAMÁTICO (Busca contexto antes de escrever)
+    const relatedPosts = await getRelatedPosts(env, job.cluster);
+    const internalLinksPrompt = relatedPosts.length > 0
+        ? `INCLUA LINKS INTERNOS PARA: ${relatedPosts.map(p => `[${p.title}](/blog/${p.slug})`).join(", ")}`
+        : "";
 
-    // PROMPT ARQUITETADO PARA TEXTO PLANO E FILOSOFIA LEXIS
     const systemPrompt = `
     Você é o Evangelista Chefe da Lexis Academy.
-    Sua missão é destruir mitos do ensino tradicional de inglês e promover a Metodologia Lexis.
     
-    PRINCÍPIOS EDITORIAIS (OBRIGATÓRIO SEGUIR):
-    1. AXIOMA CENTRAL: "Idioma não se aprende. Idioma se treina." Trate inglês como esporte/habilidade, não como matéria escolar.
-    2. INIMIGO COMUM: Ataque métodos tradicionais (focados em gramática, tradução mental, lentidão).
-    3. SOLUÇÃO: Imersão intensiva, repetição deliberada, erro como ferramenta, alta densidade (120h em 2 semanas).
-    4. TOM DE VOZ: Autoritário, motivador, direto, contra-intuitivo. Use frases curtas e impactantes.
-    
-    FORMATO DE RESPOSTA OBRIGATÓRIO (TEXTO PLANO):
-    TITLE: [Título H1 provocativo e otimizado SEO]
-    SLUG: [slug-kebab-case]
-    DESCRIPTION: [Meta description focada na dor do aluno]
+    PRINCÍPIOS EDITORIAIS:
+    1. "Idioma não se aprende. Idioma se treina."
+    2. Ataque o método tradicional.
+    3. Use tom autoritário e motivador.
+
+    FORMATO OBRIGATÓRIO (TEXTO PLANO):
+    TITLE: [Título H1]
+    SLUG: [slug]
+    DESCRIPTION: [Meta description]
     TAGS: [tag1, tag2]
     CONTENT:
-    [Escreva o artigo completo em Markdown. Comece com um GANCHO: "O problema não é falta de estudo, é excesso de método errado". Use H2, H3. Finalize com CTA para a Imersão Lexis.]
+    [Escreva o artigo em Markdown. OBRIGATÓRIO USAR SUBTÍTULOS H2 (##) PARA DIVIDIR O TEXTO.]
   `;
 
     const userPrompt = `
     Tópico: "${job.topic}"
-    Tipo: ${job.type}
+    Cluster: "${job.cluster}"
     
-    Escreva um artigo de blog PODEROSO sob a ótica da Neurociência e Treino de Habilidade (Lexis).
-    Não dê dicas genéricas. Dê estratégias de TREINO.
-    Mínimo de 6 parágrafos. Use Português do Brasil.
+    Escreva um artigo seguindo ESTRITAMENTE esta estrutura (use Markdown):
+    
+    ## O Problema Real
+    (Fale sobre a frustração de não falar inglês)
+
+    ## A Neurociência Explica
+    (Por que métodos tradicionais falham)
+
+    ## Como Treinar de Verdade
+    (Dê 3 exemplos práticos de treino Lexis)
+
+    Use Português do Brasil. Mínimo 400 palavras.
   `;
 
     let aiResponse;
@@ -155,14 +179,16 @@ async function generateAndPublishPost(env, job) {
         return { success: false, error: `AI Failed: ${e.message}` };
     }
 
-    // PARSER DE TEXTO PLANO (INFALÍVEL)
+    // Parser "Escavadeira" V3 (Indestrutível)
     let raw = aiResponse.response;
-    let postData = {};
+    let postData = {
+        cluster: job.cluster,
+        intent: job.intent
+    };
 
     try {
-        // Regex que pega tudo após os prefixos
         const getField = (prefix) => {
-            const regex = new RegExp(`${prefix}:\\s*(.*)`);
+            const regex = new RegExp(`(?:\\*+|#+)?\\s*${prefix}(?:\\*+)?\\s*:\\s*(.*)`);
             const match = raw.match(regex);
             return match ? match[1].trim() : null;
         };
@@ -170,122 +196,120 @@ async function generateAndPublishPost(env, job) {
         postData.title = getField("TITLE");
         postData.slug = getField("SLUG");
         postData.description = getField("DESCRIPTION");
+        postData.tags = getField("TAGS") ? getField("TAGS").split(",").map(t => t.trim()) : [];
 
-        const tagsRaw = getField("TAGS");
-        postData.tags = tagsRaw ? tagsRaw.split(",").map(t => t.trim()) : ["english", "learning"];
-
-        // Conteúdo é tudo depois de "CONTENT:"
-        const contentSplit = raw.split("CONTENT:");
+        const contentSplit = raw.split(/CONTENT\s*:/i);
         if (contentSplit.length > 1) {
             postData.content_markdown = contentSplit[1].trim();
         }
 
-        // Validação de sanidade
+        // FALLBACK DE ÚLTIMA INSTÂNCIA (A IA ignorou o formato)
         if (!postData.title || !postData.content_markdown) {
-            throw new Error("Missing TITLE or CONTENT fields in AI response");
+            console.warn("[PARSER] IA ignorou formato. Usando Fallback de Linha 1.");
+            const lines = raw.split('\n');
+            // Tenta achar a primeira linha não vazia que parece um título
+            const titleLine = lines.find(l => l.trim().length > 10 && l.length < 100) || job.topic;
+
+            postData.title = titleLine.replace(/\*/g, '').replace(/#/g, '').trim();
+            postData.content_markdown = raw.replace(titleLine, '').trim();
+
+            if (!postData.slug) postData.slug = job.topic.toLowerCase().replace(/ /g, '-').replace(/[^\w-]/g, '');
+            if (!postData.description) postData.description = `Saiba tudo sobre ${postData.title} com a Metodologia Lexis.`;
+            if (postData.tags.length === 0) postData.tags = ["ingles", "treino"];
         }
 
+        if (!postData.content_markdown) throw new Error("Content Empty");
+
     } catch (e) {
-        return { success: false, error: "Parsing Failed", raw: raw.substring(0, 200) + "..." };
+        return { success: false, error: "Parsing Failed", raw: raw.substring(0, 100) };
     }
 
-    // ETAPA 4: VALIDAÇÃO AUTOMÁTICA
+    // ETAPA 5: VALIDAÇÃO
     const validation = validatePost(postData);
-    if (!validation.valid) {
-        return { success: false, error: `Validation Failed: ${validation.reason}` };
+    if (!validation.valid) return { success: false, error: validation.reason };
+
+    // ETAPA 4.5: ANTI-DUPLICIDADE
+    if (await checkFileExists(env, `${postData.slug}.md`)) {
+        return { success: false, reason: "DUPLICATE_SLUG", error: "Exists" };
     }
 
-    // ETAPA 4.5: CHECK ANTI-DUPLICIDADE
-    const exists = await checkFileExists(env, `${postData.slug}.md`);
-    if (exists) {
-        return { success: false, reason: "DUPLICATE_SLUG", error: "File already exists on GitHub" };
-    }
-
-    // ETAPA 5: MONTAGEM DO ARQUIVO
+    // ETAPA 6: MONTAGEM FINAL
+    // Se a IA não inseriu links no texto, nós inserimos no final como um bloco "Leia Mais"
     const finalMarkdown = `---
 title: "${postData.title.replace(/"/g, '\\"')}"
 date: "${new Date().toISOString().split('T')[0]}"
 description: "${postData.description.replace(/"/g, '\\"')}"
 tags: [${postData.tags.map(t => `"${t}"`).join(', ')}]
+category: "${job.cluster}"
 author: "Lexis Intel AI"
+cluster: "${job.cluster}"
+intent: "${job.intent}"
 ---
 
 ${postData.content_markdown}
+
+---
+*Este artigo é parte da nossa série sobre **${job.cluster}**. Continue treinando:*
+${relatedPosts.map(p => `- [${p.title}](/blog/${p.slug})`).join('\n')}
   `;
 
-    // ETAPA 6: COMMIT GITHUB
-    const fileName = `${postData.slug}.md`;
-    try {
-        const uploadResult = await uploadToGitHub(env, fileName, finalMarkdown, `feat(blog): ${postData.title}`);
-        return { success: true, url: uploadResult.url, slug: postData.slug };
-    } catch (e) {
-        return { success: false, error: `GitHub Upload Failed: ${e.message}` };
+    // ETAPA 8: COMMIT
+    const result = await uploadToGitHub(env, `${postData.slug}.md`, finalMarkdown, `feat(blog): [${job.cluster}] ${postData.title}`);
+    return { success: true, url: result.url, slug: postData.slug, title: postData.title };
+}
+
+// --- KV HELPER (BRAIN) ---
+
+// Adiciona post ao índice do cluster
+async function addToClusterIndex(env, cluster, postMeta) {
+    const key = `index:${cluster}`;
+    let current = await env.LEXIS_PAUTA.get(key);
+    let posts = current ? JSON.parse(current) : [];
+
+    // Evita duplicatas no índice
+    if (!posts.find(p => p.slug === postMeta.slug)) {
+        posts.push(postMeta);
+        await env.LEXIS_PAUTA.put(key, JSON.stringify(posts));
     }
 }
 
-// --- CHECKER ---
-async function checkFileExists(env, fileName) {
-    const githubUrl = `https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/src/posts/${fileName}`;
+// Recupera posts do mesmo cluster (para linkar)
+async function getRelatedPosts(env, cluster) {
+    const key = `index:${cluster}`;
+    const data = await env.LEXIS_PAUTA.get(key);
+    if (!data) return [];
 
-    const response = await fetch(githubUrl, {
-        method: "GET",
-        headers: {
-            "Authorization": `Bearer ${env.GITHUB_TOKEN}`,
-            "User-Agent": "Lexis-Publisher-Worker",
-            "Accept": "application/vnd.github.v3+json",
-        }
-    });
-
-    return response.status === 200; // 200 = Existe, 404 = Não existe
+    const posts = JSON.parse(data);
+    // Retorna até 3 posts aleatórios do cluster para não ficar sempre os mesmos links
+    return posts.sort(() => 0.5 - Math.random()).slice(0, 3);
 }
 
+// --- UTILS ---
 
-// --- REGRAS DE VALIDAÇÃO ---
 function validatePost(post) {
-    if (!post.title || !post.content_markdown) return { valid: false, reason: "Missing fields" };
-
-    // Mínimo de caracteres (tamanho)
-    // Relaxado para 400 caracteres para evitar falso-negativo em testes
-    if (post.content_markdown.length < 400) {
-        return { valid: false, reason: `Conteúdo curto (${post.content_markdown.length} chars)` };
-    }
-
-    // Estrutura obrigatória
-    if (!post.content_markdown.includes("##")) {
-        return { valid: false, reason: "Sem H2" };
-    }
-
+    if (post.content_markdown.length < 400) return { valid: false, reason: "Short Content" };
+    if (!post.content_markdown.includes("##")) return { valid: false, reason: "No Structure (H2)" };
     return { valid: true };
 }
 
-// --- GITHUB HELPER ---
-async function uploadToGitHub(env, fileName, content, commitMessage) {
-    const contentEncoded = btoa(unescape(encodeURIComponent(content)));
-    const githubUrl = `https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/src/posts/${fileName}`;
-
-    const response = await fetch(githubUrl, {
-        method: "PUT",
-        headers: {
-            "Authorization": `Bearer ${env.GITHUB_TOKEN}`,
-            "User-Agent": "Lexis-Publisher-Worker",
-            "Content-Type": "application/json",
-            "Accept": "application/vnd.github.v3+json",
-        },
-        body: JSON.stringify({
-            message: commitMessage,
-            content: contentEncoded,
-            branch: env.GITHUB_BRANCH,
-        }),
+async function checkFileExists(env, fileName) {
+    const r = await fetch(`https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/src/posts/${fileName}`, {
+        headers: { "Authorization": `Bearer ${env.GITHUB_TOKEN}`, "User-Agent": "Lexis-Worker" }
     });
-
-    const data = await response.json();
-    if (response.ok) {
-        return { url: data.content.html_url };
-    } else {
-        throw new Error(`GitHub Error: ${data.message}`);
-    }
+    return r.status === 200;
 }
 
-async function createTestFile(env) {
-    return uploadToGitHub(env, `hello-world-${Date.now()}.md`, "# Test", "chore: test");
+async function uploadToGitHub(env, fileName, content, message) {
+    const r = await fetch(`https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/src/posts/${fileName}`, {
+        method: "PUT",
+        headers: { "Authorization": `Bearer ${env.GITHUB_TOKEN}`, "User-Agent": "Lexis-Worker" },
+        body: JSON.stringify({
+            message,
+            content: btoa(unescape(encodeURIComponent(content))),
+            branch: env.GITHUB_BRANCH
+        })
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.message);
+    return { url: d.content.html_url };
 }
