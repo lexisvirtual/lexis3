@@ -51,7 +51,7 @@ export default {
             return await generateAndPublishPost(env, { topic, type: "manual" });
         }
 
-        return new Response("Lexis Publisher 3.1 (Robust JSON) Ativo!", { status: 200 });
+        return new Response("Lexis Publisher 4.0 (Anti-Duplication + Filter) Ativo!", { status: 200 });
     },
 
     // --- TRIGGERS AGENDADOS (CRON Auto) ---
@@ -76,6 +76,16 @@ async function processNextJob(env) {
 
     console.log(`[ORCHESTRATOR] Iniciando job: ${jobData.topic}`);
 
+    // 1. FILTRO DE PALAVRAS FRACAS (Economia de Recursos)
+    const weakKeywords = ["o que é", "significado", "traducao", "grátis", "pdf", "baixar"];
+    const isWeak = weakKeywords.some(w => jobData.topic.toLowerCase().includes(w));
+
+    if (isWeak) {
+        console.warn(`[DISCARD] Tópico fraco descartado: ${jobData.topic}`);
+        await env.LEXIS_PAUTA.delete(jobKey);
+        return new Response(`Descartado (Weak Query): ${jobData.topic}`, { status: 200 });
+    }
+
     try {
         const result = await generateAndPublishPost(env, jobData);
 
@@ -83,7 +93,15 @@ async function processNextJob(env) {
             await env.LEXIS_PAUTA.delete(jobKey); // Remove da fila se sucesso
             return new Response(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
         } else {
-            console.error(`[FAIL] Job ${jobKey} falhou validação: ${result.error}`);
+            // Tratamento especial para duplicatas: remove da fila também (já foi feito antes)
+            if (result.reason === "DUPLICATE_SLUG") {
+                console.warn(`[SKIP] Duplicata detectada: ${jobData.topic}`);
+                await env.LEXIS_PAUTA.delete(jobKey);
+                return new Response(JSON.stringify(result), { status: 200, headers: { "Content-Type": "application/json" } });
+            }
+
+            console.error(`[FAIL] Job ${jobKey} erro: ${result.error}`);
+            // Mantém na fila para retry se for erro técnico
             return new Response(JSON.stringify(result), { status: 422, headers: { "Content-Type": "application/json" } });
         }
     } catch (e) {
@@ -142,6 +160,7 @@ async function generateAndPublishPost(env, job) {
     try {
         postData = JSON.parse(rawContent);
     } catch (e) {
+        // Tenta fallback simples se JSON quebrar
         return { success: false, error: "AI returned invalid JSON", raw: rawContent.substring(0, 50) + "..." };
     }
 
@@ -149,6 +168,12 @@ async function generateAndPublishPost(env, job) {
     const validation = validatePost(postData);
     if (!validation.valid) {
         return { success: false, error: `Validation Failed: ${validation.reason}` };
+    }
+
+    // ETAPA 4.5: CHECK ANTI-DUPLICIDADE
+    const exists = await checkFileExists(env, `${postData.slug}.md`);
+    if (exists) {
+        return { success: false, reason: "DUPLICATE_SLUG", error: "File already exists on GitHub" };
     }
 
     // ETAPA 5: MONTAGEM DO ARQUIVO
@@ -166,28 +191,43 @@ ${postData.content_markdown}
     // ETAPA 6: COMMIT GITHUB
     const fileName = `${postData.slug}.md`;
     try {
-        const uploadResult = await uploadToGitHub(env, fileName, finalMarkdown, `feat(blog): ${postData.title}`);
+        const uploadResult = await uploadToGitHub(env, fileName, finalMarkdown, `feat(blog): ${postData.slug}`);
         return { success: true, url: uploadResult.url, slug: postData.slug };
     } catch (e) {
         return { success: false, error: `GitHub Upload Failed: ${e.message}` };
     }
 }
 
+// --- CHECKER ---
+async function checkFileExists(env, fileName) {
+    const githubUrl = `https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/src/posts/${fileName}`;
+
+    const response = await fetch(githubUrl, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${env.GITHUB_TOKEN}`,
+            "User-Agent": "Lexis-Publisher-Worker",
+            "Accept": "application/vnd.github.v3+json",
+        }
+    });
+
+    return response.status === 200; // 200 = Existe, 404 = Não existe
+}
+
+
 // --- REGRAS DE VALIDAÇÃO ---
 function validatePost(post) {
     if (!post.title || !post.content_markdown) return { valid: false, reason: "Missing fields" };
 
+    // Mínimo de caracteres (tamanho)
     if (post.content_markdown.length < 1000) {
         return { valid: false, reason: `Conteúdo curto (${post.content_markdown.length} chars)` };
     }
 
+    // Estrutura obrigatória
     if (!post.content_markdown.includes("##")) {
         return { valid: false, reason: "Sem H2" };
     }
-
-    // Relaxa validação de marca para teste
-    // const brandTerms = ["Lexis", "Immersion", "Imersão"]; 
-    // const hasBrand = brandTerms.some(term => post.content_markdown.includes(term));
 
     return { valid: true };
 }
