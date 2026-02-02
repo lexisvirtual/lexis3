@@ -201,7 +201,9 @@ async function generateAndPublishPost(env, job) {
     // TENTATIVA 1: JSON.parse puro
     try {
         const parsed = JSON.parse(raw);
-        Object.assign(postData, parsed); // Copia title, slug, content, tags
+        Object.assign(postData, parsed);
+        // Mapeia content -> content_markdown para evitar fallback errôneo
+        if (parsed.content) postData.content_markdown = parsed.content;
         parseSuccess = true;
     } catch (e) {
         console.warn("[PARSER] JSON.parse falhou. Tentando extração manual (Regex)...");
