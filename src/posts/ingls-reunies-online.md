@@ -1,18 +1,12 @@
----
-title: "Inglês para Reuniões Online: Guia de Sobrevivência"
-date: "2026-02-02"
-description: "** Aprenda a dominar o inglês para reuniões online e superar a frustração de não se expressar corretamente."
-tags: ["** inglês", "reuniões online", "comunicação empresarial"]
+---
+date: "2026-02-02"
 category: "business"
 author: "Lexis Intel AI"
 cluster: "business"
 intent: "decisao"
 ---
 
-======================================================
-**SLUG:** inglês-reuniões-online
-**DESCRIPTION:** Aprenda a dominar o inglês para reuniões online e superar a frustração de não se expressar corretamente.
-**TAGS:** inglês, reuniões online, comunicação empresarial
+======================================================
 ## O Problema Real
 -------------------
 Você já se sentiu perdido em uma reunião online? Ou se sentiu constrangido ao não entender o que os outros estavam dizendo? Muitos empresários brasileiros enfrentam esse problema todos os dias. O inglês é uma língua universal, mas a falta de confiança em sua habilidade de comunicação pode ser uma barreira significativa para o sucesso.

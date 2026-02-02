@@ -1,8 +1,5 @@
----
-title: "Por que cursinhos tradicionais falham tanto"
-date: "2026-02-02"
-description: "Saiba tudo sobre Por que cursinhos tradicionais falham tanto com a Metodologia Lexis."
-tags: ["ingles", "treino"]
+---
+date: "2026-02-02"
 category: "metodologia"
 author: "Lexis Intel AI"
 cluster: "metodologia"
