@@ -19,9 +19,9 @@ if (fs.existsSync(postsDir)) {
         let content = fs.readFileSync(filePath, 'utf-8');
         const originalSize = content.length;
 
-        // REGEX DE LIMPEZA (Mesma da V5.7)
-        // Remove linhas de metadados vazados no corpo
-        content = content.replace(/^(SLUG|DESCRIPTION|TAGS|TITLE)\s*:.*$/gim, '');
+        // REGEX DE LIMPEZA (Mesma da V5.8 - Nuclear)
+        // Remove qualquer linha que comece com esses metadados, com ou sem negrito
+        content = content.replace(/(?:^|\n)\s*(?:\*\*|#)?(SLUG|DESCRIPTION|TAGS|TITLE)(?:\*\*|#)?\s*:.*$/gim, '');
 
         // Remove excesso de quebras de linha
         content = content.replace(/\n{3,}/g, '\n\n');

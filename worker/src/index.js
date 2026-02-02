@@ -62,6 +62,15 @@ export default {
             return new Response("Fila limpa! Zero items.", { status: 200 });
         }
 
+        // 5. RESET MEMÓRIA (Apaga índices de posts antigos)
+        if (url.pathname === "/reset-memory") {
+            const list = await env.LEXIS_PAUTA.list({ prefix: "index:" });
+            for (const key of list.keys) {
+                await env.LEXIS_PAUTA.delete(key.name);
+            }
+            return new Response("Memória limpa: Índices apagados.", { status: 200 });
+        }
+
         return new Response("Lexis Publisher V5.6 (Slug Shield) Ativo", { status: 200 });
     },
 
@@ -231,11 +240,11 @@ async function generateAndPublishPost(env, job) {
 
         if (!postData.content_markdown) throw new Error("Content Empty");
 
-        // LIMPEZA PÓS-PROCESSAMENTO (Anti-Leak)
-        // Remove metadados que vazaram para o corpo
+        // LIMPEZA PÓS-PROCESSAMENTO (Anti-Leak V5.8 - Nuclear)
+        // Remove qualquer linha que comece com esses metadados, com ou sem negrito
         postData.content_markdown = postData.content_markdown
-            .replace(/^(SLUG|DESCRIPTION|TAGS|TITLE)\s*:.*$/gim, '')
-            .replace(/^\s*[\r\n]/gm, '')
+            .replace(/(?:^|\n)\s*(?:\*\*|#)?(SLUG|DESCRIPTION|TAGS|TITLE)(?:\*\*|#)?\s*:.*$/gim, '')
+            .replace(/^\s*[\r\n]/gm, '') // Remove linhas vazias no topo
             .trim();
 
     } catch (e) {
