@@ -49,6 +49,6 @@ Leia textos em inglês e pratique a escrita. Escreva cartas, artigos ou relatór
 Em resumo, treinar de verdade para melhorar sua fluência em inglês significa mudar sua abordagem de aprendizado e se concentrar em prática e repetição. Com o treino Lexis, você pode superar a barreira do idioma e se tornar um fluente em inglês.
 
 ---
-*Este artigo é parte da nossa série sobre **metodologia**. Continue treinando:*
+*Este artigo é parte da nossa série sobre metodologia. Continue treinando:*
 - [Por que você estuda gramática e trava na hora de falar](/blog/por-que-voce-estuda-gramatica-e-trava-na-hora-de-falar)
   
