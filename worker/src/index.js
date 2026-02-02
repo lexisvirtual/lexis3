@@ -173,7 +173,9 @@ async function generateAndPublishPost(env, job) {
             messages: [
                 { role: 'system', content: systemPrompt },
                 { role: 'user', content: userPrompt }
-            ]
+            ],
+            // AUMENTO DE LIMITE DE TOKENS (EVITA CORTE DE TEXTO)
+            max_tokens: 4000
         });
     } catch (e) {
         return { success: false, error: `AI Failed: ${e.message}` };
@@ -194,7 +196,16 @@ async function generateAndPublishPost(env, job) {
         };
 
         postData.title = getField("TITLE");
-        postData.slug = getField("SLUG");
+
+        // BLINDAGEM DE SLUG (Remove **, #, espaços extras)
+        let rawSlug = getField("SLUG") || job.topic;
+        postData.slug = rawSlug
+            .toLowerCase()
+            .replace(/[*#]/g, '') // Remove markdown residual
+            .trim()
+            .replace(/\s+/g, '-') // Espaços viram hifens
+            .replace(/[^\w-]/g, ''); // Remove tudo que não for letra/numero/hifen
+
         postData.description = getField("DESCRIPTION");
         postData.tags = getField("TAGS") ? getField("TAGS").split(",").map(t => t.trim()) : [];
 
