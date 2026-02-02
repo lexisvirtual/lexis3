@@ -189,30 +189,68 @@ async function generateAndPublishPost(env, job) {
         return { success: false, error: `AI Failed: ${e.message}` };
     }
 
-    // PARSER JSON BLINDADO (V7.0)
+    // PARSER JSON BLINDADO V7.1 (Híbrido)
     let raw = aiResponse.response.trim();
 
-    // Remove markdown code blocks se a IA desobedecer e colocar ```json ... ```
+    // 1. Tenta limpar markdown block code
     raw = raw.replace(/^```json/i, '').replace(/^```/i, '').replace(/```$/i, '').trim();
 
     let postData = { cluster: job.cluster, intent: job.intent };
+    let parseSuccess = false;
 
+    // TENTATIVA 1: JSON.parse puro
     try {
         const parsed = JSON.parse(raw);
-        postData.title = parsed.title;
-        postData.slug = parsed.slug;
-        postData.description = parsed.description;
-        postData.tags = parsed.tags;
-        postData.content_markdown = parsed.content;
-
-        // Fallback se vier vazio
-        if (!postData.title) postData.title = job.topic;
-        if (!postData.slug) postData.slug = job.topic.toLowerCase().replace(/ /g, '-');
-
+        Object.assign(postData, parsed); // Copia title, slug, content, tags
+        parseSuccess = true;
     } catch (e) {
-        console.error("[PARSER JSON] Falha ao fazer parse do JSON da IA. Tentando recuperação bruta.");
-        // Se falhar o JSON, aborta ou usa fallback muito simples (Vou optar por abortar para não sujar o site)
-        return { success: false, error: "AI JSON Parsing Failed", raw: raw.substring(0, 200) };
+        console.warn("[PARSER] JSON.parse falhou. Tentando extração manual (Regex)...");
+    }
+
+    // TENTATIVA 2: Extração via Regex (Se o JSON quebrou ou veio sujo)
+    if (!parseSuccess) {
+        try {
+            const extract = (key) => {
+                // Regex busca "key": "valor"
+                const match = raw.match(new RegExp(`"${key}"\\s*:\\s*"(.*?)"`, 's'));
+                return match ? match[1] : null;
+            };
+
+            postData.title = extract("title");
+            postData.slug = extract("slug");
+            postData.description = extract("description");
+
+            // Content é mais chato, pode ter aspas escapadas. Tenta pegar tudo depois de "content": "
+            const contentMatch = raw.match(/"content"\s*:\s*"(.*)"\s*}/s) || raw.match(/"content"\s*:\s*"(.*)/s);
+            if (contentMatch) {
+                // Remove a aspa final e chave se tiver pego
+                let content = contentMatch[1];
+                if (content.endsWith('"}')) content = content.slice(0, -2);
+                else if (content.endsWith('"')) content = content.slice(0, -1);
+
+                // Desescapar quebras de linha (\n -> pulo de linha real)
+                postData.content_markdown = content.replace(/\\n/g, '\n').replace(/\\"/g, '"');
+            }
+
+            // Tags (tentativa simples)
+            const tagsMatch = raw.match(/"tags"\s*:\s*\[(.*?)\]/s);
+            if (tagsMatch) {
+                postData.tags = tagsMatch[1].split(',').map(t => t.replace(/["\s]/g, ''));
+            }
+
+        } catch (e2) {
+            console.error("Parser Regex falhou também.");
+        }
+    }
+
+    // FALLBACKS DE SEGURANÇA (Se tudo falhar, não perde o post)
+    if (!postData.title) postData.title = job.topic;
+    if (!postData.slug) postData.slug = job.topic.toLowerCase().replace(/ /g, '-');
+    if (!postData.content_markdown) {
+        // Se não achou 'content' no JSON, é provável que a IA tenha mandado Markdown puro ignorando o prompt
+        // Então assumimos que 'raw' é o texto.
+        console.warn("IA ignorou JSON. Usando RAW como conteúdo.");
+        postData.content_markdown = raw;
     }
 
     // Limpeza final de segurança no Slug
@@ -231,7 +269,11 @@ async function generateAndPublishPost(env, job) {
     }
 
     // ETAPA 6: MONTAGEM FINAL
-    // Se a IA não inseriu links no texto, nós inserimos no final como um bloco "Leia Mais"
+    // INJEÇÃO DE IMAGEM AUTOMÁTICA (Curador V8.0)
+    if (!postData.image) {
+        postData.image = getCuratedImage(job.cluster);
+    }
+
     const finalMarkdown = `---
 title: "${postData.title.replace(/"/g, '\\"')}"
 date: "${new Date().toISOString().split('T')[0]}"
@@ -239,6 +281,7 @@ description: "${postData.description.replace(/"/g, '\\"')}"
 tags: [${postData.tags.map(t => `"${t}"`).join(', ')}]
 category: "${job.cluster}"
 author: "Lexis Intel AI"
+image: "${postData.image}"
 cluster: "${job.cluster}"
 intent: "${job.intent}"
 ---
@@ -309,4 +352,44 @@ async function uploadToGitHub(env, fileName, content, message) {
     const d = await r.json();
     if (!r.ok) throw new Error(d.message);
     return { url: d.content.html_url };
+}
+
+// --- BANCO DE IMAGENS HUMANIZADAS (Unsplash Curated) ---
+function getCuratedImage(cluster) {
+    const COLLECTIONS = {
+        'business': [
+            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80",
+            "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&q=80",
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+            "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1200&q=80",
+            "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1200&q=80"
+        ],
+        'viagem': [
+            "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1200&q=80",
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
+            "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1200&q=80",
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
+            "https://images.unsplash.com/photo-1488085061387-422e29b40080?w=1200&q=80"
+        ],
+        'estudo': [
+            "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1200&q=80",
+            "https://images.unsplash.com/photo-1513258496099-48168024aec0?w=1200&q=80",
+            "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1200&q=80",
+            "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1200&q=80",
+            "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1200&q=80"
+        ],
+        'mindset': [
+            "https://images.unsplash.com/photo-1499209974431-2761e2523676?w=1200&q=80", // Relaxed thinking
+            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80", // Girl thinking
+            "https://images.unsplash.com/photo-1555601568-c916f54b1046?w=1200&q=80", // Brain concept
+            "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=1200&q=80", // Meditation focus
+            "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=1200&q=80"  // Working focused
+        ],
+        'default': [
+            "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80"
+        ]
+    };
+    const key = cluster ? cluster.toLowerCase() : 'default';
+    const collection = COLLECTIONS[key] || COLLECTIONS['default'];
+    return collection[Math.floor(Math.random() * collection.length)];
 }
