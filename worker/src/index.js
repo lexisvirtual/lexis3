@@ -135,45 +135,45 @@ async function processNextJob(env) {
 // --- NÚCLEO INTELIGENTE (IA + VALIDAÇÃO) ---
 
 async function generateAndPublishPost(env, job) {
-    // ETAPA 7: INTERLINK PROGRAMÁTICO (Busca contexto antes de escrever)
+    // ETAPA 7: INTERLINK PROGRAMÁTICO
     const relatedPosts = await getRelatedPosts(env, job.cluster);
     const internalLinksPrompt = relatedPosts.length > 0
         ? `INCLUA LINKS INTERNOS PARA: ${relatedPosts.map(p => `[${p.title}](/blog/${p.slug})`).join(", ")}`
         : "";
 
+    // SISTEMA: FORÇA BRUTA JSON (V7.0)
     const systemPrompt = `
     Você é o Evangelista Chefe da Lexis Academy.
     
+    SUA MISSÃO: Escrever um artigo de blog polêmico e profundo.
+    
     PRINCÍPIOS EDITORIAIS:
     1. "Idioma não se aprende. Idioma se treina."
-    2. Ataque o método tradicional.
-    3. Use tom autoritário e motivador.
-
-    FORMATO OBRIGATÓRIO (TEXTO PLANO):
-    TITLE: [Título H1]
-    SLUG: [slug]
-    DESCRIPTION: [Meta description]
-    TAGS: [tag1, tag2]
-    CONTENT:
-    [Escreva o artigo em Markdown. OBRIGATÓRIO USAR SUBTÍTULOS H2 (##) PARA DIVIDIR O TEXTO.]
+    2. Ataque métodos tradicionais (gramática, decoreba).
+    3. Use H2 para subtítulos (##).
+    
+    FORMATO DE SAÍDA: JSON (ESTRITAMENTE)
+    {
+      "title": "Título H1 Impactante",
+      "slug": "slug-otimizado-seo",
+      "description": "Meta description persuasiva para Google (max 150 chars)",
+      "tags": ["tag1", "tag2"],
+      "content": "Texto completo do artigo em Markdown. Use ## para subtítulos. NÃO coloque o título H1 aqui dentro, apenas o corpo do texto."
+    }
   `;
 
     const userPrompt = `
     Tópico: "${job.topic}"
     Cluster: "${job.cluster}"
+    Intenção: "${job.intent}"
     
-    Escreva um artigo seguindo ESTRITAMENTE esta estrutura (use Markdown):
+    ${internalLinksPrompt}
     
-    ## O Problema Real
-    (Fale sobre a frustração de não falar inglês)
-
-    ## A Neurociência Explica
-    (Por que métodos tradicionais falham)
-
-    ## Como Treinar de Verdade
-    (Dê 3 exemplos práticos de treino Lexis)
-
-    Use Português do Brasil. Mínimo 400 palavras.
+    Escreva um artigo de >1000 palavras.
+    Comece atacando o problema imediatamente (sem introduções fofas).
+    Use Português do Brasil.
+    
+    IMPORTANTE: Retorne APENAS o JSON válido. Sem markdown em volta (\`\`\`json).
   `;
 
     let aiResponse;
@@ -183,83 +183,43 @@ async function generateAndPublishPost(env, job) {
                 { role: 'system', content: systemPrompt },
                 { role: 'user', content: userPrompt }
             ],
-            // AUMENTO DE LIMITE DE TOKENS (EVITA CORTE DE TEXTO)
             max_tokens: 4000
         });
     } catch (e) {
         return { success: false, error: `AI Failed: ${e.message}` };
     }
 
-    // Parser "Escavadeira" V3 (Indestrutível)
-    let raw = aiResponse.response;
-    let postData = {
-        cluster: job.cluster,
-        intent: job.intent
-    };
+    // PARSER JSON BLINDADO (V7.0)
+    let raw = aiResponse.response.trim();
+
+    // Remove markdown code blocks se a IA desobedecer e colocar ```json ... ```
+    raw = raw.replace(/^```json/i, '').replace(/^```/i, '').replace(/```$/i, '').trim();
+
+    let postData = { cluster: job.cluster, intent: job.intent };
 
     try {
-        const getField = (prefix) => {
-            const regex = new RegExp(`(?:\\*+|#+)?\\s*${prefix}(?:\\*+)?\\s*:\\s*(.*)`);
-            const match = raw.match(regex);
-            return match ? match[1].trim() : null;
-        };
+        const parsed = JSON.parse(raw);
+        postData.title = parsed.title;
+        postData.slug = parsed.slug;
+        postData.description = parsed.description;
+        postData.tags = parsed.tags;
+        postData.content_markdown = parsed.content;
 
-        postData.title = getField("TITLE");
-
-        // CIRURGIA DE TÍTULO (Worker V5.9)
-        if (postData.title) {
-            postData.title = postData.title
-                .replace(/^[\[\s]*(Título|Title)?\s*:?\s*/i, '')
-                .replace(/[\]]*$/, '')
-                .replace(/[*"]/g, '')
-                .trim();
-        }
-
-        // BLINDAGEM DE SLUG (Remove **, #, espaços extras)
-        let rawSlug = getField("SLUG") || job.topic;
-        postData.slug = rawSlug
-            .toLowerCase()
-            .replace(/[*#]/g, '') // Remove markdown residual
-            .trim()
-            .replace(/\s+/g, '-') // Espaços viram hifens
-            .replace(/[^\w-]/g, ''); // Remove tudo que não for letra/numero/hifen
-
-        postData.description = getField("DESCRIPTION");
-        postData.tags = getField("TAGS") ? getField("TAGS").split(",").map(t => t.trim()) : [];
-
-        const contentSplit = raw.split(/CONTENT\s*:/i);
-        if (contentSplit.length > 1) {
-            postData.content_markdown = contentSplit[1].trim();
-        }
-
-        // FALLBACK DE ÚLTIMA INSTÂNCIA (A IA ignorou o formato)
-        if (!postData.title || !postData.content_markdown) {
-            console.warn("[PARSER] IA ignorou formato. Usando Tópico como Título.");
-            const lines = raw.split('\n');
-
-            // EM VEZ DE TENTAR ADIVINHAR NO TEXTO, USA O TÓPICO DA PAUTA (Garante título certo)
-            postData.title = job.topic.replace(/[*#]/g, '').trim();
-
-            // O conteúdo é o texto cru, removendo metadados se houver
-            postData.content_markdown = raw.replace(/^(TITLE|SLUG|DESCRIPTION):.*\n?/gim, '').trim();
-
-            if (!postData.slug) postData.slug = job.topic.toLowerCase().replace(/ /g, '-').replace(/[^\w-]/g, '');
-            if (!postData.description) postData.description = `Saiba tudo sobre ${postData.title} com a Metodologia Lexis.`;
-            if (postData.tags.length === 0) postData.tags = ["ingles", "treino"];
-        }
-
-        if (!postData.content_markdown) throw new Error("Content Empty");
-
-        // LIMPEZA PÓS-PROCESSAMENTO (Anti-Leak V5.8 - Nuclear)
-        // Remove qualquer linha que comece com esses metadados, com ou sem negrito
-        postData.content_markdown = postData.content_markdown
-            .replace(/(?:^|\n)\s*(?:\*\*|#)?(SLUG|DESCRIPTION|TAGS|TITLE)(?:\*\*|#)?\s*:.*$/gim, '')
-            .replace(/^\s*[\r\n]/gm, '') // Remove linhas vazias no topo
-            .trim();
+        // Fallback se vier vazio
+        if (!postData.title) postData.title = job.topic;
+        if (!postData.slug) postData.slug = job.topic.toLowerCase().replace(/ /g, '-');
 
     } catch (e) {
-        return { success: false, error: "Parsing Failed", raw: raw.substring(0, 100) };
+        console.error("[PARSER JSON] Falha ao fazer parse do JSON da IA. Tentando recuperação bruta.");
+        // Se falhar o JSON, aborta ou usa fallback muito simples (Vou optar por abortar para não sujar o site)
+        return { success: false, error: "AI JSON Parsing Failed", raw: raw.substring(0, 200) };
     }
+
+    // Limpeza final de segurança no Slug
+    postData.slug = postData.slug.toLowerCase().replace(/[^a-z0-9-]/g, '');
+
+    // Limpeza no Title (remover aspas extras se houver)
+    postData.title = postData.title.trim();
 
     // ETAPA 5: VALIDAÇÃO
     const validation = validatePost(postData);
