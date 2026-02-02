@@ -26,7 +26,17 @@ const BlogIndex = () => {
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {posts.map((post) => (
-                        <Link key={post.slug} to={`/blog/${post.slug}`} className="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-[#fbd24c]/50 transition-all hover:transform hover:-translate-y-1">
+                        <Link key={post.slug} to={`/blog/${post.slug}`} className="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-[#fbd24c]/50 transition-all hover:transform hover:-translate-y-1 block h-full">
+                            {post.image && (
+                                <div className="h-48 overflow-hidden border-b border-white/5 relative">
+                                    <div className="absolute inset-0 bg-[#fbd24c]/10 opacity-0 group-hover:opacity-100 transition-opacity z-10"></div>
+                                    <img
+                                        src={post.image}
+                                        alt={post.title}
+                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 filter group-hover:grayscale-0 grayscale-[30%]"
+                                    />
+                                </div>
+                            )}
                             <div className="p-8">
                                 <div className="text-[#fbd24c] text-xs font-bold uppercase tracking-widest mb-4">{Array.isArray(post.tags) ? post.tags[0] : post.tags?.replace(/['"\[\]]/g, '') || 'Artigo'}</div>
                                 <h2 className="text-2xl font-bold text-white mb-3 group-hover:text-[#fbd24c] transition-colors line-clamp-2">{post.title}</h2>
