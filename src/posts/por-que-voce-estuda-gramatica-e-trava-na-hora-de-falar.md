@@ -1,8 +1,8 @@
 ---
-title: "Por que você estuda gramática e trava na hora de falar"
+
 date: "2026-02-02"
-description: "Saiba tudo sobre Por que você estuda gramática e trava na hora de falar com a Metodologia Lexis."
-tags: ["ingles", "treino"]
+
+
 category: "metodologia"
 author: "Lexis Intel AI"
 cluster: "metodologia"

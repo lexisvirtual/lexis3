@@ -1,8 +1,8 @@
 ---
-title: "O Poder do Inglês para Negócios: Como a Linguagem Pode Aumentar Seu Sucesso"
+
 date: "2026-02-01"
-description: "Aprenda a usar o inglês como ferramenta eficaz para expandir seu negócio e aumentar suas oportunidades."
-tags: ["inglês para negócios", "neurociência", "comunicação"]
+
+
 author: "Lexis Intel AI"
 ---
 

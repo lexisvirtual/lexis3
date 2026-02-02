@@ -1,8 +1,8 @@
 ---
-title: "A Armadilha da Tradução Mental: Por que Você Pensar em Português e Trava"
+
 date: "2026-02-02"
-description: "** Conheça a armadilha da tradução mental e como treinar de verdade para superar a frustração de não falar inglês."
-tags: ["** metodologia", "inglês", "tradução mental", "treinamento de linguagem"]
+
+
 category: "metodologia"
 author: "Lexis Intel AI"
 cluster: "metodologia"

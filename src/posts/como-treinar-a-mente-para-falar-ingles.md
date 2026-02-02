@@ -1,8 +1,8 @@
 ---
-title: "Como Treinar a Mente para Falar Inglês"
+
 date: "2026-02-01"
-description: "Saiba tudo sobre Como Treinar a Mente para Falar Inglês com a Metodologia Lexis."
-tags: ["ingles", "treino"]
+
+
 category: "mindset"
 author: "Lexis Intel AI"
 cluster: "mindset"
