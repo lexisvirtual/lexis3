@@ -25,7 +25,7 @@ function parseFrontmatter(rawContent) {
 
 export function getPosts() {
     // imports all .md files from src/posts as raw strings
-    const modules = import.meta.glob('/src/posts/*.md', { as: 'raw', eager: true });
+    const modules = import.meta.glob('/src/posts/*.md', { query: '?raw', import: 'default', eager: true });
 
     const posts = Object.keys(modules).map((path) => {
         const slug = path.split('/').pop().replace('.md', '');
