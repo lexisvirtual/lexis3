@@ -62,7 +62,38 @@ export default {
             return new Response("Fila limpa! Zero items.", { status: 200 });
         }
 
-        return new Response("Lexis Publisher V5.0 (The Weaver) Ativo", { status: 200 });
+        // 4. LIMPEZA DE ARQUIVO CORROMPIDO (EMERGÊNCIA)
+        if (url.pathname === "/cleanup-github") {
+            const listUrl = `https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/src/posts`;
+            const headers = {
+                "Authorization": `Bearer ${env.GITHUB_TOKEN}`,
+                "User-Agent": "Lexis-Fixer"
+            };
+
+            const listResp = await fetch(listUrl, { headers });
+            const files = await listResp.json();
+
+            // Procura o arquivo com asteriscos
+            const badFile = files.find(f => f.name.includes("**"));
+
+            if (!badFile) return new Response("Nenhum arquivo ruim encontrado.", { status: 200 });
+
+            // Deleta o arquivo
+            const deleteUrl = `https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/${badFile.path}`;
+            const delResp = await fetch(deleteUrl, {
+                method: "DELETE",
+                headers: { ...headers, "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    message: "fix: remove malformed filename",
+                    sha: badFile.sha,
+                    branch: env.GITHUB_BRANCH
+                })
+            });
+
+            return new Response(`Arquivo deletado: ${badFile.name}`, { status: 200 });
+        }
+
+        return new Response("Lexis Publisher V5.6 (Slug Shield) Ativo", { status: 200 });
     },
 
     // --- TRIGGERS AGENDADOS ---
