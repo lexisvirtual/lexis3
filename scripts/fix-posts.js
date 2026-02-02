@@ -23,6 +23,16 @@ if (fs.existsSync(postsDir)) {
         // Remove qualquer linha que comece com esses metadados, com ou sem negrito
         content = content.replace(/(?:^|\n)\s*(?:\*\*|#)?(SLUG|DESCRIPTION|TAGS|TITLE)(?:\*\*|#)?\s*:.*$/gim, '');
 
+        // CIRURGIA DE TÍTULO (Remove [ ], Título:, aspas extras)
+        content = content.replace(/^title:\s*"(.*)"/m, (match, currentTitle) => {
+            const cleanTitle = currentTitle
+                .replace(/^[\[\s]*(Título|Title)?\s*:?\s*/i, '') // Remove "[ Título:"
+                .replace(/[\]]*$/, '') // Remove "]" final
+                .replace(/[*"]/g, '') // Remove * e "
+                .trim();
+            return `title: "${cleanTitle}"`;
+        });
+
         // Remove excesso de quebras de linha
         content = content.replace(/\n{3,}/g, '\n\n');
 
