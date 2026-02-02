@@ -28,7 +28,7 @@ const BlogIndex = () => {
                     {posts.map((post) => (
                         <Link key={post.slug} to={`/blog/${post.slug}`} className="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-[#fbd24c]/50 transition-all hover:transform hover:-translate-y-1">
                             <div className="p-8">
-                                <div className="text-[#fbd24c] text-xs font-bold uppercase tracking-widest mb-4">{post.tags?.[0] || 'Artigo'}</div>
+                                <div className="text-[#fbd24c] text-xs font-bold uppercase tracking-widest mb-4">{Array.isArray(post.tags) ? post.tags[0] : post.tags?.replace(/['"\[\]]/g, '') || 'Artigo'}</div>
                                 <h2 className="text-2xl font-bold text-white mb-3 group-hover:text-[#fbd24c] transition-colors line-clamp-2">{post.title}</h2>
                                 <p className="text-slate-400 mb-6 line-clamp-3 text-sm leading-relaxed">{post.description}</p>
                                 <span className="text-white text-sm font-bold border-b border-[#fbd24c] pb-0.5">Ler artigo →</span>
