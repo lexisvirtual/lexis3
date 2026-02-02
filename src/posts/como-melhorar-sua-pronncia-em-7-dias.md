@@ -1,8 +1,7 @@
 ---
-title: "Como melhorar sua pronúncia em 7 dias"
-date: "2026-02-02"
-description: "Saiba tudo sobre Como melhorar sua pronúncia em 7 dias com a Metodologia Lexis."
-tags: ["ingles", "treino"]
+title: "Como Melhorar Sua Pronncia Em 7 Dias"
+description: "Saiba tudo sobre Como Melhorar Sua Pronncia Em 7 Dias com a Metodologia Lexis."
+date: "2026-02-02"
 category: "dicas"
 author: "Lexis Intel AI"
 cluster: "dicas"

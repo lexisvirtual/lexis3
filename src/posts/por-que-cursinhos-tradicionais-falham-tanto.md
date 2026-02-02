@@ -1,8 +1,7 @@
 ---
-title: "Por que Cursinhos Tradicionais Falham Tanto"
-date: "2026-02-02"
-description: "Saiba tudo sobre Por que Cursinhos Tradicionais Falham Tanto com a Metodologia Lexis."
-tags: ["ingles", "treino"]
+title: "Por Que Cursinhos Tradicionais Falham Tanto"
+description: "Saiba tudo sobre Por Que Cursinhos Tradicionais Falham Tanto com a Metodologia Lexis."
+date: "2026-02-02"
 category: "metodologia"
 author: "Lexis Intel AI"
 cluster: "metodologia"

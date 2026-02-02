@@ -47,13 +47,23 @@ if (fs.existsSync(postsDir)) {
             // Adiciona title logo após o primeiro "---"
             content = content.replace(/^---\s*\n/m, `---\ntitle: "${derivedTitle}"\ndescription: "Saiba tudo sobre ${derivedTitle} com a Metodologia Lexis."\n`);
         } else {
-            // Se JÁ TEM título, limpa ele (lógica anterior)
+            // Se JÁ TEM título, verifica se é o genérico "O Problema Real"
             content = content.replace(/^title:\s*"(.*)"/m, (match, currentTitle) => {
-                const cleanTitle = currentTitle
+                let cleanTitle = currentTitle
                     .replace(/^[\[\s]*(Título|Title)?\s*:?\s*/i, '')
                     .replace(/[\]]*$/, '')
                     .replace(/[*"]/g, '')
                     .trim();
+
+                // DETECTOR DE TÍTULO TÓXICO
+                if (cleanTitle === "O Problema Real" || cleanTitle === "A Neurociência Explica") {
+                    console.log(`⚠️ Título Genérico Detectado em ${file}. Substituindo...`);
+                    cleanTitle = file.replace('.md', '')
+                        .split('-')
+                        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+                        .join(' ');
+                }
+
                 return `title: "${cleanTitle}"`;
             });
         }

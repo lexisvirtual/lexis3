@@ -1,8 +1,7 @@
 ---
-title: "Título: Medo de errar ao falar inglês: como superar"
-date: "2026-02-02"
-description: "Saiba tudo sobre Título: Medo de errar ao falar inglês: como superar com a Metodologia Lexis."
-tags: ["ingles", "treino"]
+title: "Medo De Errar Ao Falar Ingls Como Superar"
+description: "Saiba tudo sobre Medo De Errar Ao Falar Ingls Como Superar com a Metodologia Lexis."
+date: "2026-02-02"
 category: "mindset"
 author: "Lexis Intel AI"
 cluster: "mindset"

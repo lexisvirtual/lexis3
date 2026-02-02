@@ -1,8 +1,7 @@
 ---
-title: "Por que você entende inglês mas não fala"
-date: "2026-02-02"
-description: "** Entenda por que você entende inglês, mas não consegue falar com fluência e descubra como treinar para superar essa barreira."
-tags: ["** inglês", "idioma", "treinamento", "neurociência", "mindset"]
+title: "Por Que Voce Entende Ingles Mas Nao Fala"
+description: "Saiba tudo sobre Por Que Voce Entende Ingles Mas Nao Fala com a Metodologia Lexis."
+date: "2026-02-02"
 category: "mindset"
 author: "Lexis Intel AI"
 cluster: "mindset"

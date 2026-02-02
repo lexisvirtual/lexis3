@@ -1,8 +1,7 @@
 ---
-title: "A Importância da Imersão para a Fluência"
-date: "2026-02-02"
-description: "Saiba tudo sobre A Importância da Imersão para a Fluência com a Metodologia Lexis."
-tags: ["ingles", "treino"]
+title: "A Importncia Da Imerso Para A Fluncia"
+description: "Saiba tudo sobre A Importncia Da Imerso Para A Fluncia com a Metodologia Lexis."
+date: "2026-02-02"
 category: "metodologia"
 author: "Lexis Intel AI"
 cluster: "metodologia"

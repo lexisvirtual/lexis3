@@ -234,13 +234,14 @@ async function generateAndPublishPost(env, job) {
 
         // FALLBACK DE ÚLTIMA INSTÂNCIA (A IA ignorou o formato)
         if (!postData.title || !postData.content_markdown) {
-            console.warn("[PARSER] IA ignorou formato. Usando Fallback de Linha 1.");
+            console.warn("[PARSER] IA ignorou formato. Usando Tópico como Título.");
             const lines = raw.split('\n');
-            // Tenta achar a primeira linha não vazia que parece um título
-            const titleLine = lines.find(l => l.trim().length > 10 && l.length < 100) || job.topic;
 
-            postData.title = titleLine.replace(/\*/g, '').replace(/#/g, '').trim();
-            postData.content_markdown = raw.replace(titleLine, '').trim();
+            // EM VEZ DE TENTAR ADIVINHAR NO TEXTO, USA O TÓPICO DA PAUTA (Garante título certo)
+            postData.title = job.topic.replace(/[*#]/g, '').trim();
+
+            // O conteúdo é o texto cru, removendo metadados se houver
+            postData.content_markdown = raw.replace(/^(TITLE|SLUG|DESCRIPTION):.*\n?/gim, '').trim();
 
             if (!postData.slug) postData.slug = job.topic.toLowerCase().replace(/ /g, '-').replace(/[^\w-]/g, '');
             if (!postData.description) postData.description = `Saiba tudo sobre ${postData.title} com a Metodologia Lexis.`;

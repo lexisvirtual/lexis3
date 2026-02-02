@@ -1,8 +1,7 @@
 ---
-title: "Como pensar em inglês (técnica prática)"
-date: "2026-02-02"
-description: "Saiba tudo sobre Como pensar em inglês (técnica prática) com a Metodologia Lexis."
-tags: ["ingles", "treino"]
+title: "Como Pensar Em Ingls Tcnica Prtica"
+description: "Saiba tudo sobre Como Pensar Em Ingls Tcnica Prtica com a Metodologia Lexis."
+date: "2026-02-02"
 category: "mindset"
 author: "Lexis Intel AI"
 cluster: "mindset"

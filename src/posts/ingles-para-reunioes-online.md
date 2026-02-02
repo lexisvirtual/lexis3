@@ -1,8 +1,7 @@
 ---
-title: "Inglês para reuniões online: guia de sobrevivência"
-date: "2026-02-02"
-description: "** Aprenda a dominar o inglês para reuniões online e melhorar sua comunicação em negócios."
-tags: ["** inglês", "reuniões online", "negócios"]
+title: "Ingles Para Reunioes Online"
+description: "Saiba tudo sobre Ingles Para Reunioes Online com a Metodologia Lexis."
+date: "2026-02-02"
 category: "business"
 author: "Lexis Intel AI"
 cluster: "business"

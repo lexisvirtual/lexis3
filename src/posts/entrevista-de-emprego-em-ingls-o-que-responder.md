@@ -1,8 +1,7 @@
 ---
-title: "O Problema Real"
-date: "2026-02-02"
-description: "Saiba tudo sobre O Problema Real com a Metodologia Lexis."
-tags: ["ingles", "treino"]
+title: "Entrevista De Emprego Em Ingls O Que Responder"
+description: "Saiba tudo sobre Entrevista De Emprego Em Ingls O Que Responder com a Metodologia Lexis."
+date: "2026-02-02"
 category: "business"
 author: "Lexis Intel AI"
 cluster: "business"
