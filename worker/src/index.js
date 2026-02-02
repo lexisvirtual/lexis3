@@ -231,6 +231,13 @@ async function generateAndPublishPost(env, job) {
 
         if (!postData.content_markdown) throw new Error("Content Empty");
 
+        // LIMPEZA PÓS-PROCESSAMENTO (Anti-Leak)
+        // Remove metadados que vazaram para o corpo
+        postData.content_markdown = postData.content_markdown
+            .replace(/^(SLUG|DESCRIPTION|TAGS|TITLE)\s*:.*$/gim, '')
+            .replace(/^\s*[\r\n]/gm, '')
+            .trim();
+
     } catch (e) {
         return { success: false, error: "Parsing Failed", raw: raw.substring(0, 100) };
     }
