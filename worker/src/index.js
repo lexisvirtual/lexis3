@@ -269,11 +269,7 @@ async function generateAndPublishPost(env, job) {
     }
 
     // ETAPA 6: MONTAGEM FINAL
-    // INJEÇÃO DE IMAGEM AUTOMÁTICA (Curador V8.0)
-    if (!postData.image) {
-        postData.image = getCuratedImage(job.cluster);
-    }
-
+    // Se a IA não inseriu links no texto, nós inserimos no final como um bloco "Leia Mais"
     const finalMarkdown = `---
 title: "${postData.title.replace(/"/g, '\\"')}"
 date: "${new Date().toISOString().split('T')[0]}"
@@ -281,7 +277,6 @@ description: "${postData.description.replace(/"/g, '\\"')}"
 tags: [${postData.tags.map(t => `"${t}"`).join(', ')}]
 category: "${job.cluster}"
 author: "Lexis Intel AI"
-image: "${postData.image}"
 cluster: "${job.cluster}"
 intent: "${job.intent}"
 ---
@@ -352,44 +347,4 @@ async function uploadToGitHub(env, fileName, content, message) {
     const d = await r.json();
     if (!r.ok) throw new Error(d.message);
     return { url: d.content.html_url };
-}
-
-// --- BANCO DE IMAGENS HUMANIZADAS (Unsplash Curated) ---
-function getCuratedImage(cluster) {
-    const COLLECTIONS = {
-        'business': [
-            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80",
-            "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1200&q=80",
-            "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1200&q=80"
-        ],
-        'viagem': [
-            "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1200&q=80",
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
-            "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1200&q=80",
-            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
-            "https://images.unsplash.com/photo-1488085061387-422e29b40080?w=1200&q=80"
-        ],
-        'estudo': [
-            "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1200&q=80",
-            "https://images.unsplash.com/photo-1513258496099-48168024aec0?w=1200&q=80",
-            "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1200&q=80",
-            "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1200&q=80",
-            "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1200&q=80"
-        ],
-        'mindset': [
-            "https://images.unsplash.com/photo-1499209974431-2761e2523676?w=1200&q=80", // Relaxed thinking
-            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80", // Girl thinking
-            "https://images.unsplash.com/photo-1555601568-c916f54b1046?w=1200&q=80", // Brain concept
-            "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=1200&q=80", // Meditation focus
-            "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=1200&q=80"  // Working focused
-        ],
-        'default': [
-            "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80"
-        ]
-    };
-    const key = cluster ? cluster.toLowerCase() : 'default';
-    const collection = COLLECTIONS[key] || COLLECTIONS['default'];
-    return collection[Math.floor(Math.random() * collection.length)];
 }

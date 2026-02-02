@@ -26,19 +26,9 @@ const BlogIndex = () => {
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {posts.map((post) => (
-                        <Link key={post.slug} to={`/blog/${post.slug}`} className="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-[#fbd24c]/50 transition-all hover:transform hover:-translate-y-1 block h-full">
-                            {post.image && (
-                                <div className="h-48 overflow-hidden border-b border-white/5 relative">
-                                    <div className="absolute inset-0 bg-[#fbd24c]/10 opacity-0 group-hover:opacity-100 transition-opacity z-10"></div>
-                                    <img
-                                        src={post.image}
-                                        alt={post.title}
-                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 filter group-hover:grayscale-0 grayscale-[30%]"
-                                    />
-                                </div>
-                            )}
+                        <Link key={post.slug} to={`/blog/${post.slug}`} className="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-[#fbd24c]/50 transition-all hover:transform hover:-translate-y-1">
                             <div className="p-8">
-                                <div className="text-[#fbd24c] text-xs font-bold uppercase tracking-widest mb-4">{post.tags?.[0]?.replace(/"/g, '') || post.cluster || 'Artigo'}</div>
+                                <div className="text-[#fbd24c] text-xs font-bold uppercase tracking-widest mb-4">{post.tags?.[0] || 'Artigo'}</div>
                                 <h2 className="text-2xl font-bold text-white mb-3 group-hover:text-[#fbd24c] transition-colors line-clamp-2">{post.title}</h2>
                                 <p className="text-slate-400 mb-6 line-clamp-3 text-sm leading-relaxed">{post.description}</p>
                                 <span className="text-white text-sm font-bold border-b border-[#fbd24c] pb-0.5">Ler artigo →</span>
