@@ -1,7 +1,7 @@
 ---
 title: "O Guia Definitivo: Por que você trava ao falar inglês"
 date: "2026-02-02"
-description: "** Descubra por que os métodos tradicionais de aprendizado de inglês falham e como treinar de verdade para melhorar sua fluência."
+description: "Descubra por que os métodos tradicionais de aprendizado de inglês falham e como treinar de verdade para melhorar sua fluência."
 tags: ["** inglês", "metodologia", "treinamento", "fluência"]
 category: "metodologia"
 author: "Lexis Intel AI"
