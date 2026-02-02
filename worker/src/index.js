@@ -206,6 +206,15 @@ async function generateAndPublishPost(env, job) {
 
         postData.title = getField("TITLE");
 
+        // CIRURGIA DE TÍTULO (Worker V5.9)
+        if (postData.title) {
+            postData.title = postData.title
+                .replace(/^[\[\s]*(Título|Title)?\s*:?\s*/i, '')
+                .replace(/[\]]*$/, '')
+                .replace(/[*"]/g, '')
+                .trim();
+        }
+
         // BLINDAGEM DE SLUG (Remove **, #, espaços extras)
         let rawSlug = getField("SLUG") || job.topic;
         postData.slug = rawSlug

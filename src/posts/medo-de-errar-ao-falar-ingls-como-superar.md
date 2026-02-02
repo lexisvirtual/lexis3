@@ -1,4 +1,6 @@
----
+---
+title: "Medo De Errar Ao Falar Ingls Como Superar"
+description: "Saiba tudo sobre Medo De Errar Ao Falar Ingls Como Superar com a Metodologia Lexis."
 date: "2026-02-02"
 category: "mindset"
 author: "Lexis Intel AI"

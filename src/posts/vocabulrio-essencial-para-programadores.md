@@ -1,4 +1,6 @@
----
+---
+title: "Vocabulrio Essencial Para Programadores"
+description: "Saiba tudo sobre Vocabulrio Essencial Para Programadores com a Metodologia Lexis."
 date: "2026-02-02"
 category: "tech"
 author: "Lexis Intel AI"

@@ -1,4 +1,6 @@
----
+---
+title: "O Segredo Dos Poliglotas Para Aprender Rpido"
+description: "Saiba tudo sobre O Segredo Dos Poliglotas Para Aprender Rpido com a Metodologia Lexis."
 date: "2026-02-02"
 category: "metodologia"
 author: "Lexis Intel AI"

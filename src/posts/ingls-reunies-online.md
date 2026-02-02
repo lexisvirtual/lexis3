@@ -1,4 +1,6 @@
----
+---
+title: "Ingls Reunies Online"
+description: "Saiba tudo sobre Ingls Reunies Online com a Metodologia Lexis."
 date: "2026-02-02"
 category: "business"
 author: "Lexis Intel AI"

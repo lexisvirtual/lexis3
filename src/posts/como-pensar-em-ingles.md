@@ -1,4 +1,6 @@
----
+---
+title: "Como Pensar Em Ingles"
+description: "Saiba tudo sobre Como Pensar Em Ingles com a Metodologia Lexis."
 date: "2026-02-02"
 category: "mindset"
 author: "Lexis Intel AI"

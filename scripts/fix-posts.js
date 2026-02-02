@@ -36,12 +36,30 @@ if (fs.existsSync(postsDir)) {
         // Remove excesso de quebras de linha
         content = content.replace(/\n{3,}/g, '\n\n');
 
-        if (content.length !== originalSize) {
-            fs.writeFileSync(filePath, content, 'utf-8');
-            console.log(`✅ Reparado: ${file} (-${originalSize - content.length} chars)`);
+        // RECONSTRUÇÃO DE METADADOS (Se faltar Title/Desc)
+        if (!content.match(/^title:/m)) {
+            // Gera título baseado no nome do arquivo (ex: "como-falar.md" -> "Como Falar")
+            const derivedTitle = file.replace('.md', '')
+                .split('-')
+                .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+                .join(' ');
+
+            // Adiciona title logo após o primeiro "---"
+            content = content.replace(/^---\s*\n/m, `---\ntitle: "${derivedTitle}"\ndescription: "Saiba tudo sobre ${derivedTitle} com a Metodologia Lexis."\n`);
         } else {
-            console.log(`✨ Já limpo: ${file}`);
+            // Se JÁ TEM título, limpa ele (lógica anterior)
+            content = content.replace(/^title:\s*"(.*)"/m, (match, currentTitle) => {
+                const cleanTitle = currentTitle
+                    .replace(/^[\[\s]*(Título|Title)?\s*:?\s*/i, '')
+                    .replace(/[\]]*$/, '')
+                    .replace(/[*"]/g, '')
+                    .trim();
+                return `title: "${cleanTitle}"`;
+            });
         }
+
+        fs.writeFileSync(filePath, content, 'utf-8');
+        console.log(`✅ Processado: ${file}`);
     });
 } else {
     console.error("Diretório de posts não encontrado!");
