@@ -1,8 +1,5 @@
----
-title: "O Segredo dos Poliglotas para Aprender Rápido"
-date: "2026-02-02"
-description: "Saiba tudo sobre O Segredo dos Poliglotas para Aprender Rápido com a Metodologia Lexis."
-tags: ["ingles", "treino"]
+---
+date: "2026-02-02"
 category: "metodologia"
 author: "Lexis Intel AI"
 cluster: "metodologia"

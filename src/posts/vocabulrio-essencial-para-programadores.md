@@ -1,8 +1,5 @@
----
-title: "Título: Vocabulário essencial para programadores"
-date: "2026-02-02"
-description: "Saiba tudo sobre Título: Vocabulário essencial para programadores com a Metodologia Lexis."
-tags: ["ingles", "treino"]
+---
+date: "2026-02-02"
 category: "tech"
 author: "Lexis Intel AI"
 cluster: "tech"
