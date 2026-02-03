@@ -189,11 +189,16 @@ async function generateAndPublishPost(env, job) {
         return { success: false, error: `AI Failed: ${e.message}` };
     }
 
-    // PARSER JSON BLINDADO V7.1 (Híbrido)
+    // PARSER JSON BLINDADO V8.2 (Smart Extractor)
     let raw = aiResponse.response.trim();
 
-    // 1. Tenta limpar markdown block code
-    raw = raw.replace(/^```json/i, '').replace(/^```/i, '').replace(/```$/i, '').trim();
+    // 1. Busca cirúrgica pelo objeto JSON (ignora "Aqui está:", markdown, etc)
+    const firstBrace = raw.indexOf('{');
+    const lastBrace = raw.lastIndexOf('}');
+
+    if (firstBrace >= 0 && lastBrace > firstBrace) {
+        raw = raw.substring(firstBrace, lastBrace + 1);
+    }
 
     let postData = { cluster: job.cluster, intent: job.intent };
     let parseSuccess = false;
