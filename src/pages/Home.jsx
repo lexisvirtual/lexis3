@@ -50,7 +50,7 @@ const Home = () => {
         <div className="flex flex-col w-full min-h-screen">
             <SEO
                 title=""
-                description="Aprenda inglês de verdade com a metodologia Lexis. Cursos de imersão presencial de 14 dias, Maestria Online de 8 semanas e modelo cíclico flexível. Automação cognitiva para fluência real em tempo recorde. São Carlos-SP."
+                description="Curso de inglês por imersão em São Carlos. Aprenda com imersão em inglês intensiva: 120h em 2 semanas com garantia vitalícia de fluência."
                 keywords="curso de inglês, imersão em inglês, aprender inglês rápido, fluência em inglês, curso intensivo de inglês, escola de inglês São Carlos"
             />
             <Navbar onOpenModal={openModal} />
