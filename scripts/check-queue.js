@@ -1,30 +1,48 @@
+const https = require('https');
+
 const WORKER_URL = "https://lexis-publisher.lexisvirtual.workers.dev/queue";
 
 console.log("📡 Conectando ao satélite Lexis...");
 console.log(`URL: ${WORKER_URL}\n`);
 
-// Função com timeout
-function fetchWithTimeout(url, timeout = 10000) {
-  return Promise.race([
-    fetch(url),
-    new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Timeout na conexão')), timeout)
-    )
-  ]);
+function makeRequest(url, timeout = 10000) {
+  return new Promise((resolve, reject) => {
+    const req = https.get(url, { timeout }, (res) => {
+      let data = '';
+      
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+      
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          try {
+            resolve(JSON.parse(data));
+          } catch (e) {
+            reject(new Error('Resposta inválida do Worker'));
+          }
+        } else {
+          reject(new Error(`HTTP ${res.statusCode}: ${res.statusMessage}`));
+        }
+      });
+    });
+    
+    req.on('error', (e) => {
+      reject(e);
+    });
+    
+    req.on('timeout', () => {
+      req.destroy();
+      reject(new Error('Timeout na conexão'));
+    });
+  });
 }
 
 async function run() {
   try {
     console.log("⏳ Aguardando resposta do Worker...");
-    const res = await fetchWithTimeout(WORKER_URL, 10000);
+    const data = await makeRequest(WORKER_URL, 10000);
     
-    console.log(`Status HTTP: ${res.status}`);
-    
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-    }
-    
-    const data = await res.json();
     console.log(`\n✅ Conexão estabelecida!`);
     console.log(`📊 STATUS DA FILA: ${data.length} ITENS\n`);
 
