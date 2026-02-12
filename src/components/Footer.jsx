@@ -14,7 +14,7 @@ const Footer = () => {
                     <img src="/logo.png" alt="Lexis Academy" className="w-12 h-12 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500" />
                     <div className="text-left">
                         <p className="text-white font-extrabold tracking-tight">LEXIS ACADEMY</p>
-                        <p className="text-slate-500 text-xs text-[#fbd24c]">English as a Skill</p>
+                        <p className="text-yellow-400 text-xs font-semibold">English as a Skill</p>
                     </div>
                 </div>
                 <div className="flex flex-wrap justify-center md:justify-end gap-6 text-sm font-bold text-slate-500">
