@@ -1,27 +1,74 @@
+const https = require('https');
 
-const WORKER_URL = "https://lexis-publisher.lexis-english-account.workers.dev/queue";
+const WORKER_URL = "https://lexis-publisher.lexisvirtual.workers.dev/queue";
 
 console.log("📡 Conectando ao satélite Lexis...");
+console.log(`URL: ${WORKER_URL}\n`);
+
+function makeRequest(url, timeout = 10000) {
+  return new Promise((resolve, reject) => {
+    const req = https.get(url, { timeout }, (res) => {
+      let data = '';
+      
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+      
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          try {
+            resolve(JSON.parse(data));
+          } catch (e) {
+            reject(new Error('Resposta inválida do Worker'));
+          }
+        } else {
+          reject(new Error(`HTTP ${res.statusCode}: ${res.statusMessage}`));
+        }
+      });
+    });
+    
+    req.on('error', (e) => {
+      reject(e);
+    });
+    
+    req.on('timeout', () => {
+      req.destroy();
+      reject(new Error('Timeout na conexão'));
+    });
+  });
+}
 
 async function run() {
-    try {
-        const res = await fetch(WORKER_URL);
-        const data = await res.json();
+  try {
+    console.log("⏳ Aguardando resposta do Worker...");
+    const data = await makeRequest(WORKER_URL, 10000);
+    
+    console.log(`\n✅ Conexão estabelecida!`);
+    console.log(`📊 STATUS DA FILA: ${data.length} ITENS\n`);
 
-        console.log(`\n📦 STATUS DA FILA: ${data.length} ITENS\n`);
-
-        if (data.length === 0) {
-            console.log("🍃 A fila está vazia. O Worker está dormindo.");
-        } else {
-            data.forEach((job, i) => {
-                const date = job.created_at ? new Date(job.created_at).toLocaleDateString('pt-BR') : 'Hoje';
-                console.log(`${String(i + 1).padStart(2, '0')}. [${(job.cluster || 'GERAL').toUpperCase()}] ${job.topic}`);
-                console.log(`    └─ Intenção: ${job.intent || 'N/A'} | Status: ${job.status || 'Pendente'}\n`);
-            });
-        }
-    } catch (e) {
-        console.error("❌ Erro ao conectar:", e.message);
+    if (data.length === 0) {
+      console.log("✅ A fila está vazia. O Worker está dormindo.");
+    } else {
+      console.log("📋 JOBS NA FILA:");
+      console.log("─".repeat(50));
+      data.forEach((job, i) => {
+        const date = job.created_at ? new Date(job.created_at).toLocaleDateString('pt-BR') : 'Hoje';
+        const status = job.status || 'Pendente';
+        const cluster = job.cluster || 'GERAL';
+        console.log(`${String(i + 1).padStart(2, '0')}. [${cluster.toUpperCase()}] ${status} - ${date}`);
+      });
+      console.log("─".repeat(50));
     }
+  } catch (e) {
+    console.error("\n❌ ERRO AO CONECTAR:");
+    console.error(`   Mensagem: ${e.message}`);
+    console.error(`   URL: ${WORKER_URL}`);
+    console.error("\n💡 Possíveis soluções:");
+    console.error("   1. Verifique sua conexão com a internet");
+    console.error("   2. Verifique se o Worker está ativo no Cloudflare");
+    console.error("   3. Tente novamente em alguns segundos");
+    process.exit(1);
+  }
 }
 
 run();
