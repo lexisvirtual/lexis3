@@ -42,6 +42,7 @@ const BlogPost = () => {
                                 src={post.image}
                                 alt={post.title}
                                 className="w-full h-64 md:h-96 object-cover rounded-2xl shadow-2xl mt-8 border border-white/10"
+                                loading="lazy"
                             />
                         )}
                     </header>

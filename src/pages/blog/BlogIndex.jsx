@@ -34,6 +34,7 @@ const BlogIndex = () => {
                                         src={post.image}
                                         alt={post.title}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 filter group-hover:grayscale-0 grayscale-[30%]"
+                                        loading="lazy"
                                     />
                                 </div>
                             )}
