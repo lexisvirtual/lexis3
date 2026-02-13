@@ -39,7 +39,8 @@ export default {
 
         // 2. Ver Fila
         if (url.pathname === "/queue") {
-            const list = await env.LEXIS_PAUTA.list({ prefix: "job:" });
+            const limit = parseInt(url.searchParams.get("limit")) || 100; // Default: 100 items
+            const list = await env.LEXIS_PAUTA.list({ prefix: "job:", limit });
             const jobs = [];
             for (const key of list.keys) {
                 const value = await env.LEXIS_PAUTA.get(key.name);
@@ -278,7 +279,7 @@ async function generateAndPublishPost(env, job) {
     // ETAPA 6: MONTAGEM FINAL
     // INJEÇÃO DE IMAGEM AUTOMÁTICA (Curador V8.1 - Reativado)
     if (!postData.image) {
-        postData.image = getCuratedImage(job.cluster);
+        postData.image = await getImageWithFallback(job.cluster, env);
     }
 
     const finalMarkdown = `---
@@ -361,6 +362,143 @@ async function uploadToGitHub(env, fileName, content, message) {
     return { url: d.content.html_url };
 }
 
+
+// Mapa de queries para cada cluster (para buscar no Unsplash)
+const CLUSTER_QUERIES = {
+    'business': 'business professional office work',
+    'viagem': 'travel adventure landscape nature',
+    'estudo': 'study learning education books',
+    'mindset': 'meditation focus mindfulness wellness',
+    'default': 'inspiration motivation success'
+};
+
+// ============================================
+// FUNÇÃO PRINCIPAL: Buscar imagem com fallback
+// ============================================
+async function getImageWithFallback(cluster, env) {
+    console.log(`[IMAGE] Buscando imagem para cluster: ${cluster}`);
+    
+    // TENTATIVA 1: Unsplash API (se configurado)
+    if (env.UNSPLASH_ACCESS_KEY && env.UNSPLASH_ENABLED === 'true') {
+        try {
+            console.log(`[UNSPLASH] Tentando buscar imagem dinâmica...`);
+            const image = await getUnsplashImage(cluster, env.UNSPLASH_ACCESS_KEY);
+            if (image) {
+                console.log(`[UNSPLASH] ✅ Sucesso! URL: ${image.substring(0, 50)}...`);
+                return image;
+            }
+        } catch (error) {
+            console.warn(`[UNSPLASH] ❌ Falha: ${error.message}. Usando fallback...`);
+        }
+    } else {
+
+  // TENTATIVA 2: Pexels API (se configurado)
+  if (env.PEXELS_API_KEY && env.PEXELS_ENABLED === 'true') {
+    try {
+      console.log(`[PEXELS] Tentando buscar imagem dinâmica...`);
+      const query = CLUSTER_QUERIES[cluster] || CLUSTER_QUERIES['default'];
+      const image = await getPixabayImage(query, env.PEXELS_API_KEY);
+      if (image) {
+        console.log(`[PEXELS] ✅ Sucesso! URL: ${image.substring(0, 50)}...`);
+        return image;
+      }
+    } catch (error) {
+      console.warn(`[PEXELS] ❌ Falha: ${error.message}. Usando fallback...`);
+    }
+  } else {
+    console.log(`[PEXELS] Desabilitado ou sem chave. Usando banco curado.`);
+  }cd C:\Users\aderv\lexis3\Workercode wrangler.toml
+  npx wrangler deploy
+
+     node test-pexels.json   console.log(`[UNSPLASH] Desabilitado ou sem chave. Usando banco curado.`);
+    }
+    
+    // FALLBACK 1: Banco de imagens curado
+    console.log(`[FALLBACK-1] Usando banco de imagens estático...`);
+    const curatedImage = getCuratedImage(cluster);
+    if (curatedImage) {
+        console.log(`[FALLBACK-1] ✅ Imagem curada encontrada`);
+        return curatedImage;
+    }
+    
+    // FALLBACK 2: Imagem padrão
+    console.log(`[FALLBACK-2] Usando imagem padrão...`);
+    return CURATED_IMAGES['default'][0];
+}
+
+// ============================================
+// FUNÇÃO: Buscar do Unsplash API
+// ============================================
+async function getUnsplashImage(cluster, accessKey) {
+    const query = CLUSTER_QUERIES[cluster] || CLUSTER_QUERIES['default'];
+    const url = `https://api.unsplash.com/photos/random?query=${encodeURIComponent(query)}&w=1200&q=80&orientation=landscape`;
+    
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos timeout
+        
+        const response = await fetch(url, {
+            headers: {
+                'Authorization': `Client-ID ${accessKey}`,
+                'Accept-Version': 'v1'
+            },
+            signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        // Retornar URL com parâmetros otimizados
+        const imageUrl = data.urls.regular;
+        return `${imageUrl}?w=1200&q=80`;
+        
+    } catch (error) {
+        if (error.name === 'AbortError') {
+            console.error(`[UNSPLASH API] Timeout (5s) ao buscar imagem`);
+        } else {
+            console.error(`[UNSPLASH API] Erro: ${error.message}`);
+        }
+        return null;
+    }
+
+    // =====================================================
+// FUNÇÃO: Buscar do Pexels API
+// =====================================================
+async function getPixabayImage(query, accessKey) {
+  try {
+        const url = `https://pixabay.com/api/?key=${accessKey}&q=${encodeURIComponent(query)}&image_type=photo&orientation=horizontal&per_page=3`;
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+    const response = await fetch(url, {
+      ;
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    const imageUrl = getPixabayImagedata.hits?.[0]?.largeImageURL;
+    
+    if (imageUrl) {
+      console.log(`[PEXELS] ✅ Sucesso! URL: ${imageUrl.substring(0, 50)}...`);
+      return imageUrl;
+    }
+    return null;
+  } catch (error) {
+    console.error(`[[PEXELS]PIXABAY API] ❌ Erro: ${error.message}`);
+    return null;
+  }
+}
+
+
+
 // --- BANCO DE IMAGENS HUMANIZADAS (Unsplash Curated - V8.1) ---
 function getCuratedImage(cluster) {
     const COLLECTIONS = {
@@ -399,4 +537,5 @@ function getCuratedImage(cluster) {
     const key = cluster ? cluster.toLowerCase() : 'default';
     const collection = COLLECTIONS[key] || COLLECTIONS['default'];
     return collection[Math.floor(Math.random() * collection.length)];
+}
 }

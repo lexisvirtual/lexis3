@@ -8,6 +8,9 @@ compatibility_date = "2024-03-20"
 GITHUB_OWNER = "lexisvirtual"
 GITHUB_REPO = "lexis3"
 GITHUB_BRANCH = "main"
+UNSPLASH_ACCESS_KEY = "qMQTTHCD80yz4EPtYQcJ4B8HS1BwZ2UMiASUPB5i2oI"
+UNSPLASH_ENABLED = "true"
+PIXABAY_API_KEY = "54644686-76fa1461402a91a56a1f92e8b"PEXELS_ENABLED = "true"
 
 # Habilitar Workers AI
 [ai]
@@ -22,4 +25,5 @@ id = "071364560008455bad2f86d070c9f4bd"
 # Roda todo dia às 09:00 UTC (06:00 BRT)
 [triggers]
 crons = ["0 9 * * *"]
+
 
