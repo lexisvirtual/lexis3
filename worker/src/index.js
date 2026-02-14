@@ -408,23 +408,20 @@ async function getImageWithFallback(cluster, env) {
   } else {
     console.log(`[PEXELS] Desabilitado ou sem chave. Usando banco curado.`);
   }cd C:\Users\aderv\lexis3\Workercode wrangler.toml
-  npx wrangler deploy
-
-     node test-pexels.json   console.log(`[UNSPLASH] Desabilitado ou sem chave. Usando banco curado.`);
-    }
     
-    // FALLBACK 1: Banco de imagens curado
-    console.log(`[FALLBACK-1] Usando banco de imagens estático...`);
-    const curatedImage = getCuratedImage(cluster);
-    if (curatedImage) {
-        console.log(`[FALLBACK-1] ✅ Imagem curada encontrada`);
-        return curatedImage;
-    }
-    
-    // FALLBACK 2: Imagem padrão
-    console.log(`[FALLBACK-2] Usando imagem padrão...`);
-    return CURATED_IMAGES['default'][0];
-}
+  
+  // FALLBACK: Banco de imagens curado
+  console.log(`[FALLBACK] Usando banco de imagens estático...`);
+  const curatedImage = getCuratedImage(cluster);
+  if (curatedImage) {
+    console.log(`[FALLBACK] ✅ Imagem curada encontrada`);
+    return curatedImage;
+  }
+  
+  // Se tudo falhar, retorna imagem padrão
+  return "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80";
+}  
+        git add worker/src/index.jsgit commit -m "Fix: Corrigir escopo getCuratedImage e remover codigo duplicado"
 
 // ============================================
 // FUNÇÃO: Buscar do Unsplash API
