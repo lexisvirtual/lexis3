@@ -404,13 +404,7 @@ async function getImageWithFallback(cluster, env) {
       }
     } catch (error) {
       console.warn(`[PEXELS] ❌ Falha: ${error.message}. Usando fallback...`);
-    }
-  } else {
-    console.log(`[PEXELS] Desabilitado ou sem chave. Usando banco curado.`);
-  }cd C:\Users\aderv\lexis3\Workercode wrangler.toml
-  npx wrangler deploy
-
-     node test-pexels.json   console.log(`[UNSPLASH] Desabilitado ou sem chave. Usando banco curado.`);
+ 
     }
     
     // FALLBACK 1: Banco de imagens curado
