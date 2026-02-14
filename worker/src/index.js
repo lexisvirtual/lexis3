@@ -477,14 +477,15 @@ async function getPixabayImage(query, accessKey) {
     const timeoutId = setTimeout(() => controller.abort(), 5000);
 
     const response = await fetch(url, {
-      ;
+              signal: controller.signal
+    });
 
     clearTimeout(timeoutId);
 
     if (!response.ok) return null;
 
     const data = await response.json();
-    const imageUrl = getPixabayImagedata.hits?.[0]?.largeImageURL;
+    const imageUrl = data.hits?.[0]?.largeImageURL;
     
     if (imageUrl) {
       console.log(`[PEXELS] ✅ Sucesso! URL: ${imageUrl.substring(0, 50)}...`);
