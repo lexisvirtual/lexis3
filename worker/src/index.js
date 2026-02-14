@@ -404,7 +404,13 @@ async function getImageWithFallback(cluster, env) {
       }
     } catch (error) {
       console.warn(`[PEXELS] ❌ Falha: ${error.message}. Usando fallback...`);
- 
+    }
+  } else {
+    console.log(`[PEXELS] Desabilitado ou sem chave. Usando banco curado.`);
+  }cd C:\Users\aderv\lexis3\Workercode wrangler.toml
+  npx wrangler deploy
+
+     node test-pexels.json   console.log(`[UNSPLASH] Desabilitado ou sem chave. Usando banco curado.`);
     }
     
     // FALLBACK 1: Banco de imagens curado
@@ -471,17 +477,16 @@ async function getPixabayImage(query, accessKey) {
     const timeoutId = setTimeout(() => controller.abort(), 5000);
 
     const response = await fetch(url, {
-              signal: controller.signal
-    });
+      ;
 
     clearTimeout(timeoutId);
 
     if (!response.ok) return null;
 
     const data = await response.json();
-    const imageUrl = data.hits?.[0]?.largeImageURL;
+    const imageUrl = getPixabayImagedata.hits?.[0]?.largeImageURL;
     
-    if (imageUrl) {
+ node test-pixabay-final.js   if (imageUrl) {
       console.log(`[PEXELS] ✅ Sucesso! URL: ${imageUrl.substring(0, 50)}...`);
       return imageUrl;
     }
@@ -532,5 +537,4 @@ function getCuratedImage(cluster) {
     const key = cluster ? cluster.toLowerCase() : 'default';
     const collection = COLLECTIONS[key] || COLLECTIONS['default'];
     return collection[Math.floor(Math.random() * collection.length)];
-}
 }
