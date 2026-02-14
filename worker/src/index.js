@@ -407,9 +407,7 @@ async function getImageWithFallback(cluster, env) {
     }
   } else {
     console.log(`[PEXELS] Desabilitado ou sem chave. Usando banco curado.`);
-  }cd C:\Users\aderv\lexis3\Workercode wrangler.toml
-    
-  
+git add worker/src/index.js && git commit -m "Fix: Remover texto acidental" && git push  
   // FALLBACK: Banco de imagens curado
   console.log(`[FALLBACK] Usando banco de imagens estático...`);
   const curatedImage = getCuratedImage(cluster);
