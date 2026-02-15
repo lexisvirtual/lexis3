@@ -9,7 +9,6 @@ image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80
 cluster: "metodologia"
 intent: "informacional"
 ---
-
 ## A Ilusão da Gramática
 
 Acreditamos que a gramática é o fundamento do idioma, mas isso é um mito. A gramática é apenas um conjunto de regras que ajudam a comunicação, mas não é o segredo para aprender um idioma de verdade. O que é importante é a prática e a imersão no idioma.
@@ -49,4 +48,3 @@ Para saber mais sobre como treinar o idioma inglês de forma eficaz, leia nossos
 - [Por que cursinhos tradicionais falham tanto](/blog/cursinhos-tradicionais-falam-tanto)
 - [O Segredo dos Poliglotas para Aprender Rápido](/blog/o-segredo-dos-poliglotas-para-aprender-rapido)
 - [A Imersão é o Segredo para Aprender Idiomas de Verdade](/blog/imersao-para-fluencia-em-idiomas)
-  

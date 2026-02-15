@@ -9,7 +9,6 @@ image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=1200&q=80
 cluster: "mindset"
 intent: "dor"
 ---
-
 Você já se sentiu frustrado por não avançar no seu aprendizado de inglês apesar de estudar todos os dias? Você já se perguntou por que entender inglês não é o mesmo que falar inglês? A dor de não ter liberdade de expressão é um sentimento comum entre os aprendizes de inglês. E muitas vezes, é justamente essa dor que impede que você avance no seu aprendizado.
 
 ## A dor de não ter liberdade de expressão
@@ -41,4 +40,3 @@ Em resumo, estudar inglês todos os dias não é suficiente para dominar o idiom
 - [O Medo de Errar ao Falar Inglês: Como Superar a Dor](/blog/o-medo-de-errar-ao-falar-ingles)
 - [Por que você entende inglês mas não fala: A Dor de Não Ter Liberdade de Expressão](/blog/por-que-voce-entende-ingles-mas-nao-fala)
 - [A Dor de Não Treinar Idioma: O Erro Comum de Quem Tenta Aprender Inglês Sozinho](/blog/a-dor-de-nao-treinar-idioma-o-erro-comum-de-quem-tenta-aprender-ingles-sozinho)
-  

@@ -10,8 +10,6 @@ image_source: "ERROR_401"
 cluster: "estudo"
 intent: "desejo"
 ---
-
-
 ## O Estudo de Inglês: um Fardo ou uma Aventura?
 
 Quando se fala em estudar inglês, muitas pessoas sentem um arrepio. O estudo de línguas pode ser um desafio, mas não precisa ser um fardo. A chave é encontrar formas divertidas e eficazes de aprender.
@@ -56,4 +54,3 @@ Lembre-se de que o estudo de inglês é um processo contínuo e que a prática �
 - [O Carnaval é a Melhor Vez para Intensificar o Estudo de Inglês](/blog/intensivao-ingles-no-carnaval-vale-a-pena)
 - [Aproveitar o feriado para estudar inglês: uma oportunidade para revolucionar sua linguagem](/blog/aproveitar-feriado-para-estudar-ingles)
 - [A Maratona de Séries em Inglês Feriado: Um Desafio para Revolucionar sua Linguagem](/blog/maratona-de-series-em-ingles-feriado)
-  

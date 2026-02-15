@@ -10,7 +10,6 @@ image_source: "ERROR_401"
 cluster: "social"
 intent: "desejo"
 ---
-
 Aprender a se comunicar com pessoas de língua estrangeira é um desafio para muitos viajantes. E é natural, pois a linguagem é um barreira que pode dificultar a compreensão e a expressão. No entanto, é possível superar essa barreira e puxar assunto com gringos em viagem. O segredo está em abandonar os métodos tradicionais de ensino de línguas e adoptar uma abordagem mais prática e interativa.
 
 ## A Linguagem Não Se Aprende, a Linguagem Se Treina
@@ -35,5 +34,3 @@ Puxar assunto com gringos em viagem é um desafio, mas é possível. O segredo e
 
 ---
 *Este artigo é parte da nossa série sobre **social**. Continue treinando:*
-
-  

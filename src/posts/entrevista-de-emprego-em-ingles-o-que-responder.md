@@ -9,7 +9,6 @@ image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80"
 cluster: "business"
 intent: "decisao"
 ---
-
 ## O desafio da entrevista de emprego em inglês
 
 A entrevista de emprego é um momento crucial na vida profissional. Além de demonstrar suas habilidades e experiência, é fundamental mostrar-se confiante e bem-preparado. Mas, o que fazer quando a entrevista é realizada em inglês? Muitas pessoas sentem-se perdidas e não sabem como se preparar para uma situação como essa.
@@ -49,4 +48,3 @@ A entrevista de emprego em inglês é um desafio, mas não é impossível. Com a
 ---
 *Este artigo é parte da nossa série sobre **business**. Continue treinando:*
 - [Inglês para reuniões online: um guia de sobrevivência para empresários](/blog/ingles-para-reunioes-online-guia-de-sobrevivencia)
-  

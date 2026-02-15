@@ -9,7 +9,6 @@ image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80
 cluster: "metodologia"
 intent: "informacional"
 ---
-
 Quando se fala em fluência funcional em inglês, muitas pessoas pensam em cursos de idiomas tradicionais ou online que prometem resultados rápidos e fáceis. No entanto, é preciso questionar esses métodos e procurar uma abordagem mais eficaz para alcançar a fluência funcional. ## Por que os métodos tradicionais falham tanto
 
 Os cursos de idiomas tradicionais baseiam-se em uma abordagem tradicional que se concentra em gramática, vocabulário e exercícios de escrita e leitura. Embora isso possa ser útil para alguns, muitas pessoas se sentem frustradas e desanimadas com esses métodos. Isso porque eles não consideram a realidade da comunicação em inglês, que é fundamentalmente oral e prática.
@@ -45,4 +44,3 @@ Em resumo, a fluência funcional é um nível alto de competência em inglês qu
 - [Por que cursinhos tradicionais falham tanto](/blog/cursinhos-tradicionais-falam-tanto)
 - [Imersão em Inglês Funciona Sim? A Verdadeira Razão por trás do Sucesso](/blog/imersao-em-ingles-funciona-sim)
 - [Por que cursos online não fazem você falar: A Verdadeira Razão por trás da Dor](/blog/por-que-cursos-online-nao-fazem-voc-falar)
-  

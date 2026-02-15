@@ -10,7 +10,6 @@ image_source: "ERROR_401"
 cluster: "estudo"
 intent: "motivacao"
 ---
-
 ## Aproveitar o feriado para estudar inglês: uma oportunidade para revolucionar sua linguagem
 
 Quando o feriado chega, muitas pessoas se sentem perdidas, sem saber o que fazer para não se sentir vazio e sem propósito. Porém, é exatamente nesse momento que você pode aproveitar para fazer algo que mudará sua vida: estudar inglês.
@@ -39,5 +38,3 @@ O feriado é uma oportunidade única para mudar sua vida. Você pode aproveitar 
 
 ---
 *Este artigo é parte da nossa série sobre **estudo**. Continue treinando:*
-
-  

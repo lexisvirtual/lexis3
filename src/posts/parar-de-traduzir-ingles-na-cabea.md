@@ -9,7 +9,6 @@ image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=1200&q=80
 cluster: "mindset"
 intent: "dor"
 ---
-
 Você já sentiu aquele momento em que está conversando com alguém em inglês e, de repente, sua mente começa a traduzir tudo para o português? Ou quando você está lendo um texto em inglês e seu cérebro está traduzindo para português sem parar? Essa é a dor de traduzir inglês na cabeça.
 
 Essa dor é real e pode ser estressante, especialmente quando você está tentando se comunicar em inglês. Mas, não é apenas uma questão de habilidade linguística. É uma questão de mindset. É uma questão de como você se relaciona com o inglês e com a linguagem em geral.
@@ -39,4 +38,3 @@ E, quando você se sente mais seguro e mais confiante, você começa a parar de 
 - [Por que você entende inglês mas não fala: A Dor de Não Ter Liberdade de Expressão](/blog/por-que-voce-entende-ingles-mas-nao-fala)
 - [Desmistificando o Pensamento em Inglês: Abandone as Fórmulas e Desbloqueie a Liberdade](/blog/desmistificando-o-pensamento-em-ingles)
 - [O Medo de Errar ao Falar Inglês: Como Superar a Dor](/blog/o-medo-de-errar-ao-falar-ingles)
-  

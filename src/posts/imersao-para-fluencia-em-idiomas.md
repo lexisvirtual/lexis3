@@ -9,7 +9,6 @@ image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80
 cluster: "metodologia"
 intent: "informacional"
 ---
-
 Quando se trata de aprender um idioma, muitas pessoas se sentem perdidas na neblina da gramática e da decoreba. No entanto, essa abordagem tradicional não é a mais eficaz. A imersão é o segredo para aprender idiomas de verdade.
 
 ## A Falsa Crença na Gramática
@@ -48,4 +47,3 @@ Você pode começar a se imergir na linguagem hoje mesmo. Encontre um aplicativo
 *Este artigo é parte da nossa série sobre **metodologia**. Continue treinando:*
 - [Por que cursinhos tradicionais falham tanto](/blog/cursinhos-tradicionais-falam-tanto)
 - [O Segredo dos Poliglotas para Aprender Rápido](/blog/o-segredo-dos-poliglotas-para-aprender-rapido)
-  

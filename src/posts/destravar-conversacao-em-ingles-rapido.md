@@ -9,8 +9,6 @@ image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80
 cluster: "dicas"
 intent: "informacional"
 ---
-
-
 ## O segredo da conversação em inglês rápido: não é gramática
 
 Você está cansado de estudar gramática e verbos regulares, mas ainda não consegue conversar naturalmente em inglês? Você não está sozinho. Muitas pessoas acreditam que a chave para uma conversação fluente em inglês está na gramática e na decoreba, mas isso não é verdade. O segredo está em treinar sua habilidade de comunicação, não em memorizar regras e fórmulas.
@@ -55,5 +53,3 @@ Melhorar sua conversação em inglês rápido não é fácil, mas é possível. 
 
 ---
 *Este artigo é parte da nossa série sobre **dicas**. Continue treinando:*
-
-  

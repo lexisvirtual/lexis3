@@ -9,7 +9,6 @@ image: "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80
 cluster: "mindset"
 intent: "informacional"
 ---
-
 ## O Fardo da Gramática
 
 Quando se trata de aprender um idioma, é comum achar que a gramática é o principal obstáculo. E é verdade, mas não no sentido que você pensa. A gramática não é o problema, é a forma como você a aborda. A gramática é um conjunto de regras, e regras são para ser quebradas. O que é importante é entender o porquê dessas regras existem, e não apenas memorizá-las.
@@ -48,5 +47,3 @@ A técnica do pensamento em inglês é simples: você precisa mudar a forma como
 
 ---
 *Este artigo é parte da nossa série sobre **mindset**. Continue treinando:*
-
-  

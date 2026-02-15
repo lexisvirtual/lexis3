@@ -10,7 +10,6 @@ image_source: "ERROR_401"
 cluster: "estudo"
 intent: "decisao"
 ---
-
 Idioma não se aprende. Idioma se treina. E o carnaval é a melhor vez para treinar o seu inglês. Parece contrário, mas a verdade é que o feriado mais popular do Brasil pode ser uma oportunidade única para intensificar o estudo de inglês.
 
 ## O que você faz durante o carnaval?
@@ -52,4 +51,3 @@ O carnaval é uma oportunidade única para intensificar o estudo de inglês. Com
 ---
 *Este artigo é parte da nossa série sobre **estudo**. Continue treinando:*
 - [Aproveitar o feriado para estudar inglês: uma oportunidade para revolucionar sua linguagem](/blog/aproveitar-feriado-para-estudar-ingles)
-  

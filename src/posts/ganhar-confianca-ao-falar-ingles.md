@@ -9,8 +9,6 @@ image: "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80
 cluster: "mindset"
 intent: "informacional"
 ---
-
-
 ## O Medo é o Maior Obstáculo
 
 Muitas pessoas que estudam inglês sentem um medo intenso ao falar a língua. Esse medo pode ser causado por várias razões, desde a preocupação com a gramática até a ansiedade de se parecer ridículo diante de outros. No entanto, é importante lembrar que o inglês é uma língua viva e que a perfeição não é o objetivo. O objetivo é se comunicar de forma eficaz e construir relacionamentos.
@@ -46,4 +44,3 @@ Se você está lutando para superar o medo de falar inglês, leia nossos outros 
 - [O Medo de Errar ao Falar Inglês: Como Superar a Dor](/blog/o-medo-de-errar-ao-falar-ingles)
 - [A Dor de Não Avançar no Inglês: Superar o Medo de Errar](/blog/a-dor-de-nao-avancar-no-ingles-superar-o-medo-de-errar)
 - [Como parar de traduzir inglês na cabeça](/blog/parar-de-traduzir-ingles-na-cabea)
-  

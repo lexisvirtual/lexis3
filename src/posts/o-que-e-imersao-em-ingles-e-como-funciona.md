@@ -10,7 +10,6 @@ image_source: "fallback_manual"
 cluster: "metodologia"
 intent: "informacional"
 ---
-
 Quando você pensa em aprender inglês, provavelmente imagina salas de aula, lições de gramática e listas de vocabulário. Mas e se te disséssemos que existe um método completamente diferente que funciona muito melhor? Bem-vindo ao mundo da imersão em inglês.
 
 ## O que é Imersão em Inglês?

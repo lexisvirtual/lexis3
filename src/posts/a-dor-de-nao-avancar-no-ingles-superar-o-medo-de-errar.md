@@ -9,7 +9,6 @@ image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=1200&q=80"
 cluster: "mindset"
 intent: "dor"
 ---
-
 Você já estudou anos de inglês, mas não consegue avançar. O medo de errar é um obstáculo que parece insuperável. Você se sente frustrado e dorido com a falta de progresso.
 
 ## O Medo de Errar é um Obstáculo Real
@@ -41,4 +40,3 @@ A dor de não avançar no inglês é real, mas é possível superá-la. O medo d
 - [O Medo de Errar ao Falar Inglês: Como Superar a Dor](/blog/o-medo-de-errar-ao-falar-ingles)
 - [Desmistificando o Pensamento em Inglês: Abandone as Fórmulas e Desbloqueie a Liberdade](/blog/desmistificando-o-pensamento-em-ingles)
 - [Por que você entende inglês mas não fala: A Dor de Não Ter Liberdade de Expressão](/blog/por-que-voce-entende-ingles-mas-nao-fala)
-  

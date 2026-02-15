@@ -10,7 +10,6 @@ image_source: "ERROR_401"
 cluster: "estudo"
 intent: "lazer"
 ---
-
 Você está cansado de estudar inglês da mesma forma há anos? Você já tentou usar métodos tradicionais como gramática e decoreba, mas não está vendo resultados? Então, é hora de mudar de abordagem! A maratona de séries em inglês feriado é a oportunidade perfeita para revolucionar seu estudo de língua e melhorar sua fluência.
 
 ## O que é uma maratona de séries em inglês?
@@ -63,4 +62,3 @@ Para aprender mais sobre como intensificar seu estudo de inglês durante o feria
 *Este artigo é parte da nossa série sobre **estudo**. Continue treinando:*
 - [O Carnaval é a Melhor Vez para Intensificar o Estudo de Inglês](/blog/intensivao-ingles-no-carnaval-vale-a-pena)
 - [Aproveitar o feriado para estudar inglês: uma oportunidade para revolucionar sua linguagem](/blog/aproveitar-feriado-para-estudar-ingles)
-  

@@ -72,6 +72,28 @@ export default {
             return new Response("Memória limpa: Índices apagados.", { status: 200 });
         }
 
+        // 6. ANALYTICS (Ver dados)
+        if (url.pathname === "/analytics") {
+            const analysis = await analyzePostHistory(env);
+            const context = getTemporalContext();
+
+            return new Response(JSON.stringify({
+                analysis,
+                context,
+                recommendations: analysis.gaps
+            }, null, 2), {
+                headers: { "Content-Type": "application/json" }
+            });
+        }
+
+        // 7. PLANEJAMENTO IA (Gerar Pautas)
+        if (url.pathname === "/ai-plan") {
+            const result = await selectThemesByAI(env);
+            return new Response(JSON.stringify(result, null, 2), {
+                headers: { "Content-Type": "application/json" }
+            });
+        }
+
         return new Response("Lexis Publisher V5.6 (Slug Shield) Ativo", { status: 200 });
     },
 
@@ -159,7 +181,8 @@ async function generateAndPublishPost(env, job) {
       "slug": "slug-otimizado-seo",
       "description": "Meta description persuasiva para Google (max 150 chars)",
       "tags": ["tag1", "tag2"],
-      "content": "Texto completo do artigo em Markdown. Use ## para subtítulos. NÃO coloque o título H1 aqui dentro, apenas o corpo do texto."
+      "content": "Texto completo do artigo em Markdown. Use ## para subtítulos. NÃO coloque o título H1 aqui dentro, apenas o corpo do texto.",
+      "image_search_query": "English visual search query for Unsplash/Pixabay. Ex: 'cinematic shot of happy students watching a movie on laptop, cozy atmosphere'"
     }
   `;
 
@@ -201,7 +224,7 @@ async function generateAndPublishPost(env, job) {
         raw = raw.substring(firstBrace, lastBrace + 1);
     }
 
-    let postData = { cluster: job.cluster, intent: job.intent };
+    const postData = { cluster: job.cluster, intent: job.intent };
     let parseSuccess = false;
 
     // TENTATIVA 1: JSON.parse puro
@@ -251,6 +274,12 @@ async function generateAndPublishPost(env, job) {
         }
     }
 
+    // TENTATIVA 3 (Extra): Extrair image_search_query via Regex isolado se não veio
+    if (!postData.image_search_query) {
+        const imgMatch = raw.match(/"image_search_query"\s*:\s*"(.*?)"/s);
+        if (imgMatch) postData.image_search_query = imgMatch[1];
+    }
+
     // FALLBACKS DE SEGURANÇA (Se tudo falhar, não perde o post)
     if (!postData.title) postData.title = job.topic;
     if (!postData.slug) postData.slug = job.topic.toLowerCase().replace(/ /g, '-');
@@ -279,8 +308,12 @@ async function generateAndPublishPost(env, job) {
     // ETAPA 6: MONTAGEM FINAL
     // INJEÇÃO DE IMAGEM AUTOMÁTICA (Curador V8.1 - Reativado)
     if (!postData.image) {
-        postData.image = await getImageWithFallback(job.cluster, env);
+        // Passamos a query da AI (ou o tópico como fallback fraco) + o cluster
+        postData.image = await getImageWithFallback(job.cluster, env, postData.image_search_query || job.topic);
     }
+
+    // LIMPEZA DE CONTEÚDO V8.3 - Remove metadados técnicos vazados
+    postData.content_markdown = sanitizeContent(postData.content_markdown);
 
     const finalMarkdown = `---
 title: "${postData.title.replace(/"/g, '\\"')}"
@@ -334,6 +367,36 @@ async function getRelatedPosts(env, cluster) {
 
 // --- UTILS ---
 
+function sanitizeContent(content) {
+    if (!content) return content;
+
+    let cleaned = content;
+
+    // 1. Remove linhas com "image_search_query" (formato JSON ou texto solto)
+    cleaned = cleaned.replace(/[,\s]*"image_search_query"\s*:\s*"[^"]*"/gi, '');
+    cleaned = cleaned.replace(/.*image_search_query.*\n?/gi, '');
+
+    // 2. Remove restos de JSON artifacts (chaves soltas, vírgulas extras)
+    cleaned = cleaned.replace(/^\s*[,}\]]\s*$/gm, ''); // Linhas com apenas }, ], ou vírgulas
+    cleaned = cleaned.replace(/,\s*}/g, '}'); // Vírgulas antes de fechar objeto
+    cleaned = cleaned.replace(/,\s*\]/g, ']'); // Vírgulas antes de fechar array
+
+    // 3. Remove aspas escapadas desnecessárias no meio do texto
+    cleaned = cleaned.replace(/\\"/g, '"');
+
+    // 4. Remove blocos de código JSON vazios ou quebrados
+    cleaned = cleaned.replace(/```json\s*\n\s*```/gi, '');
+    cleaned = cleaned.replace(/```\s*\n\s*```/g, '');
+
+    // 5. Limpa múltiplas linhas em branco consecutivas (deixa no máximo 2)
+    cleaned = cleaned.replace(/\n{4,}/g, '\n\n\n');
+
+    // 6. Remove espaços em branco no final das linhas
+    cleaned = cleaned.replace(/[ \t]+$/gm, '');
+
+    return cleaned.trim();
+}
+
 function validatePost(post) {
     if (post.content_markdown.length < 400) return { valid: false, reason: "Short Content" };
     if (!post.content_markdown.includes("##")) return { valid: false, reason: "No Structure (H2)" };
@@ -375,14 +438,20 @@ const CLUSTER_QUERIES = {
 // ============================================
 // FUNÇÃO PRINCIPAL: Buscar imagem com fallback
 // ============================================
-async function getImageWithFallback(cluster, env) {
-    console.log(`[IMAGE] Buscando imagem para cluster: ${cluster}`);
-    
-    // TENTATIVA 1: Unsplash API (se configurado)
+async function getImageWithFallback(cluster, env, specificQuery = null) {
+    console.log(`[IMAGE] Buscando imagem. Cluster: ${cluster} | Query Específica: ${specificQuery || "Nenhuma"}`);
+
+    // Define a query final: Se tiver específica (da IA), usa ela. Se não, usa a do cluster.
+    // Se a específica for muito curta (<3 chars), ignora.
+    let finalQuery = (specificQuery && specificQuery.length > 3)
+        ? specificQuery
+        : (CLUSTER_QUERIES[cluster] || CLUSTER_QUERIES['default']);
+
+    // TENTATIVA 1: Unsplash API
     if (env.UNSPLASH_ACCESS_KEY && env.UNSPLASH_ENABLED === 'true') {
         try {
-            console.log(`[UNSPLASH] Tentando buscar imagem dinâmica...`);
-            const image = await getUnsplashImage(cluster, env.UNSPLASH_ACCESS_KEY);
+            console.log(`[UNSPLASH] Buscando: "${finalQuery}"`);
+            const image = await getUnsplashImage(finalQuery, env.UNSPLASH_ACCESS_KEY);
             if (image) {
                 console.log(`[UNSPLASH] ✅ Sucesso! URL: ${image.substring(0, 50)}...`);
                 return image;
@@ -390,48 +459,47 @@ async function getImageWithFallback(cluster, env) {
         } catch (error) {
             console.warn(`[UNSPLASH] ❌ Falha: ${error.message}. Usando fallback...`);
         }
-    } else {
-
-  // TENTATIVA 2: Pexels API (se configurado)
-  if (env.PEXELS_API_KEY && env.PEXELS_ENABLED === 'true') {
-    try {
-      console.log(`[PEXELS] Tentando buscar imagem dinâmica...`);
-      const query = CLUSTER_QUERIES[cluster] || CLUSTER_QUERIES['default'];
-      const image = await getPixabayImage(query, env.PEXELS_API_KEY);
-      if (image) {
-        console.log(`[PEXELS] ✅ Sucesso! URL: ${image.substring(0, 50)}...`);
-        return image;
-      }
-    } catch (error) {
-      console.warn(`[PEXELS] ❌ Falha: ${error.message}. Usando fallback...`);
     }
-  } else {
-    console.log(`[PEXELS] Desabilitado ou sem chave. Usando banco curado.`);
-git add worker/src/index.js && git commit -m "Fix: Remover texto acidental" && git push  
-  // FALLBACK: Banco de imagens curado
-  console.log(`[FALLBACK] Usando banco de imagens estático...`);
-  const curatedImage = getCuratedImage(cluster);
-  if (curatedImage) {
-    console.log(`[FALLBACK] ✅ Imagem curada encontrada`);
-    return curatedImage;
-  }
-  
-  // Se tudo falhar, retorna imagem padrão
-  return "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80";
-}  
-        git add worker/src/index.jsgit commit -m "Fix: Corrigir escopo getCuratedImage e remover codigo duplicado"
+
+    // TENTATIVA 2: Pixabay API
+    if (env.PIXABAY_API_KEY && env.PEXELS_ENABLED === 'true') {
+        try {
+            console.log(`[PIXABAY] Buscando: "${finalQuery}"`);
+            const image = await getPixabayImage(finalQuery, env.PIXABAY_API_KEY);
+            if (image) {
+                console.log(`[PIXABAY] ✅ Sucesso! URL: ${image.substring(0, 50)}...`);
+                return image;
+            }
+        } catch (error) {
+            console.warn(`[PIXABAY] ❌ Falha: ${error.message}. Usando fallback...`);
+        }
+    } else {
+        console.log(`[PIXABAY] Desabilitado ou sem chave. Usando banco curado.`);
+    }
+
+    // FALLBACK 1: Banco de imagens curado
+    console.log(`[FALLBACK] Usando banco de imagens estático...`);
+    const curatedImage = getCuratedImage(cluster);
+    if (curatedImage) {
+        console.log(`[FALLBACK] ✅ Imagem curada encontrada`);
+        return curatedImage;
+    }
+
+    // FALLBACK 2: Imagem padrão final
+    return "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80";
+}
 
 // ============================================
 // FUNÇÃO: Buscar do Unsplash API
 // ============================================
-async function getUnsplashImage(cluster, accessKey) {
-    const query = CLUSTER_QUERIES[cluster] || CLUSTER_QUERIES['default'];
-    const url = `https://api.unsplash.com/photos/random?query=${encodeURIComponent(query)}&w=1200&q=80&orientation=landscape`;
-    
+async function getUnsplashImage(query, accessKey) {
+    // Adicionamos timestamp para evitar cache agressivo
+    const url = `https://api.unsplash.com/photos/random?query=${encodeURIComponent(query)}&w=1200&q=80&orientation=landscape&count=1`;
+
     try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos timeout
-        
+
         const response = await fetch(url, {
             headers: {
                 'Authorization': `Client-ID ${accessKey}`,
@@ -439,19 +507,23 @@ async function getUnsplashImage(cluster, accessKey) {
             },
             signal: controller.signal
         });
-        
+
         clearTimeout(timeoutId);
-        
+
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        
+
         const data = await response.json();
-        
-        // Retornar URL com parâmetros otimizados
-        const imageUrl = data.urls.regular;
-        return `${imageUrl}?w=1200&q=80`;
-        
+
+        // A API random retorna array se count > 1 ou as vezes objeto simples
+        const imgObj = Array.isArray(data) ? data[0] : data;
+
+        if (imgObj && imgObj.urls && imgObj.urls.regular) {
+            return `${imgObj.urls.regular}?w=1200&q=80`;
+        }
+        return null;
+
     } catch (error) {
         if (error.name === 'AbortError') {
             console.error(`[UNSPLASH API] Timeout (5s) ao buscar imagem`);
@@ -460,39 +532,39 @@ async function getUnsplashImage(cluster, accessKey) {
         }
         return null;
     }
-
-    // =====================================================
-// FUNÇÃO: Buscar do Pexels API
-// =====================================================
-async function getPixabayImage(query, accessKey) {
-  try {
-        const url = `https://pixabay.com/api/?key=${accessKey}&q=${encodeURIComponent(query)}&image_type=photo&orientation=horizontal&per_page=3`;
-    
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-    const response = await fetch(url, {
-      ;
-
-    clearTimeout(timeoutId);
-
-    if (!response.ok) return null;
-
-    const data = await response.json();
-    const imageUrl = getPixabayImagedata.hits?.[0]?.largeImageURL;
-    
- node test-pixabay-final.js   if (imageUrl) {
-      console.log(`[PEXELS] ✅ Sucesso! URL: ${imageUrl.substring(0, 50)}...`);
-      return imageUrl;
-    }
-    return null;
-  } catch (error) {
-    console.error(`[[PEXELS]PIXABAY API] ❌ Erro: ${error.message}`);
-    return null;
-  }
 }
 
+// ============================================
+// FUNÇÃO: Buscar do Pixabay API
+// ============================================
+async function getPixabayImage(query, accessKey) {
+    try {
+        const url = `https://pixabay.com/api/?key=${accessKey}&q=${encodeURIComponent(query)}&image_type=photo&orientation=horizontal&per_page=3`;
 
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+        const response = await fetch(url, {
+            signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) return null;
+
+        const data = await response.json();
+        const imageUrl = data.hits?.[0]?.largeImageURL;
+
+        if (imageUrl) {
+            console.log(`[PIXABAY] ✅ Sucesso! URL: ${imageUrl.substring(0, 50)}...`);
+            return imageUrl;
+        }
+        return null;
+    } catch (error) {
+        console.error(`[PIXABAY API] ❌ Erro: ${error.message}`);
+        return null;
+    }
+}
 
 // --- BANCO DE IMAGENS HUMANIZADAS (Unsplash Curated - V8.1) ---
 function getCuratedImage(cluster) {
@@ -532,4 +604,234 @@ function getCuratedImage(cluster) {
     const key = cluster ? cluster.toLowerCase() : 'default';
     const collection = COLLECTIONS[key] || COLLECTIONS['default'];
     return collection[Math.floor(Math.random() * collection.length)];
+}
+
+// ============================================
+// MODULO: PLANEJAMENTO ESTRATÉGICO (IA)
+// ============================================
+
+// 1. Analisar Histórico do GitHub
+async function analyzePostHistory(env) {
+    console.log('[ANALISE] Iniciando análise de histórico...');
+
+    try {
+        const response = await fetch(
+            `https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/src/posts`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${env.GITHUB_TOKEN}`,
+                    'User-Agent': 'Lexis-Worker'
+                }
+            }
+        );
+
+        if (!response.ok) throw new Error(`GitHub API Error: ${response.status}`);
+        const files = await response.json();
+
+        const categoryCounts = {};
+        let totalFiles = 0;
+
+        // Categorias base para garantir que existam no objeto
+        const baseCategories = ['estudo', 'imersao', 'viagem', 'vocabulario', 'profissional', 'mindset', 'pronuncia', 'gramatica', 'conversacao', 'neurociencia'];
+        baseCategories.forEach(c => categoryCounts[c] = 0);
+
+        // Amostragem: Analisar os 20 últimos posts para ser rápido (ou todos se der)
+        // O GitHub retorna em ordem alfabética. Vamos pegar todos, mas limitar fetch de conteúdo.
+        const targetFiles = files.filter(f => f.name.endsWith('.md'));
+
+        console.log(`[ANALISE] Encontrados ${targetFiles.length} arquivos.`);
+
+        // Processamento paralelo limitado (batch de 5)
+        for (let i = 0; i < targetFiles.length; i += 5) {
+            const batch = targetFiles.slice(i, i + 5);
+            await Promise.all(batch.map(async (file) => {
+                try {
+                    const contentResponse = await fetch(file.download_url);
+                    const content = await contentResponse.text();
+
+                    // Extrair cluster/categoria
+                    const match = content.match(/cluster:\s*["']?([^"'\n]+)["']?/i) || content.match(/category:\s*["']?([^"'\n]+)["']?/i);
+                    if (match) {
+                        const cat = match[1].trim().toLowerCase();
+                        categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+                        totalFiles++;
+                    }
+                } catch (e) {
+                    console.warn(`Erro ao ler ${file.name}: ${e.message}`);
+                }
+            }));
+        }
+
+        // Estatísticas
+        const distribution = {};
+        for (const [cat, count] of Object.entries(categoryCounts)) {
+            distribution[cat] = {
+                count,
+                percentage: totalFiles > 0 ? ((count / totalFiles) * 100).toFixed(1) : "0.0"
+            };
+        }
+
+        // Gaps (< 10%)
+        const gaps = Object.entries(distribution)
+            .filter(([_, data]) => parseFloat(data.percentage) < 10)
+            .map(([cat]) => cat);
+
+        return { distribution, gaps, totalPosts: totalFiles };
+
+    } catch (e) {
+        console.error(`[ANALISE] Falha Fatal: ${e.message}`);
+        return { distribution: {}, gaps: ['geral'], error: e.message };
+    }
+}
+
+// 2. Contexto Temporal
+function getTemporalContext() {
+    const hoje = new Date();
+    const mes = hoje.getMonth() + 1;
+
+    // Eventos (Simplificado & Localizado)
+    const eventosVals = [
+        { m: 1, d: 1, n: 'Ano Novo' },
+        { m: 2, d: 14, n: 'Valentine\'s Day (Data Americana/Internacional)' },
+        { m: 2, d: 20, n: 'Carnaval (Brasil)' },
+        { m: 3, d: 8, n: 'Dia da Mulher' },
+        { m: 3, d: 17, n: 'St. Patrick\'s Day (Cultural)' },
+        { m: 4, d: 21, n: 'Páscoa' },
+        { m: 6, d: 12, n: 'Dia dos Namorados (Brasil)' },
+        { m: 7, d: 4, n: 'Independence Day (USA - Cultural)' },
+        { m: 10, d: 12, n: 'Dia das Crianças / N. Sra. Aparecida' },
+        { m: 10, d: 31, n: 'Halloween (Cultural)' },
+        { m: 11, d: 2, n: 'Finados' },
+        { m: 11, d: 15, n: 'Proclamação da República' },
+        { m: 11, d: 25, n: 'Thanksgiving (USA - Cultural)' },
+        { m: 12, d: 25, n: 'Natal' }
+    ];
+
+    const eventosProximos = eventosVals
+        .filter(e => e.m === mes || e.m === mes + 1)
+        .map(e => e.n);
+
+    let estacao = (mes >= 12 || mes <= 2) ? 'Verão (Brasil)' : (mes >= 6 && mes <= 8) ? 'Inverno (Brasil)' : (mes >= 3 && mes <= 5) ? 'Outono (Brasil)' : 'Primavera (Brasil)';
+
+    return {
+        data: hoje.toISOString().split('T')[0],
+        estacao,
+        eventosProximos
+    };
+}
+
+// 3. Seleção IA
+async function selectThemesByAI(env) {
+    const analysis = await analyzePostHistory(env);
+    const context = getTemporalContext();
+
+    const prompt = `
+    ATUE COMO: Estrategista de Conteúdo Sênior da Lexis Academy (Escola de Inglês para Brasileiros).
+    
+    DADOS:
+    - Total Posts: ${analysis.totalPosts}
+    - GAPS (Prioridade): ${analysis.gaps.join(', ')}
+    - Contexto: ${context.data} (${context.estacao}). Eventos Próximos: ${context.eventosProximos.join(', ')}
+    
+    TAREFA:
+    Gere 3 sugestões de pauta INÉDITAS para preencher os gaps e aproveitar o contexto.
+    
+    REGRAS:
+    1. Público: Brasileiros aprendendo inglês.
+    2. Contexto Cultural: Se citar datas comemorativas estrangeiras (ex: Valentine's Day em Fev), aborde como "Curiosidade Cultural" ou "Vocabulário Específico", deixando claro a diferença para o Brasil.
+    3. Títulos: Magnéticos e em Português.
+    4. Diversifique os clusters.
+    
+    SAÍDA (JSON Puro):
+    {
+      "temas": [
+        {
+          "topic": "Título do Post",
+          "cluster": "categoria-do-gap",
+          "intent": "dor|decisao|cultural",
+          "justificativa": "Motivo da escolha"
+        }
+      ]
+    }
+    `;
+
+    try {
+        const aiRes = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
+            messages: [{ role: 'user', content: prompt }]
+        });
+
+        let text = aiRes.response;
+        let temas = [];
+
+        // TENTATIVA 1: JSON.parse DIRETO
+        try {
+            const jsonMatch = text.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+                const data = JSON.parse(jsonMatch[0]);
+                temas = data.temas || data.themes || [];
+            }
+        } catch (e) {
+            console.warn("[IA-PLAN] JSON Parse falhou. Tentando Regex...");
+        }
+
+        // TENTATIVA 2: REGEX FALLBACK (Se o JSON veio quebrado)
+        if (temas.length === 0) {
+            // Regex para capturar objetos { "topic": ... } individualmente
+            const objectRegex = /{\s*"topic":\s*"(.*?)",\s*"cluster":\s*"(.*?)",\s*"intent":\s*"(.*?)",\s*"justificativa":\s*"(.*?)"\s*}/g;
+            let match;
+            while ((match = objectRegex.exec(text)) !== null) {
+                temas.push({
+                    topic: match[1],
+                    cluster: match[2],
+                    intent: match[3],
+                    justificativa: match[4]
+                });
+            }
+        }
+
+        // TENTATIVA 3 (Último recurso): Regex mais permissivo
+        if (temas.length === 0) {
+            const simpleRegex = /"topic":\s*"(.*?)".*?"cluster":\s*"(.*?)"/gs;
+            let match;
+            while ((match = simpleRegex.exec(text)) !== null) {
+                temas.push({
+                    topic: match[1],
+                    cluster: match[2],
+                    intent: 'informacional', // Default
+                    justificativa: 'Recuperado via Regex Simples'
+                });
+                if (temas.length >= 3) break;
+            }
+        }
+
+        if (temas.length === 0) {
+            return {
+                success: false,
+                error: "IA não retornou temas válidos. Parse falhou.",
+                raw: text
+            };
+        }
+
+        const added = [];
+        for (const tema of temas) {
+            const id = Date.now().toString() + Math.floor(Math.random() * 1000);
+            const job = {
+                topic: tema.topic,
+                cluster: tema.cluster.toLowerCase(),
+                intent: tema.intent || 'informacional',
+                status: 'pending',
+                created_at: new Date().toISOString(),
+                ai_generated: true,
+                justification: tema.justificativa || tema.justification
+            };
+
+            await env.LEXIS_PAUTA.put(`job:${id}`, JSON.stringify(job));
+            added.push(job);
+        }
+
+        return { success: true, analysis, new_jobs: added };
+
+    } catch (e) {
+        return { success: false, error: e.message };
+    }
 }

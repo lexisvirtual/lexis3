@@ -10,7 +10,6 @@ image_source: "ERROR_401"
 cluster: "viagem"
 intent: "informacao"
 ---
-
 Quando você está prestes a embarcar em um voo, é comum se sentir um pouco perdido com o vocabulário de aeroporto em inglês. Palavras como 'check-in', 'boarding pass' e 'security check' podem parecer um código secreto, mas não se preocupem, pois hoje vamos desmistificar essa farsa da gramática e mostrar como você pode aprender rapidamente essas palavras.
 
 ## A Gramática não é o Problema
@@ -62,4 +61,3 @@ Aprender o vocabulário de aeroporto em inglês não é uma tarefa difícil. Voc
 ---
 *Este artigo é parte da nossa série sobre **viagem**. Continue treinando:*
 - [O Segredo para Aprender Inglês para Viagem Rápido: Abandone a Gramática!](/blog/aprender-ingls-para-viagem-rpido)
-  

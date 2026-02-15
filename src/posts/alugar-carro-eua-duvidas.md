@@ -10,7 +10,6 @@ image_source: "ERROR_401"
 cluster: "viagem"
 intent: "informacao"
 ---
-
 ## Alugar Carro nos EUA: O Fogo nos Pés
 
 Quando se trata de alugar carro nos EUA, muitas pessoas se sentem perdidas diante de uma infinidade de opções e termos técnicos. Mas, por quê? Porque a maioria das pessoas se baseia em gramática e decoreba, esquecendo que o idioma é um instrumento para comunicação, não um fim em si mesmo.
@@ -42,4 +41,3 @@ Alugar carro nos EUA não é um processo complicado, desde que você tenha trein
 - [O Vocabulário de Aeroporto em Inglês: Desmistificando a Farsa da Gramática](/blog/vocabulario-de-aeroporto-em-ingls)
 - [A Verdadeira Farsa das Frases para Passar na Imigração: Abandone a Gramática!](/blog/frases-para-passar-na-imigracao)
 - [Pedir Direções em Inglês na Rua: Abandone a Gramática e Treine!](/blog/pedir-direcoes-em-ingls-na-rua)
-  

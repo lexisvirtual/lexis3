@@ -10,7 +10,6 @@ image_source: "fallback_manual"
 cluster: "metodologia"
 intent: "decisao"
 ---
-
 Método tradicional vs imersão: comparação real
 
 Os métodos tradicionais de aprendizado de idiomas, que se baseiam em regras e gramáticas, não funcionaram para a maioria das pessoas. Isso é um fato. De acordo com um estudo, apenas 5% das pessoas que aprenderam um idioma com um curso tradicional são fluentes. Isso significa que o restante está preso em um nível básico, sem entender o idioma de verdade.
@@ -38,4 +37,3 @@ Se você está procurando aprender um idioma de forma eficaz, é hora de abandon
 - [Por que cursinhos tradicionais falham tanto](/blog/cursinhos-tradicionais-falam-tanto)
 - [O Segredo dos Poliglotas para Aprender Rápido](/blog/o-segredo-dos-poliglotas-para-aprender-rapido)
 - [Imersão em Inglês Funciona Sim? A Verdadeira Razão por trás do Sucesso](/blog/imersao-em-ingles-funciona-sim)
-  

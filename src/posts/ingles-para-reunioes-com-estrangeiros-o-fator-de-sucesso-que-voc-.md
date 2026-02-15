@@ -9,7 +9,6 @@ image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80
 cluster: "business"
 intent: "decisao"
 ---
-
 Inglês para reuniões com estrangeiros: o fator de sucesso que você não conhece
 
 ## A importância do inglês em reuniões internacionais
@@ -45,4 +44,3 @@ O inglês para reuniões com estrangeiros é um fator de sucesso em negócios in
 - [Entrevista de emprego em inglês: o que responder para não se perder](/blog/entrevista-de-emprego-em-ingles-o-que-responder)
 - [O Segredo para Dominar o Inglês em Presentações Profissionais: Não é o que Você Acha!](/blog/ingles-para-apresentacoes-profissionais-estrategias-para-sucesso)
 - [Inglês para reuniões online: um guia de sobrevivência para empresários](/blog/ingles-para-reunioes-online-guia-de-sobrevivencia)
-  

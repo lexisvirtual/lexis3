@@ -10,7 +10,6 @@ image_source: "fallback_manual"
 cluster: "metodologia"
 intent: "comparacao"
 ---
-
 Se você está considerando aprender inglês, provavelmente se perguntou: "Devo fazer um curso tradicional ou tentar imersão em inglês?" Esta é uma pergunta crucial que pode determinar seu sucesso ou fracasso na jornada de aprendizado.
 
 ## O Que é um Curso Tradicional?

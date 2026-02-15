@@ -10,7 +10,6 @@ image_source: "fallback_manual"
 cluster: "viagem"
 intent: "urgencia"
 ---
-
 ## O Desafio da Viagem
 
 Você está prestes a embarcar em uma viagem e precisa aprender inglês rapidamente para se comunicar com os estrangeiros. Não tem tempo para se preocupar com gramática e decoreba. Você precisa de uma solução prática e eficaz.
@@ -45,5 +44,3 @@ Aprender inglês para viagem rápido não é uma tarefa fácil, mas é possível
 
 ---
 *Este artigo é parte da nossa série sobre **viagem**. Continue treinando:*
-
-  

@@ -9,7 +9,6 @@ image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80
 cluster: "metodologia"
 intent: "informacional"
 ---
-
 Quando falamos sobre poliglotas, muitas pessoas imediatamente pensam em gênios linguísticos que nascem com um talento natural para aprender línguas. No entanto, a verdade é que a habilidade de aprender línguas rapidamente não é exclusividade de alguns poucos escolhidos do destino. É um talento que pode ser desenvolvido com a prática e a aplicação correta de técnicas.
 
 Aqui, vamos descobrir o segredo dos poliglotas para aprender rápido e eficazmente. E, antes de começar, é importante lembrar que os métodos tradicionais de ensino, como gramática e decoreba, simplesmente não funcionam. Como você pode ver em nosso artigo [Por que cursinhos tradicionais falham tanto](/blog/cursinhos-tradicionais-falam-tanto), esses métodos são ineficazes e podem até mesmo causar estresse e frustração.
@@ -37,4 +36,3 @@ Em resumo, o segredo dos poliglotas para aprender rápido é uma combinação de
 ---
 *Este artigo é parte da nossa série sobre **metodologia**. Continue treinando:*
 - [Por que cursinhos tradicionais falham tanto](/blog/cursinhos-tradicionais-falam-tanto)
-  

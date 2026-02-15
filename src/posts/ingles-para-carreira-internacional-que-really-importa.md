@@ -9,8 +9,6 @@ image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80
 cluster: "business"
 intent: "decisao"
 ---
-
-
 O que é mais importante para uma carreira internacional: a gramática perfeita, a capacidade de usar verbos regulares ou a habilidade de se expressar de forma clara e eficaz?
 
 Em uma era em que a globalização é cada vez mais comum, é fundamental ter uma boa compreensão do inglês para se manter competitivo no mercado trabalhista. No entanto, muitos brasileiros se confundem com o que realmente é necessário para uma carreira internacional.
@@ -57,4 +55,3 @@ Para saber mais sobre como melhorar suas habilidades em inglês, leia nosso arti
 *Este artigo é parte da nossa série sobre **business**. Continue treinando:*
 - [Entrevista de emprego em inglês: o que responder para não se perder](/blog/entrevista-de-emprego-em-ingles-o-que-responder)
 - [Inglês para reuniões online: um guia de sobrevivência para empresários](/blog/ingles-para-reunioes-online-guia-de-sobrevivencia)
-  

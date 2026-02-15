@@ -9,7 +9,6 @@ image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80
 cluster: "dicas"
 intent: "informacional"
 ---
-
 Quando se trata de aprender inglês, muitas pessoas se concentram em gramática, decoreba e empreender longas listas de palavras para memorizar. No entanto, essa abordagem não é eficaz e pode levar a frustração e desânimo. O vocabulário de alta frequência é o segredo para uma comunicação eficaz em inglês.
 
 ## O que é vocabulário de alta frequência?
@@ -45,4 +44,3 @@ Se você está procurando melhorar sua comunicação em inglês, sugiero que voc
 ---
 *Este artigo é parte da nossa série sobre **dicas**. Continue treinando:*
 - [Como destravar a conversação em inglês rápido](/blog/destravar-conversacao-em-ingles-rapido)
-  

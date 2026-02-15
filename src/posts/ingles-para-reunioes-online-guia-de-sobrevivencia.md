@@ -9,7 +9,6 @@ image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80"
 cluster: "business"
 intent: "decisao"
 ---
-
 Inglês para reuniões online: um guia de sobrevivência para empresários
 
 ## O desafio da comunicação em inglês
@@ -70,5 +69,3 @@ A capacidade de se comunicar em inglês é fundamental para o sucesso em reuniõ
 
 ---
 *Este artigo é parte da nossa série sobre **business**. Continue treinando:*
-
-  

@@ -9,8 +9,6 @@ image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80
 cluster: "metodologia"
 intent: "informacional"
 ---
-
-
 ## Gramática atrapalha a fluência?
 
 Acredite ou não, mas a gramática é um obstáculo para a fluência em inglês. Sim, você leu certo. A linguagem é mais complexa do que apenas regras e estruturas, e a gramática não é o caminho mais eficaz para aprender um idioma.
@@ -42,4 +40,3 @@ Em resumo, a gramática atrapalha a fluência em inglês. A gramática é uma ab
 - [O Curso Intensivo de Inglês: Um Desafio à Mentalidade Tradicional](/blog/curso-intensivo-ingles-vale-pena)
 - [Quanto tempo leva para falar inglês de verdade](/blog/quanto-tempo-leva-para-falar-ingles-de-verdade)
 - [A Imersão é o Segredo para Aprender Idiomas de Verdade](/blog/imersao-para-fluencia-em-idiomas)
-  

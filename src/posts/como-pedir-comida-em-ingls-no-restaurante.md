@@ -10,7 +10,6 @@ image_source: "ERROR_401"
 cluster: "viagem"
 intent: "pratica"
 ---
-
 Você está viajando e precisa pedir comida em inglês no restaurante. Já pensou que é impossível? Não é! Acreditamos que a gramática é um obstáculo para aprender idiomas e podemos prová-lo. Neste artigo, vamos mostrar como pedir comida em inglês sem se preocupar com gramática.
 
 ## O Segredo para Aprender Inglês para Viagem Rápido: Abandone a Gramática!
@@ -55,4 +54,3 @@ Lembre-se de que a gramática é apenas um obstáculo para aprender idiomas. Aba
 *Este artigo é parte da nossa série sobre **viagem**. Continue treinando:*
 - [O Segredo para Aprender Inglês para Viagem Rápido: Abandone a Gramática!](/blog/aprender-ingls-para-viagem-rpido)
 - [O Vocabulário de Aeroporto em Inglês: Desmistificando a Farsa da Gramática](/blog/vocabulario-de-aeroporto-em-ingls)
-  

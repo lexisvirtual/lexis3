@@ -9,7 +9,6 @@ image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80"
 cluster: "business"
 intent: "decisao"
 ---
-
 ## O Segredo para Dominar o Inglês em Presentações Profissionais: Não é o que Você Acha!
 
 Você provavelmente já ouviu que o inglês é fundamental para o sucesso em carreira internacional. E é verdade! No entanto, muitas pessoas acreditam que a chave para dominar o inglês em apresentações profissionais é apenas aprender gramática e vocabulário. Mas isso não é verdade.
@@ -63,4 +62,3 @@ Para aprender mais sobre como dominar o inglês em carreira internacional, leia 
 - [Inglês para carreira internacional: o que realmente importa](/blog/ingles-para-carreira-internacional-que-really-importa)
 - [Inglês para reuniões online: um guia de sobrevivência para empresários](/blog/ingles-para-reunioes-online-guia-de-sobrevivencia)
 - [Entrevista de emprego em inglês: o que responder para não se perder](/blog/entrevista-de-emprego-em-ingles-o-que-responder)
-  

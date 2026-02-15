@@ -9,7 +9,6 @@ image: "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80
 cluster: "mindset"
 intent: "dor"
 ---
-
 ## A Dor de Não Ter Liberdade de Expressão
 
 Você entende inglês, mas não fala. Por quê? A resposta está mais ligada à sua mente do que à sua gramática. A dor de não ter liberdade de expressão é um sentimento comum entre os que conhecem mais de uma língua, mas não sabem utilizar ao máximo essa habilidade.
@@ -42,4 +41,3 @@ A dor de não ter liberdade de expressão é um sentimento comum entre os que co
 *Este artigo é parte da nossa série sobre **mindset**. Continue treinando:*
 - [Desmistificando o Pensamento em Inglês: Abandone as Fórmulas e Desbloqueie a Liberdade](/blog/desmistificando-o-pensamento-em-ingles)
 - [O Medo de Errar ao Falar Inglês: Como Superar a Dor](/blog/o-medo-de-errar-ao-falar-ingles)
-  

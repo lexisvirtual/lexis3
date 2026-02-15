@@ -10,7 +10,6 @@ image_source: "ERROR_401"
 cluster: "viagem"
 intent: "desejo"
 ---
-
 Quando você está em um país estrangeiro, fazer compras em inglês pode ser um desafio. Mas, por que precisamos aprender gramática e decoreba para comprar um produto? É tempo de mudar a forma como abordamos a linguagem inglesa para viagem.
 
 ## O Vocabulário é o Segredo
@@ -44,4 +43,3 @@ Em resumo, fazer compras em inglês no exterior não é um desafio difícil. Bas
 - [O Vocabulário de Aeroporto em Inglês: Desmistificando a Farsa da Gramática](/blog/vocabulario-de-aeroporto-em-ingls)
 - [O Segredo para Aprender Inglês para Viagem Rápido: Abandone a Gramática!](/blog/aprender-ingls-para-viagem-rpido)
 - [Como Pedir Comida em Inglês no Restaurante? Abandone a Gramática!](/blog/como-pedir-comida-em-ingls-no-restaurante)
-  

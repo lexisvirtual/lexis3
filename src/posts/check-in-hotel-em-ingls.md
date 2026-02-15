@@ -10,7 +10,6 @@ image_source: "ERROR_401"
 cluster: "viagem"
 intent: "pratica"
 ---
-
 Quando você chega ao hotel, você não está preocupado com a gramática ou o vocabulário. Você está preocupado com a sua bagagem, o seu tempo e a sua fadiga. E é aí que entra o inglês para check-in. Mas, como você pode aprender a falar inglês para check-in sem se preocupar com as regras e a gramática? É simples: treine o que você precisa saber, não o que você precisa aprender.
 
 ## A Farsa da Gramática
@@ -43,4 +42,3 @@ Se você gostou desse artigo, você pode ler mais sobre como aprender inglês pa
 - [O Vocabulário de Aeroporto em Inglês: Desmistificando a Farsa da Gramática](/blog/vocabulario-de-aeroporto-em-ingls)
 - [Como Pedir Comida em Inglês no Restaurante? Abandone a Gramática!](/blog/como-pedir-comida-em-ingls-no-restaurante)
 - [O Segredo para Aprender Inglês para Viagem Rápido: Abandone a Gramática!](/blog/aprender-ingls-para-viagem-rpido)
-  

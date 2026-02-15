@@ -9,7 +9,6 @@ image: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=1200&q=80
 cluster: "tech"
 intent: "decisao"
 ---
-
 O idioma não se aprende. Idioma se treina. E é por isso que muitos profissionais de TI se sentem inseguros ao se deparar com uma entrevista técnica em inglês. No entanto, é preciso entender que o inglês não é apenas uma linguagem, é uma ferramenta para comunicação eficaz e para diferenciar-se do concorrente.
 
 ## A importância do inglês para entrevistas técnicas
@@ -32,4 +31,3 @@ Entrevistas técnicas em inglês podem ser um desafio, mas com a prática e o es
 *Este artigo é parte da nossa série sobre **tech**. Continue treinando:*
 - [Vocabulário essencial para programadores: Desmistificando a linguagem](/blog/vocabulary-essential-for-programmers)
 - [Inglês para profissionais de TI: erros fatais](/blog/english-for-it-professionals-fatal-mistakes)
-  

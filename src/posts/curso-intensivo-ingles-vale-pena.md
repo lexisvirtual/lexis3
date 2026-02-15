@@ -9,7 +9,6 @@ image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80
 cluster: "metodologia"
 intent: "decisao"
 ---
-
 Você está cansado de assistir aulas de inglês, sem resultados concretos? Você já tentou cursos tradicionais e não obteve os resultados esperados? Então, é hora de desafiar a mentalidade tradicional e descobrir se um curso intensivo de inglês é a melhor opção para você.
 
 ## Os Cursos Tradicionais Não São Mais Eficazes
@@ -47,4 +46,3 @@ Se você está cansado de assistir aulas de inglês, sem resultados concretos, �
 - [Por que cursinhos tradicionais falham tanto](/blog/cursinhos-tradicionais-falam-tanto)
 - [O Segredo dos Poliglotas para Aprender Rápido](/blog/o-segredo-dos-poliglotas-para-aprender-rapido)
 - [Quanto tempo leva para falar inglês de verdade](/blog/quanto-tempo-leva-para-falar-ingles-de-verdade)
-  

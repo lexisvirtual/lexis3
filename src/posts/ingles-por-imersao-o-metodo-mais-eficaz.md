@@ -10,7 +10,6 @@ image_source: "fallback_manual"
 cluster: "metodologia"
 intent: "decisao"
 ---
-
 Quando se trata de aprender inglês de verdade, inglês por imersão se destaca como o método mais eficaz disponível. Mas por quê? A resposta está em como nosso cérebro aprende idiomas.
 
 ## O Cérebro Aprende Melhor com Imersão

@@ -10,7 +10,6 @@ image_source: "ERROR_401"
 cluster: "viagem"
 intent: "medo"
 ---
-
 Quando você está prestes a viajar para um país estrangeiro, o medo de não saber o que dizer à imigração pode ser muito real. E, muitas vezes, isso é culpa da falta de confiança em sua habilidade em falar inglês. Mas, o que você realmente precisa saber para passar na imigração? É hora de desmascarar a farsa da gramática e aprender a treinar sua língua para viagens.
 
 ## A Farsa da Gramática
@@ -52,4 +51,3 @@ A imigração pode ser um momento muito estressante durante a viagem. Mas, com a
 - [O Vocabulário de Aeroporto em Inglês: Desmistificando a Farsa da Gramática](/blog/vocabulario-de-aeroporto-em-ingls)
 - [Como Pedir Comida em Inglês no Restaurante? Abandone a Gramática!](/blog/como-pedir-comida-em-ingls-no-restaurante)
 - [O Segredo para Aprender Inglês para Viagem Rápido: Abandone a Gramática!](/blog/aprender-ingls-para-viagem-rpido)
-  

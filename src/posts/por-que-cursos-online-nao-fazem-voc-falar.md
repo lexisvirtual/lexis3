@@ -9,8 +9,6 @@ image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80
 cluster: "metodologia"
 intent: "dor"
 ---
-
-
 ## A Dor de não Falar
 
 Você já se sentiu frustrado ao tentar aprender um idioma online? Gostaria de conversar com os nativos, mas não consegue expressar suas ideias com fluência. A dor é real, e muitas vezes, é causada por uma falta de compreensão sobre como aprender um idioma de verdade.
@@ -40,4 +38,3 @@ A dor de não falar um idioma é real, e muitas vezes, é causada por uma falta 
 - [A Imersão é o Segredo para Aprender Idiomas de Verdade](/blog/imersao-para-fluencia-em-idiomas)
 - [O Curso Intensivo de Inglês: Um Desafio à Mentalidade Tradicional](/blog/curso-intensivo-ingles-vale-pena)
 - [Quanto tempo leva para falar inglês de verdade](/blog/quanto-tempo-leva-para-falar-ingles-de-verdade)
-  

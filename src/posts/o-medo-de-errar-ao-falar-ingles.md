@@ -9,7 +9,6 @@ image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=1200&q=80"
 cluster: "mindset"
 intent: "dor"
 ---
-
 O medo de errar ao falar inglês é um obstáculo comum para muitas pessoas que desejam melhorar sua habilidade linguística. É um sentimento que pode ser paralisante, impedindo que você se sinta confortável para expressar-se em inglês. No entanto, é importante lembrar que o erro é um passo natural no processo de aprendizado e que, muitas vezes, é mais prejudicial do que benéfico.
 
 ## A Dor do Erro
@@ -35,4 +34,3 @@ O medo de errar ao falar inglês é um obstáculo comum para muitas pessoas que 
 ---
 *Este artigo é parte da nossa série sobre **mindset**. Continue treinando:*
 - [Desmistificando o Pensamento em Inglês: Abandone as Fórmulas e Desbloqueie a Liberdade](/blog/desmistificando-o-pensamento-em-ingles)
-  
