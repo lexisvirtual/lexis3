@@ -5,7 +5,7 @@ description: "Descubra o lado mais profundo da celebração do Dia dos Namorados
 tags: ["dia-dos-namorados", "cultura", "amizade"]
 category: "vocabilário específico"
 author: "Lexis Intel AI"
-image: "https://pixabay.com/get/g1a502f8acc5b7c2056f685e1951f018278b58cf8b5e2b7a4945b6f01e85c886dff9707bd6000fd4a6bcf7707e1f0649b3b8c1ec955483702e694c5766583f291_1280.jpg"
+image: "/img/posts/dia-dos-namorados-cultura-da-amizade.webp"
 cluster: "vocabilário específico"
 intent: "cultural"
 ---
