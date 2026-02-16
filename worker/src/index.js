@@ -882,28 +882,86 @@ async function selectThemesByAI(env) {
 }
 
 // ============================================
-// HELPER: GERAÇÃO DE KEYWORDS VISUAIS (TRADUÇÃO)
+// HELPER: GERAÇÃO DE PROMPTS PROFISSIONAIS (ART DIRECTOR)
 // ============================================
 async function generateVisualKeywords(env, topic) {
     if (!topic) return null;
-    console.log(`[TRANSLATION] Gerando keywords visuais para: "${topic}"`);
+    console.log(`[ART DIRECTOR] Gerando prompt visual para: "${topic}"`);
+
+    // Lista de palavras proibidas (geram imagens ruins/abstratas)
+    const FORBIDDEN_KEYWORDS = [
+        'neuroscience', 'brain', 'science', 'concept', 'abstract',
+        'success', 'motivation', 'inspiration', 'achievement',
+        'communication', 'connection', 'network', 'idea',
+        'innovation', 'creativity', 'strategy', 'solution'
+    ];
+
     try {
+        const artDirectorPrompt = `You are a professional art director specializing in stock photography for editorial blog hero images.
+
+Your task: Create a highly specific Pixabay search prompt in English for this blog title:
+"${topic}"
+
+MANDATORY STRUCTURE - Fill ALL fields:
+
+1. CHARACTER: Who appears (age, gender, ethnicity if relevant, profession/role)
+2. SPECIFIC ACTION: What they are doing (be concrete, not abstract)
+3. ENVIRONMENT: Where (specific location, not generic "office" or "home")
+4. EMOTIONAL TONE: Facial expression and body language
+5. LIGHTING: Type of light (natural window, soft overhead, golden hour, etc.)
+6. COLOR PALETTE: Dominant colors and mood (warm earth tones, cool blues, neutral minimalist, etc.)
+
+CRITICAL RULES:
+- Transform abstract concepts into CONCRETE VISUAL SCENES
+- Use realistic, observable actions (NOT metaphors like "reaching for stars")
+- Specify real environments (NOT "modern office" - say "cozy cafe with plants" or "bright library desk")
+- FORBIDDEN WORDS: ${FORBIDDEN_KEYWORDS.join(', ')}
+- If the topic is abstract, find the HUMAN STORY behind it
+
+OUTPUT FORMAT:
+Return ONLY the final English prompt (one line, no quotes, no explanation).
+The prompt must be 15-25 words describing a real photo scene.
+
+Example for "Neurociência e Conversação":
+BAD: "neuroscience conversation brain learning concept"
+GOOD: "two young adults having engaging conversation at cozy cafe, warm natural light, focused expressions, earth tones"`;
+
         const response = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
             messages: [
-                { role: 'system', content: 'You are a Stock Photo Search Assistant. Convert the Title specific visual search keywords in English (3 to 6 words). Output ONLY the keywords separated by spaces. No text, no explanation.' },
-                { role: 'user', content: `Title: "${topic}"` }
+                { role: 'system', content: artDirectorPrompt },
+                { role: 'user', content: `Create the prompt now.` }
             ],
-            max_tokens: 100
+            max_tokens: 150
         });
 
-        let keywords = response.response.trim();
-        // Limpeza básica
-        keywords = keywords.replace(/["\n]/g, '').replace(/Here are.*/gi, '').trim();
+        let prompt = response.response.trim();
 
-        console.log(`[TRANSLATION] Keywords geradas: "${keywords}"`);
-        return keywords;
+        // Limpeza de artifacts
+        prompt = prompt.replace(/^["']|["']$/g, ''); // Remove aspas
+        prompt = prompt.replace(/^(Here is|Here's|Prompt:|The prompt is:?)/gi, '').trim();
+        prompt = prompt.replace(/\n.*/g, ''); // Remove linhas extras
+
+        // Validação: Se contém palavras proibidas, força fallback
+        const hasForbiddenWord = FORBIDDEN_KEYWORDS.some(word =>
+            prompt.toLowerCase().includes(word.toLowerCase())
+        );
+
+        if (hasForbiddenWord) {
+            console.warn(`[ART DIRECTOR] Prompt contém palavra proibida. Usando fallback genérico.`);
+            prompt = "young professional working on laptop at bright modern workspace, natural window light, concentrated expression";
+        }
+
+        // FÓRMULA HERO IMAGE (sempre anexada)
+        const heroImageSuffix = "wide horizontal composition, negative space for headline, high resolution, realistic editorial photography, no stock cliché, no exaggerated smile";
+
+        const finalPrompt = `${prompt}, ${heroImageSuffix}`;
+
+        console.log(`[ART DIRECTOR] Prompt final: "${finalPrompt.substring(0, 100)}..."`);
+        return finalPrompt;
+
     } catch (e) {
-        console.warn(`[TRANSLATION] Falha ao gerar keywords: ${e.message}`);
-        return null;
+        console.warn(`[ART DIRECTOR] Falha: ${e.message}`);
+        // Fallback de emergência
+        return "professional working on creative project, natural lighting, modern workspace, wide horizontal composition, high resolution, realistic editorial photography";
     }
 }
