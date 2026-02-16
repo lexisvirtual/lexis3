@@ -36,9 +36,7 @@ Aprender inglês não é apenas sobre gramática e vocabulário. É sobre se ime
 
 O Carnaval é uma celebração cultural única e emocionante. É uma oportunidade para se imergir na cultura brasileira e se expressar de forma natural. Ao aprender inglês, você precisará entender a cultura e a sociedade que o rodeia. E o Carnaval é uma oportunidade para isso.
 
-**Imagem:** Uma foto de uma festa de Carnaval no Brasil, com pessoas dançando, bebendo e se divertindo.
 
-**Search query:** 'carnival celebration colorful brazil'
 
 ---
 *Este artigo é parte da nossa série sobre **cultural**. Continue treinando:*
