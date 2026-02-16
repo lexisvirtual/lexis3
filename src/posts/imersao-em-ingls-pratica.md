@@ -5,7 +5,7 @@ description: "Descubra como transformar sua imersão em inglês em uma realidade
 tags: ["imersao", "ingles", "carnaval"]
 category: "imersao"
 author: "Lexis Intel AI"
-image: "https://pixabay.com/get/g316921ced91c7121a3787d86ca2a565e3e37930c99b2758cb40a5cc0eaafc07bc16440647dbd02549a7c42ba7a6e7b78722c53b8e2c91ae0195d241a70e4639c_1280.jpg"
+image: "/img/posts/imersao-em-ingls-pratica.webp"
 cluster: "imersao"
 intent: "dor"
 ---
