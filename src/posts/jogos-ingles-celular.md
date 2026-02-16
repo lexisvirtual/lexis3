@@ -42,8 +42,7 @@ Para usar jogos para aprender inglês no celular de forma eficaz, é importante 
 
 Aprender inglês no celular pode ser uma ótima maneira de diversificar sua rotina de estudo e tornar o estudo mais atraente. Além disso, é importante lembrar que a prática regular é fundamental para o sucesso. Se você está procurando uma forma mais divertida de estudar inglês, os jogos no celular podem ser uma ótima opção.
 
-Para aprender mais sobre como estudar inglês sem parecer que está estudando, clique [aqui](/blog/estudar-ingles-sem-parecer-estudo). Além disso, você pode ouvir podcasts para aprender inglês na estrada [aqui](/blog/podcasts-ingles-para-ouvir-na-estrada). E, se você está procurando aproveitar o feriado para estudar inglês, [aqui](/blog/aproveitar-feriado-para-estudar-ingles) você encontrará dicas e sugestões para fazer isso."",
-  "image_search_query": "cell phone with english language learning apps
+Para aprender mais sobre como estudar inglês sem parecer que está estudando, clique [aqui](/blog/estudar-ingles-sem-parecer-estudo). Além disso, você pode ouvir podcasts para aprender inglês na estrada [aqui](/blog/podcasts-ingles-para-ouvir-na-estrada). E, se você está procurando aproveitar o feriado para estudar inglês, [aqui](/blog/aproveitar-feriado-para-estudar-ingles) você encontrará dicas e sugestões para fazer isso.
 
 ---
 *Este artigo é parte da nossa série sobre **estudo**. Continue treinando:*

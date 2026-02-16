@@ -9,12 +9,7 @@ image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80
 cluster: "tech"
 intent: "dor"
 ---
-{
-  "title": "Inglês para profissionais de TI: erros fatais",
-  "slug": "english-for-it-professionals-fatal-mistakes",
-  "description": "Aprenda a evitar erros fatais no inglês para profissionais de TI e melhore suas chances de sucesso em sua carreira.",
-  "tags": ["ingles", "tech", "profissionais de TI"],
-  "content":
+
 ## O preconceito da gramática
 
 Quando se trata de aprender inglês para profissionais de TI, muitas pessoas se concentram em aprender gramática. E é aqui que começa o problema. A gramática, em si mesma, não é uma habilidade útil para um profissional de TI. Ela é apenas um obstáculo que impede a comunicação eficaz.

@@ -35,8 +35,7 @@ O Carnaval é um ambiente perfeito para superar o medo de falar em inglês. Muit
 
 O Carnaval é uma oportunidade única para melhorar sua imersão em inglês. Com um ambiente vibrante e alegre, é um local perfeito para se divertir e aprender ao mesmo tempo. Se você está procurando aproveitar o Carnaval para melhorar sua habilidade em inglês, aqui estão algumas dicas e sugestões para você. Lembre-se de que a imersão é a chave para aprender um idioma de forma eficaz, e o Carnaval é um momento perfeito para isso.
 
-## Imagem: Cinematic shot of happy students watching a movie on laptop, cozy atmosphere"
-  "image_search_query": "people dancing and laughing during Carnival celebration, colorful costumes and masks
+
 
 ---
 *Este artigo é parte da nossa série sobre **imersao**. Continue treinando:*

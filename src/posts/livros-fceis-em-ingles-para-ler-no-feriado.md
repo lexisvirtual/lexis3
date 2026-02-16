@@ -41,8 +41,7 @@ Aqui estão alguns links para você aproveitar o feriado para estudar inglês:
 * [O Carnaval é a Melhor Vez para Intensificar o Estudo de Inglês](/blog/intensivao-ingles-no-carnaval-vale-a-pena)
 * [A Revolução da Música Pop: Como Aprender Inglês de uma Forma Diversa e Entretenida](/blog/aprender-ingles-com-musica-pop)
 
-Não perca mais tempo e aproveite o feriado para se dedicar ao seu estudo de inglês. Leia um desses livros e descobra o poder da leitura no aprendizado de idiomas.",
-  "image_search_query": "a person reading a book in a cozy atmosphere, with a cup of coffee and a laptop in the background
+Não perca mais tempo e aproveite o feriado para se dedicar ao seu estudo de inglês. Leia um desses livros e descobra o poder da leitura no aprendizado de idiomas.
 
 ---
 *Este artigo é parte da nossa série sobre **estudo**. Continue treinando:*
