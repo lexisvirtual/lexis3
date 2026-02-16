@@ -125,6 +125,39 @@ async function optimizeAndSaveImage(imageUrl, slug) {
     }
 }
 
+
+/**
+ * Atualiza o frontmatter do post com o novo caminho da imagem
+ */
+function updatePostImage(slug, newImagePath) {
+    const postPath = path.join(POSTS_DIR, `${slug}.md`);
+
+    if (!fs.existsSync(postPath)) {
+        throw new Error(`Post não encontrado: ${postPath}`);
+    }
+
+    let content = fs.readFileSync(postPath, 'utf-8');
+
+    // Regex para encontrar e substituir a linha "image:" no frontmatter
+    const imageRegex = /^image:\s*"[^"]*"/m;
+
+    if (!imageRegex.test(content)) {
+        // Se não achar com aspas, tenta sem aspas ou cria
+        const imageRegexNoQuotes = /^image:\s*.*$/m;
+        if (imageRegexNoQuotes.test(content)) {
+            content = content.replace(imageRegexNoQuotes, `image: "${newImagePath}"`);
+        } else {
+            // Se não existir, insere após author
+            content = content.replace(/^author:.*$/m, `$&${"\n"}image: "${newImagePath}"`);
+        }
+    } else {
+        content = content.replace(imageRegex, `image: "${newImagePath}"`);
+    }
+
+    fs.writeFileSync(postPath, content, 'utf-8');
+    console.log(`✅ Post atualizado: ${postPath}`);
+}
+
 /**
  * Função principal
  */
@@ -162,7 +195,10 @@ async function main() {
         console.log(`🎨 Imagem encontrada!\n`);
 
         // 5. Baixa, otimiza e salva a nova imagem (sobrescreve a antiga)
-        await optimizeAndSaveImage(newImageUrl, slug);
+        const localImagePath = await optimizeAndSaveImage(newImageUrl, slug);
+
+        // [CORREÇÃO] Atualiza o post para apontar para a imagem local
+        updatePostImage(slug, localImagePath);
 
         console.log('\n🎉 Imagem atualizada com sucesso!');
 
@@ -171,7 +207,7 @@ async function main() {
         const { execSync } = await import('child_process');
 
         try {
-            execSync(`git add public/img/posts/${slug}.webp`, { cwd: path.join(__dirname, '..'), stdio: 'inherit' });
+            execSync(`git add public/img/posts/${slug}.webp src/posts/${slug}.md`, { cwd: path.join(__dirname, '..'), stdio: 'inherit' });
             execSync(`git commit -m "chore(post): refresh image for ${slug}"`, { cwd: path.join(__dirname, '..'), stdio: 'inherit' });
 
             // NOVO: Faz pull antes de dar push para evitar rejeição

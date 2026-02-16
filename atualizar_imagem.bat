@@ -20,6 +20,11 @@ echo.
 echo [PROCESS] Iniciando processo para: %POST_URL%
 echo.
 
+
+echo [GIT] Sincronizando repositorio para garantir arquivos...
+git pull origin main
+echo.
+
 node scripts/refresh-post-image.js "%POST_URL%"
 
 echo.

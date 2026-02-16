@@ -109,7 +109,19 @@ async function processNextJob(env) {
     const list = await env.LEXIS_PAUTA.list({ prefix: "job:", limit: 1 });
 
     if (list.keys.length === 0) {
-        return new Response("Fila vazia", { status: 200 });
+        console.log("[AUTO-REFILL] Fila vazia. Iniciando geração automática de pautas...");
+        try {
+            const plan = await selectThemesByAI(env);
+            if (plan.success && plan.new_jobs && plan.new_jobs.length > 0) {
+                console.log(`[AUTO-REFILL] Sucesso! ${plan.new_jobs.length} novas pautas geradas.`);
+                // Recursivamente processa o primeiro da nova lista
+                return await processNextJob(env);
+            } else {
+                return new Response(`Fila vazia. Auto-geração falhou: ${plan.error || "Sem Jobs"}`, { status: 200 });
+            }
+        } catch (e) {
+            return new Response(`Fila vazia. Erro no refill: ${e.message}`, { status: 500 });
+        }
     }
 
     const jobKey = list.keys[0].name;
@@ -181,7 +193,7 @@ async function generateAndPublishPost(env, job) {
       "slug": "slug-otimizado-seo",
       "description": "Meta description persuasiva para Google (max 150 chars)",
       "tags": ["tag1", "tag2"],
-      "content": "Texto completo do artigo em Markdown. Use ## para subtítulos. NÃO coloque o título H1 aqui dentro, apenas o corpo do texto.",
+      "content": "Texto completo do artigo em Markdown. Use ## para subtítulos. NÃO coloque o título H1 aqui dentro, apenas o corpo do texto. NUNCA coloque 'Imagem:', 'Search query:' ou descrições da imagem dentro deste campo.",
       "image_search_query": "English visual search query for Unsplash/Pixabay. Ex: 'cinematic shot of happy students watching a movie on laptop, cozy atmosphere'"
     }
   `;
@@ -306,10 +318,20 @@ async function generateAndPublishPost(env, job) {
     }
 
     // ETAPA 6: MONTAGEM FINAL
+    // ETAPA 6: MONTAGEM FINAL
     // INJEÇÃO DE IMAGEM AUTOMÁTICA (Curador V8.1 - Reativado)
     if (!postData.image) {
-        // Passamos a query da AI (ou o tópico como fallback fraco) + o cluster
-        postData.image = await getImageWithFallback(job.cluster, env, postData.image_search_query || job.topic);
+        // [MELHORIA] Tradução de Query
+        // Se a query visual não veio, ou se parece com o título em PT, tentamos traduzir/gerar keywords em inglês.
+        let searchQuery = postData.image_search_query;
+
+        if (!searchQuery || searchQuery.trim() === job.topic.trim()) {
+            const translated = await generateVisualKeywords(env, job.topic);
+            if (translated) searchQuery = translated;
+        }
+
+        // Passamos a query final (da AI ou traduzida) + o cluster
+        postData.image = await getImageWithFallback(job.cluster, env, searchQuery || job.topic);
     }
 
     // LIMPEZA DE CONTEÚDO V8.3 - Remove metadados técnicos vazados
@@ -395,9 +417,16 @@ function sanitizeContent(content) {
     cleaned = cleaned.replace(/[ \t]+$/gm, '');
 
     // 7. Remove artefatos de final de JSON (", ou " ou }, no final do arquivo)
-    // Isso acontece quando a regex captura o fechamento do campo content
     cleaned = cleaned.replace(/",\s*$/, "");
     cleaned = cleaned.replace(/"\s*$/, "");
+
+    // 8. [NOVO] Remove metadados descritivos de imagem vazados (Identificados pelo User)
+    // Ex: "Imagem: Uma foto...", "Search query: ...", "| A imagem não condiz..."
+    cleaned = cleaned.replace(/^Imagem:.*$/gim, '');
+    cleaned = cleaned.replace(/^Image:.*$/gim, '');
+    cleaned = cleaned.replace(/^Search query:.*$/gim, '');
+    cleaned = cleaned.replace(/^Query:.*$/gim, '');
+    cleaned = cleaned.replace(/\| A imagem não condiz com o tema/gi, ''); // Remoção cirúrgica do erro relatado
 
     return cleaned.trim();
 }
@@ -436,6 +465,8 @@ const CLUSTER_QUERIES = {
     'business': 'business professional office work',
     'viagem': 'travel adventure landscape nature',
     'estudo': 'study learning education books',
+    'imersao': 'immersion study language travel brazil',
+    'cultural': 'brazil culture carnival festival parade',
     'mindset': 'meditation focus mindfulness wellness',
     'default': 'inspiration motivation success'
 };
@@ -452,7 +483,9 @@ async function getImageWithFallback(cluster, env, specificQuery = null) {
         ? specificQuery
         : (CLUSTER_QUERIES[cluster] || CLUSTER_QUERIES['default']);
 
-    // TENTATIVA 1: Unsplash API
+    // TENTATIVA 1: Unsplash API (DESATIVADO Conforme Solicitado)
+    // Motivo: Falha da API e preferência pelo Pixabay
+    /*
     if (env.UNSPLASH_ACCESS_KEY && env.UNSPLASH_ENABLED === 'true') {
         try {
             console.log(`[UNSPLASH] Buscando: "${finalQuery}"`);
@@ -465,6 +498,7 @@ async function getImageWithFallback(cluster, env, specificQuery = null) {
             console.warn(`[UNSPLASH] ❌ Falha: ${error.message}. Usando fallback...`);
         }
     }
+    */
 
     // TENTATIVA 2: Pixabay API
     if (env.PIXABAY_API_KEY && env.PEXELS_ENABLED === 'true') {
@@ -645,8 +679,10 @@ async function analyzePostHistory(env) {
         baseCategories.forEach(c => categoryCounts[c] = 0);
 
         // Amostragem: Analisar os 20 últimos posts para ser rápido (ou todos se der)
-        // O GitHub retorna em ordem alfabética. Vamos pegar todos, mas limitar fetch de conteúdo.
-        const targetFiles = files.filter(f => f.name.endsWith('.md'));
+        // O GitHub retorna em ordem alfabética. Vamos pegar os últimos 20.
+        // Slice(-20) pega os últimos 20 elementos do array.
+        const allFiles = files.filter(f => f.name.endsWith('.md'));
+        const targetFiles = allFiles.slice(-20);
 
         console.log(`[ANALISE] Encontrados ${targetFiles.length} arquivos.`);
 
@@ -842,5 +878,32 @@ async function selectThemesByAI(env) {
 
     } catch (e) {
         return { success: false, error: e.message };
+    }
+}
+
+// ============================================
+// HELPER: GERAÇÃO DE KEYWORDS VISUAIS (TRADUÇÃO)
+// ============================================
+async function generateVisualKeywords(env, topic) {
+    if (!topic) return null;
+    console.log(`[TRANSLATION] Gerando keywords visuais para: "${topic}"`);
+    try {
+        const response = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
+            messages: [
+                { role: 'system', content: 'You are a Stock Photo Search Assistant. Convert the Title specific visual search keywords in English (3 to 6 words). Output ONLY the keywords separated by spaces. No text, no explanation.' },
+                { role: 'user', content: `Title: "${topic}"` }
+            ],
+            max_tokens: 100
+        });
+
+        let keywords = response.response.trim();
+        // Limpeza básica
+        keywords = keywords.replace(/["\n]/g, '').replace(/Here are.*/gi, '').trim();
+
+        console.log(`[TRANSLATION] Keywords geradas: "${keywords}"`);
+        return keywords;
+    } catch (e) {
+        console.warn(`[TRANSLATION] Falha ao gerar keywords: ${e.message}`);
+        return null;
     }
 }
