@@ -5,7 +5,7 @@ description: "Aprenda a se comunicar em inglês durante as festas de Carnaval co
 tags: ["imersao", "carnaval", "ingles", "comunicacao"]
 category: "imersão"
 author: "Lexis Intel AI"
-image: "https://pixabay.com/get/g7656504e557cd63b54e4a8212e52a91aa172383d8b2e74b701272f03044535f001c877e7ffa30909aed993b0077155ea1eb75a0198551eda3e19164bac5b9d62_1280.jpg"
+image: "/img/posts/imersao-carnaval-5-frases-ingles-para-se-comunicar-durante-as-festas.webp"
 cluster: "imersão"
 intent: "conversational|cultural"
 ---

@@ -5,7 +5,7 @@ description: "Aprenda inglês de forma prática e divertida com filmes. Leia est
 tags: ["estudo", "ingles", "pratica"]
 category: "estudo"
 author: "Lexis Intel AI"
-image: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1200&q=80"
+image: "/img/posts/filmes-para-treinar-listening-em-ingles.webp"
 cluster: "estudo"
 intent: "pratica"
 ---
