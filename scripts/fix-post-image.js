@@ -152,6 +152,11 @@ async function main() {
         try {
             execSync(`git add src/posts/${slug}.md public/img/posts/${slug}.webp`, { cwd: path.join(__dirname, '..'), stdio: 'inherit' });
             execSync(`git commit -m "fix(post): self-host image for ${slug}"`, { cwd: path.join(__dirname, '..'), stdio: 'inherit' });
+
+            // NOVO: Faz pull antes de dar push para evitar rejeição
+            console.log('🔄 Sincronizando com o GitHub...');
+            execSync('git pull --rebase origin main', { cwd: path.join(__dirname, '..'), stdio: 'inherit' });
+
             execSync('git push origin main', { cwd: path.join(__dirname, '..'), stdio: 'inherit' });
             console.log('\n✅ Alterações commitadas e enviadas para o GitHub!');
         } catch (error) {
