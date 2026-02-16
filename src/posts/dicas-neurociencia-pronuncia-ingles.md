@@ -5,7 +5,7 @@ description: "Melhore sua pronúncia em inglês com base em dicas de neurociênc
 tags: ["pronuncia", "ingles", "neurociência"]
 category: "pronuncia"
 author: "Lexis Intel AI"
-image: "https://images.unsplash.com/photo-1555601568-c916f54b1046?w=1200&q=80"
+image: "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=1200&q=80"
 cluster: "pronuncia"
 intent: "informacao|decisao"
 ---
