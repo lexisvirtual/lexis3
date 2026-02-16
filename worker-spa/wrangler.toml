@@ -1,0 +1,13 @@
+name = "lexis-spa-proxy"
+main = "src/index.js"
+compatibility_date = "2024-03-20"
+
+# Este Worker atua como proxy para o site SPA
+# Intercepta todas as requisições e serve o index.html para rotas SPA
+# Isso resolve o problema de SEO onde o Googlebot recebia 404 para rotas dinâmicas
+
+[vars]
+ORIGIN_URL = "https://lexisvirtual.github.io/lexis3"
+
+# Rotas que este Worker deve interceptar
+# Configure no Cloudflare Dashboard: lexis.academy/*

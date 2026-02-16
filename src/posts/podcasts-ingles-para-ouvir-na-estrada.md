@@ -5,7 +5,7 @@ description: "Aprenda inglês de forma prática e divertida com podcasts para ou
 tags: ["estudo", "ingles", "pratica"]
 category: "estudo"
 author: "Lexis Intel AI"
-image: "https://pixabay.com/get/g2e2e28bbde99aac04c06f3b671d3f668e43dbce5d49f4414314c650c733185e014f7004d525802c513679309bc4e0ca75c37a29332845a9f9bd7f395c514435c_1280.jpg"
+image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80"
 cluster: "estudo"
 intent: "pratica"
 ---

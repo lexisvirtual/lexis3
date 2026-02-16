@@ -1,0 +1,82 @@
+export default {
+    // --- ROTAS HTTP (API Manual) ---
+    async fetch(request, env, ctx) {
+        const url = new URL(request.url);
+
+        // 1. Adicionar Pauta (ETAPA 1: Input Rico)
+        if (url.pathname === "/add-topic") {
+            if (request.method !== "POST") return new Response("Use POST", { status: 405 });
+
+            const body = await request.json().catch(() => ({}));
+
+            // Validação de Schema (ETAPA 1.2)
+            if (!body.topic || !body.cluster) {
+                return new Response(JSON.stringify({
+                    error: "Schema Inválido. Obrigatório: 'topic' e 'cluster'.",
+                    required: { query: "string", cluster: "string", intent: "informacional|dor|decisao" }
+                }), { status: 400, headers: { "Content-Type": "application/json" } });
+            }
+
+            const jobData = {
+                topic: body.topic.trim(),
+                cluster: body.cluster.trim().toLowerCase(),
+                intent: body.intent || "informacional",
+                type: body.type || "evergreen",
+                priority: body.priority || 1,
+                status: 'pending',
+                created_at: new Date().toISOString()
+            };
+
+            // Salva com prioridade invertida no ID para ordenação simples (na listagem futura)
+            const id = Date.now().toString();
+            await env.LEXIS_PAUTA.put(`job:${id}`, JSON.stringify(jobData));
+
+            return new Response(JSON.stringify({ success: true, id, job: jobData }), {
+                headers: { "Content-Type": "application/json" }
+            });
+        }
+
+        // 2. Ver Fila
+        if (url.pathname === "/queue") {
+            const list = await env.LEXIS_PAUTA.list({ prefix: "job:" });
+            const jobs = [];
+            for (const key of list.keys) {
+                const value = await env.LEXIS_PAUTA.get(key.name);
+                jobs.push({ id: key.name, ...JSON.parse(value) });
+            }
+            return new Response(JSON.stringify(jobs, null, 2), { headers: { "Content-Type": "application/json" } });
+        }
+
+        // 3. Forçar Processamento
+        if (url.pathname === "/process-queue") {
+            return await processNextJob(env);
+        }
+
+        // 4. LIMPEZA TOTAL (NUCLEAR - TEMP)
+        if (url.pathname === "/purge") {
+            const list = await env.LEXIS_PAUTA.list({ prefix: "job:" });
+            for (const key of list.keys) {
+                await env.LEXIS_PAUTA.delete(key.name);
+            }
+            return new Response("Fila limpa! Zero items.", { status: 200 });
+        }
+
+        // 5. RESET MEMÓRIA (Apaga índices de posts antigos)
+        if (url.pathname === "/reset-memory") {
+            const list = await env.LEXIS_PAUTA.list({ prefix: "index:" });
+            for (const key of list.keys) {
+                await env.LEXIS_PAUTA.delete(key.name);
+            }
+            return new Response("Memória limpa: Índices apagados.", { status: 200 });
+        }
+
+        return new Response("Lexis Publisher V5.6 (Slug Shield) Ativo", { status: 200 });
+    },
+
+    // --- TRIGGERS AGENDADOS ---
+    async scheduled(event, env, ctx) {
+        ctx.waitUntil(processNextJob(env));
+    }
+};
+
+// BACKUP ORIGINAL - Criado em " + new Date().toISOString() + "

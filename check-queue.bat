@@ -1,22 +1,9 @@
 @echo off
-cls
-
 echo ==========================================
 echo      LEXIS QUEUE MONITOR
 echo ==========================================
 echo.
-echo Verificando fila de posts...
-echo.
-
-cd /d "%~dp0"
 node scripts/check-queue.js
-
-if errorlevel 1 (
-    echo.
-    echo Erro ao executar o script
-    echo.
-)
-
 echo.
 echo ==========================================
 echo Pressione qualquer tecla para fechar.

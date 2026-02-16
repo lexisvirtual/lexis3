@@ -396,7 +396,7 @@ function sanitizeContent(content) {
 
     // 7. Remove artefatos de final de JSON (", ou " ou }, no final do arquivo)
     // Isso acontece quando a regex captura o fechamento do campo content
-    cleaned = cleaned.replace(/",\s*$/, ""); 
+    cleaned = cleaned.replace(/",\s*$/, "");
     cleaned = cleaned.replace(/"\s*$/, "");
 
     return cleaned.trim();
@@ -544,7 +544,7 @@ async function getUnsplashImage(query, accessKey) {
 // ============================================
 async function getPixabayImage(query, accessKey) {
     try {
-        const url = `https://pixabay.com/api/?key=${accessKey}&q=${encodeURIComponent(query)}&image_type=photo&orientation=horizontal&per_page=3`;
+        const url = `https://pixabay.com/api/?key=${accessKey}&q=${encodeURIComponent(query)}&image_type=photo&orientation=horizontal&per_page=20`;
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000);
@@ -558,12 +558,16 @@ async function getPixabayImage(query, accessKey) {
         if (!response.ok) return null;
 
         const data = await response.json();
-        const imageUrl = data.hits?.[0]?.largeImageURL;
 
-        if (imageUrl) {
-            console.log(`[PIXABAY] ✅ Sucesso! URL: ${imageUrl.substring(0, 50)}...`);
+        // CORREÇÃO: Seleciona aleatoriamente uma das imagens retornadas para evitar duplicidade
+        if (data.hits && data.hits.length > 0) {
+            const randomIndex = Math.floor(Math.random() * data.hits.length);
+            const imageUrl = data.hits[randomIndex].largeImageURL;
+
+            console.log(`[PIXABAY] ✅ Sucesso! URL: ${imageUrl.substring(0, 50)}... (Index: ${randomIndex}/${data.hits.length})`);
             return imageUrl;
         }
+
         return null;
     } catch (error) {
         console.error(`[PIXABAY API] ❌ Erro: ${error.message}`);
