@@ -212,9 +212,23 @@ async function main() {
 
             // NOVO: Faz pull antes de dar push para evitar rejeição
             console.log('🔄 Sincronizando com o GitHub...');
-            execSync('git pull --rebase origin main', { cwd: path.join(__dirname, '..'), stdio: 'inherit' });
 
+            // Salva mudanças não commitadas temporariamente
+            try {
+                execSync('git stash', { cwd: path.join(__dirname, '..'), stdio: 'pipe' });
+            } catch (e) {
+                // Ignora erro se não houver nada para fazer stash
+            }
+
+            execSync('git pull --rebase origin main', { cwd: path.join(__dirname, '..'), stdio: 'inherit' });
             execSync('git push origin main', { cwd: path.join(__dirname, '..'), stdio: 'inherit' });
+
+            // Restaura mudanças salvas
+            try {
+                execSync('git stash pop', { cwd: path.join(__dirname, '..'), stdio: 'pipe' });
+            } catch (e) {
+                // Ignora erro se não houver stash para restaurar
+            }
             console.log('\n✅ Alterações commitadas e enviadas para o GitHub!');
         } catch (error) {
             console.error('\n⚠️  Erro ao fazer commit. Faça manualmente:');
