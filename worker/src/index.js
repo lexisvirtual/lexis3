@@ -394,6 +394,11 @@ function sanitizeContent(content) {
     // 6. Remove espaços em branco no final das linhas
     cleaned = cleaned.replace(/[ \t]+$/gm, '');
 
+    // 7. Remove artefatos de final de JSON (", ou " ou }, no final do arquivo)
+    // Isso acontece quando a regex captura o fechamento do campo content
+    cleaned = cleaned.replace(/",\s*$/, ""); 
+    cleaned = cleaned.replace(/"\s*$/, "");
+
     return cleaned.trim();
 }
 
