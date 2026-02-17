@@ -1,4 +1,3 @@
-
 export default {
     // --- ROTAS HTTP (API Manual) ---
     async fetch(request, env, ctx) {
@@ -28,7 +27,6 @@ export default {
                 created_at: new Date().toISOString()
             };
 
-            // Salva com prioridade invertida no ID para ordenação simples (na listagem futura)
             const id = Date.now().toString();
             await env.LEXIS_PAUTA.put(`job:${id}`, JSON.stringify(jobData));
 
@@ -94,7 +92,17 @@ export default {
             });
         }
 
-        return new Response("Lexis Publisher V5.6 (Slug Shield) Ativo", { status: 200 });
+        // 8. SITEMAP DINÂMICO (SEO)
+        if (url.pathname === "/sitemap.xml") {
+            return await generateDynamicSitemap(env);
+        }
+
+        // 9. RSS FEED DINÂMICO (SEO)
+        if (url.pathname === "/rss.xml" || url.pathname === "/feed.xml") {
+            return await generateDynamicRSS(env);
+        }
+
+        return new Response("Lexis Publisher V5.8 (Advanced Art Director) Ativo", { status: 200 });
     },
 
     // --- TRIGGERS AGENDADOS ---
@@ -104,7 +112,6 @@ export default {
 };
 
 // --- ORQUESTRADOR ---
-
 async function processNextJob(env) {
     const list = await env.LEXIS_PAUTA.list({ prefix: "job:", limit: 1 });
 
@@ -127,7 +134,6 @@ async function processNextJob(env) {
     const jobKey = list.keys[0].name;
     const rawValue = await env.LEXIS_PAUTA.get(jobKey);
 
-    // SELF-HEALING: Se o valor for nulo (Zumbi), deleta e segue
     if (!rawValue) {
         console.warn(`[ZOMBIE] Limpando item vazio: ${jobKey}`);
         await env.LEXIS_PAUTA.delete(jobKey);
@@ -142,18 +148,16 @@ async function processNextJob(env) {
 
         if (result.success) {
             await env.LEXIS_PAUTA.delete(jobKey);
-            // Indexação (ETAPA 9 - Cache Warming / Metadata)
-            // Salvamos o post no índice do cluster para interlink futuro
             await addToClusterIndex(env, jobData.cluster, {
                 title: result.title,
                 slug: result.slug,
-                intent: jobData.intent
+                intent: jobData.intent,
+                published_at: new Date().toISOString().split('T')[0]
             });
 
             return new Response(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
         } else {
             console.error(`[FAIL] ${result.error}`);
-            // Lógica de Retentativa Corrigida: Deleta se for qualquer erro de validação ou Parsing
             const isValidationError = ["Short Content", "No Structure (H2)", "Missing Fields", "Parsing Failed"].includes(result.error) || result.reason === "DUPLICATE_SLUG";
 
             if (isValidationError) {
@@ -168,15 +172,12 @@ async function processNextJob(env) {
 }
 
 // --- NÚCLEO INTELIGENTE (IA + VALIDAÇÃO) ---
-
 async function generateAndPublishPost(env, job) {
-    // ETAPA 7: INTERLINK PROGRAMÁTICO
     const relatedPosts = await getRelatedPosts(env, job.cluster);
     const internalLinksPrompt = relatedPosts.length > 0
         ? `INCLUA LINKS INTERNOS PARA: ${relatedPosts.map(p => `[${p.title}](/blog/${p.slug})`).join(", ")}`
         : "";
 
-    // SISTEMA: FORÇA BRUTA JSON (V7.0)
     const systemPrompt = `
     Você é o Evangelista Chefe da Lexis Academy.
     
@@ -194,22 +195,21 @@ async function generateAndPublishPost(env, job) {
       "description": "Meta description persuasiva para Google (max 150 chars)",
       "tags": ["tag1", "tag2"],
       "content": "Texto completo do artigo em Markdown. Use ## para subtítulos. NÃO coloque o título H1 aqui dentro, apenas o corpo do texto. NUNCA coloque 'Imagem:', 'Search query:' ou descrições da imagem dentro deste campo.",
-      "image_search_query": "English visual search query for Unsplash/Pixabay. Ex: 'cinematic shot of happy students watching a movie on laptop, cozy atmosphere'"
+      "image_search_query": "English visual search query for Pixabay. Follow the Advanced Anti-Noise template: [who], [specific action], [specific environment], [emotional tone], [lighting], [color direction], [composition], [quality markers], [minimum 6 exclusions with -]"
     }
   `;
 
     const userPrompt = `
-    Tópico: "${job.topic}"
-    Cluster: "${job.cluster}"
-    Intenção: "${job.intent}"
+Tópico: "${job.topic}"
+Cluster: "${job.cluster}"
+Intenção: "${job.intent}"
     
     ${internalLinksPrompt}
     
-    Escreva um artigo de >1000 palavras.
-    Comece atacando o problema imediatamente (sem introduções fofas).
+    Escreva um artigo de > 1000 palavras.
     Use Português do Brasil.
-    
-    IMPORTANTE: Retorne APENAS o JSON válido. Sem markdown em volta (\`\`\`json).
+
+    IMPORTANTE: Retorne APENAS o JSON válido.
   `;
 
     let aiResponse;
@@ -225,10 +225,7 @@ async function generateAndPublishPost(env, job) {
         return { success: false, error: `AI Failed: ${e.message}` };
     }
 
-    // PARSER JSON BLINDADO V8.2 (Smart Extractor)
     let raw = aiResponse.response.trim();
-
-    // 1. Busca cirúrgica pelo objeto JSON (ignora "Aqui está:", markdown, etc)
     const firstBrace = raw.indexOf('{');
     const lastBrace = raw.lastIndexOf('}');
 
@@ -239,23 +236,19 @@ async function generateAndPublishPost(env, job) {
     const postData = { cluster: job.cluster, intent: job.intent };
     let parseSuccess = false;
 
-    // TENTATIVA 1: JSON.parse puro
     try {
         const parsed = JSON.parse(raw);
         Object.assign(postData, parsed);
-        // Mapeia content -> content_markdown para evitar fallback errôneo
         if (parsed.content) postData.content_markdown = parsed.content;
         parseSuccess = true;
     } catch (e) {
-        console.warn("[PARSER] JSON.parse falhou. Tentando extração manual (Regex)...");
+        console.warn("[PARSER] JSON.parse falhou. Tentando extração manual...");
     }
 
-    // TENTATIVA 2: Extração via Regex (Se o JSON quebrou ou veio sujo)
     if (!parseSuccess) {
         try {
             const extract = (key) => {
-                // Regex busca "key": "valor"
-                const match = raw.match(new RegExp(`"${key}"\\s*:\\s*"(.*?)"`, 's'));
+                const match = raw.match(new RegExp(`"${key}"\\s *: \\s * "(.*?)"`, 's'));
                 return match ? match[1] : null;
             };
 
@@ -263,24 +256,18 @@ async function generateAndPublishPost(env, job) {
             postData.slug = extract("slug");
             postData.description = extract("description");
 
-            // Content é mais chato, pode ter aspas escapadas. Tenta pegar tudo depois de "content": "
             const contentMatch = raw.match(/"content"\s*:\s*"(.*)"\s*}/s) || raw.match(/"content"\s*:\s*"(.*)/s);
             if (contentMatch) {
-                // Remove a aspa final e chave se tiver pego
                 let content = contentMatch[1];
                 if (content.endsWith('"}')) content = content.slice(0, -2);
                 else if (content.endsWith('"')) content = content.slice(0, -1);
-
-                // Desescapar quebras de linha (\n -> pulo de linha real)
                 postData.content_markdown = content.replace(/\\n/g, '\n').replace(/\\"/g, '"');
             }
 
-            // Tags (tentativa simples)
             const tagsMatch = raw.match(/"tags"\s*:\s*\[(.*?)\]/s);
             if (tagsMatch) {
                 postData.tags = tagsMatch[1].split(',').map(t => t.replace(/["\s]/g, ''));
             }
-
         } catch (e2) {
             console.error("Parser Regex falhou também.");
         }
@@ -296,28 +283,20 @@ async function generateAndPublishPost(env, job) {
     if (!postData.title) postData.title = job.topic;
     if (!postData.slug) postData.slug = job.topic.toLowerCase().replace(/ /g, '-');
     if (!postData.content_markdown) {
-        // Se não achou 'content' no JSON, é provável que a IA tenha mandado Markdown puro ignorando o prompt
-        // Então assumimos que 'raw' é o texto.
         console.warn("IA ignorou JSON. Usando RAW como conteúdo.");
         postData.content_markdown = raw;
     }
 
-    // Limpeza final de segurança no Slug
     postData.slug = postData.slug.toLowerCase().replace(/[^a-z0-9-]/g, '');
-
-    // Limpeza no Title (remover aspas extras se houver)
     postData.title = postData.title.trim();
 
-    // ETAPA 5: VALIDAÇÃO
     const validation = validatePost(postData);
     if (!validation.valid) return { success: false, error: validation.reason };
 
-    // ETAPA 4.5: ANTI-DUPLICIDADE
     if (await checkFileExists(env, `${postData.slug}.md`)) {
         return { success: false, reason: "DUPLICATE_SLUG", error: "Exists" };
     }
 
-    // ETAPA 6: MONTAGEM FINAL
     // ETAPA 6: MONTAGEM FINAL
     // INJEÇÃO DE IMAGEM AUTOMÁTICA (Curador V8.1 - Reativado)
     if (!postData.image) {
@@ -354,41 +333,38 @@ ${postData.content_markdown}
 ---
 *Este artigo é parte da nossa série sobre **${job.cluster}**. Continue treinando:*
 ${relatedPosts.map(p => `- [${p.title}](/blog/${p.slug})`).join('\n')}
-  `;
+`;
 
-    // ETAPA 8: COMMIT
-    const result = await uploadToGitHub(env, `${postData.slug}.md`, finalMarkdown, `feat(blog): [${job.cluster}] ${postData.title}`);
+    const result = await uploadToGitHub(env, `${postData.slug}.md`, finalMarkdown, `feat(blog): [${job.cluster}] ${postData.title} `);
     return { success: true, url: result.url, slug: postData.slug, title: postData.title };
 }
 
 // --- KV HELPER (BRAIN) ---
-
-// Adiciona post ao índice do cluster
 async function addToClusterIndex(env, cluster, postMeta) {
     const key = `index:${cluster}`;
     let current = await env.LEXIS_PAUTA.get(key);
     let posts = current ? JSON.parse(current) : [];
 
-    // Evita duplicatas no índice
+    if (!postMeta.published_at) {
+        postMeta.published_at = new Date().toISOString().split('T')[0];
+    }
+
     if (!posts.find(p => p.slug === postMeta.slug)) {
         posts.push(postMeta);
         await env.LEXIS_PAUTA.put(key, JSON.stringify(posts));
     }
 }
 
-// Recupera posts do mesmo cluster (para linkar)
 async function getRelatedPosts(env, cluster) {
     const key = `index:${cluster}`;
     const data = await env.LEXIS_PAUTA.get(key);
     if (!data) return [];
 
     const posts = JSON.parse(data);
-    // Retorna até 3 posts aleatórios do cluster para não ficar sempre os mesmos links
     return posts.sort(() => 0.5 - Math.random()).slice(0, 3);
 }
 
 // --- UTILS ---
-
 function sanitizeContent(content) {
     if (!content) return content;
 
@@ -430,7 +406,6 @@ function sanitizeContent(content) {
 
     return cleaned.trim();
 }
-
 function validatePost(post) {
     if (post.content_markdown.length < 400) return { valid: false, reason: "Short Content" };
     if (!post.content_markdown.includes("##")) return { valid: false, reason: "No Structure (H2)" };
@@ -459,7 +434,6 @@ async function uploadToGitHub(env, fileName, content, message) {
     return { url: d.content.html_url };
 }
 
-
 // Mapa de queries para cada cluster (para buscar no Unsplash)
 const CLUSTER_QUERIES = {
     'business': 'business professional office work',
@@ -483,24 +457,7 @@ async function getImageWithFallback(cluster, env, specificQuery = null) {
         ? specificQuery
         : (CLUSTER_QUERIES[cluster] || CLUSTER_QUERIES['default']);
 
-    // TENTATIVA 1: Unsplash API (DESATIVADO Conforme Solicitado)
-    // Motivo: Falha da API e preferência pelo Pixabay
-    /*
-    if (env.UNSPLASH_ACCESS_KEY && env.UNSPLASH_ENABLED === 'true') {
-        try {
-            console.log(`[UNSPLASH] Buscando: "${finalQuery}"`);
-            const image = await getUnsplashImage(finalQuery, env.UNSPLASH_ACCESS_KEY);
-            if (image) {
-                console.log(`[UNSPLASH] ✅ Sucesso! URL: ${image.substring(0, 50)}...`);
-                return image;
-            }
-        } catch (error) {
-            console.warn(`[UNSPLASH] ❌ Falha: ${error.message}. Usando fallback...`);
-        }
-    }
-    */
-
-    // TENTATIVA 2: Pixabay API
+    // TENTATIVA 1: Pixabay API
     if (env.PIXABAY_API_KEY && env.PEXELS_ENABLED === 'true') {
         try {
             console.log(`[PIXABAY] Buscando: "${finalQuery}"`);
@@ -526,51 +483,6 @@ async function getImageWithFallback(cluster, env, specificQuery = null) {
 
     // FALLBACK 2: Imagem padrão final
     return "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80";
-}
-
-// ============================================
-// FUNÇÃO: Buscar do Unsplash API
-// ============================================
-async function getUnsplashImage(query, accessKey) {
-    // Adicionamos timestamp para evitar cache agressivo
-    const url = `https://api.unsplash.com/photos/random?query=${encodeURIComponent(query)}&w=1200&q=80&orientation=landscape&count=1`;
-
-    try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos timeout
-
-        const response = await fetch(url, {
-            headers: {
-                'Authorization': `Client-ID ${accessKey}`,
-                'Accept-Version': 'v1'
-            },
-            signal: controller.signal
-        });
-
-        clearTimeout(timeoutId);
-
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-
-        // A API random retorna array se count > 1 ou as vezes objeto simples
-        const imgObj = Array.isArray(data) ? data[0] : data;
-
-        if (imgObj && imgObj.urls && imgObj.urls.regular) {
-            return `${imgObj.urls.regular}?w=1200&q=80`;
-        }
-        return null;
-
-    } catch (error) {
-        if (error.name === 'AbortError') {
-            console.error(`[UNSPLASH API] Timeout (5s) ao buscar imagem`);
-        } else {
-            console.error(`[UNSPLASH API] Erro: ${error.message}`);
-        }
-        return null;
-    }
 }
 
 // ============================================
@@ -609,36 +521,24 @@ async function getPixabayImage(query, accessKey) {
     }
 }
 
-// --- BANCO DE IMAGENS HUMANIZADAS (Unsplash Curated - V8.1) ---
+// --- BANCO DE IMAGENS ---
 function getCuratedImage(cluster) {
     const COLLECTIONS = {
         'business': [
             "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80",
-            "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1200&q=80",
-            "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1200&q=80"
+            "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&q=80"
         ],
         'viagem': [
             "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1200&q=80",
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
-            "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1200&q=80",
-            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
-            "https://images.unsplash.com/photo-1488085061387-422e29b40080?w=1200&q=80"
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80"
         ],
         'estudo': [
             "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1200&q=80",
-            "https://images.unsplash.com/photo-1513258496099-48168024aec0?w=1200&q=80",
-            "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1200&q=80",
-            "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1200&q=80",
-            "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1200&q=80"
+            "https://images.unsplash.com/photo-1513258496099-48168024aec0?w=1200&q=80"
         ],
         'mindset': [
-            "https://images.unsplash.com/photo-1499209974431-2761e2523676?w=1200&q=80", // Relaxed thinking
-            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80", // Girl thinking
-            "https://images.unsplash.com/photo-1555601568-c916f54b1046?w=1200&q=80", // Brain concept
-            "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=1200&q=80", // Meditation focus
-            "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=1200&q=80"  // Working focused
+            "https://images.unsplash.com/photo-1499209974431-2761e2523676?w=1200&q=80",
+            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80"
         ],
         'default': [
             "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80"
@@ -886,9 +786,8 @@ async function selectThemesByAI(env) {
 // ============================================
 async function generateVisualKeywords(env, topic) {
     if (!topic) return null;
-    console.log(`[ART DIRECTOR] Gerando prompt visual para: "${topic}"`);
+    console.log(`[ART DIRECTOR] Gerando prompt avançado (TEMPLATE ANTIRRUÍDO) para: "${topic}"`);
 
-    // Lista de palavras proibidas (geram imagens ruins/abstratas)
     const FORBIDDEN_KEYWORDS = [
         'neuroscience', 'brain', 'science', 'concept', 'abstract',
         'success', 'motivation', 'inspiration', 'achievement',
@@ -897,71 +796,182 @@ async function generateVisualKeywords(env, topic) {
     ];
 
     try {
-        const artDirectorPrompt = `You are a professional art director specializing in stock photography for editorial blog hero images.
+        const artDirectorPrompt = `
+        ACT AS: Strategic Art Director specialized in keyword-based image banks (Pixabay, Unsplash, Pexels).
+        USER MISSION: Create a highly assertive English prompt for a blog hero image.
 
-Your task: Create a highly specific Pixabay search prompt in English for this blog title:
-"${topic}"
+        BLOG TOPIC: "${topic}"
 
-MANDATORY STRUCTURE - Fill ALL fields:
+        STEP 1: INTERNAL DIAGNOSIS (Do not include in output)
+        1. Classify the theme into ONE category: Relationship, Business, Technology, Culture, Education, Productivity, Health, Marketing, or Other.
+        2. Convert the abstract theme into a CONCRETE HUMAN SCENE with:
+           - Specific Action
+           - Real Environment
+           - Predominant Emotion
+        3. Identify ambiguous words in the theme that might cause "noise" in the image bank.
 
-1. CHARACTER: Who appears (age, gender, ethnicity if relevant, profession/role)
-2. SPECIFIC ACTION: What they are doing (be concrete, not abstract)
-3. ENVIRONMENT: Where (specific location, not generic "office" or "home")
-4. EMOTIONAL TONE: Facial expression and body language
-5. LIGHTING: Type of light (natural window, soft overhead, golden hour, etc.)
-6. COLOR PALETTE: Dominant colors and mood (warm earth tones, cool blues, neutral minimalist, etc.)
+        STEP 2: PROMPT CONSTRUCTION RULES
+        - 100% English
+        - Real life scenes, NO abstract concepts
+        - Defined characters and clear actions
+        - Specific environment and explicit emotion
+        - Defined lighting and suggested color palette
+        - Hero Image requirements: Include "wide horizontal composition" and "negative space for headline"
+        - Mandatory Quality Markers: "realistic editorial photography", "high resolution", "natural expressions"
+        - Category-based Exclusions (Include at least 6 with a minus sign):
+          * Relationship: -festival -decoration -ceramic -handmade -craft -cartoon -wedding stage -proposal ring closeup
+          * Business: -handshake closeup -cartoon office -3d render -clipart -illustration -graph isolated
+          * Technology: -futuristic neon -robot cartoon -3d abstract background -digital illustration -metaverse art
+          * Culture: -pottery -traditional craft -costume performance -folk dance stage -artisan workshop -decoration closeup
+          * Education: -children cartoon -clipart -school drawing -illustration -blackboard isolated
+          * Productivity: -abstract concept -3d clock -floating icons -illustration -minimal icon set
 
-CRITICAL RULES:
-- Transform abstract concepts into CONCRETE VISUAL SCENES
-- Use realistic, observable actions (NOT metaphors like "reaching for stars")
-- Specify real environments (NOT "modern office" - say "cozy cafe with plants" or "bright library desk")
-- FORBIDDEN WORDS: ${FORBIDDEN_KEYWORDS.join(', ')}
-- If the topic is abstract, find the HUMAN STORY behind it
+        OUTPUT FORMAT (Strictly one line, no explanation):
+        [who], [specific action], [specific environment], [emotional tone], [lighting], [color direction], [composition], [quality markers], [minimum 6 exclusions]
 
-OUTPUT FORMAT:
-Return ONLY the final English prompt (one line, no quotes, no explanation).
-The prompt must be 15-25 words describing a real photo scene.
-
-Example for "Neurociência e Conversação":
-BAD: "neuroscience conversation brain learning concept"
-GOOD: "two young adults having engaging conversation at cozy cafe, warm natural light, focused expressions, earth tones"`;
+        EXAMPLE:
+        A group of diverse friends laughing, sharing a meal at a rustic outdoor wooden table, feeling joyful and connected, soft golden hour sunlight, warm earth tones, wide horizontal composition, negative space for headline, realistic editorial photography, high resolution, natural expressions, -festival -decoration -ceramic -handmade -craft -cartoon -wedding stage -proposal ring closeup
+        `;
 
         const response = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
             messages: [
                 { role: 'system', content: artDirectorPrompt },
-                { role: 'user', content: `Create the prompt now.` }
+                { role: 'user', content: `Generate the assertive English prompt for: ${topic}` }
             ],
-            max_tokens: 150
+            max_tokens: 250
         });
 
         let prompt = response.response.trim();
 
         // Limpeza de artifacts
         prompt = prompt.replace(/^["']|["']$/g, ''); // Remove aspas
-        prompt = prompt.replace(/^(Here is|Here's|Prompt:|The prompt is:?)/gi, '').trim();
+        prompt = prompt.replace(/^(Here is|Here's|Prompt:|The prompt is:?|Result:?)/gi, '').trim();
         prompt = prompt.replace(/\n.*/g, ''); // Remove linhas extras
 
-        // Validação: Se contém palavras proibidas, força fallback
-        const hasForbiddenWord = FORBIDDEN_KEYWORDS.some(word =>
-            prompt.toLowerCase().includes(word.toLowerCase())
-        );
-
-        if (hasForbiddenWord) {
-            console.warn(`[ART DIRECTOR] Prompt contém palavra proibida. Usando fallback genérico.`);
-            prompt = "young professional working on laptop at bright modern workspace, natural window light, concentrated expression";
+        // Validação básica: Se o prompt for muito curto ou não tiver exclusões, tenta forçar
+        if (prompt.length < 50 || !prompt.includes('-')) {
+            console.warn("[ART DIRECTOR] Prompt gerado parece incompleto. Usando estrutura de segurança.");
+            const fallbackSuffix = "wide horizontal composition, negative space for headline, realistic editorial photography, high resolution, natural expressions, -cartoon -clipart -3d -illustration -abstract -background";
+            prompt = `${topic} scene with people, ${fallbackSuffix}`;
         }
 
-        // FÓRMULA HERO IMAGE (sempre anexada)
-        const heroImageSuffix = "wide horizontal composition, negative space for headline, high resolution, realistic editorial photography, no stock cliché, no exaggerated smile";
-
-        const finalPrompt = `${prompt}, ${heroImageSuffix}`;
-
-        console.log(`[ART DIRECTOR] Prompt final: "${finalPrompt.substring(0, 100)}..."`);
-        return finalPrompt;
+        console.log(`[ART DIRECTOR] Prompt final: "${prompt.substring(0, 100)}..."`);
+        return prompt;
 
     } catch (e) {
         console.warn(`[ART DIRECTOR] Falha: ${e.message}`);
-        // Fallback de emergência
-        return "professional working on creative project, natural lighting, modern workspace, wide horizontal composition, high resolution, realistic editorial photography";
+        return "authentic diverse people engaged in real activity, natural lighting, specific environment, wide horizontal composition, negative space for headline, realistic editorial photography, high resolution, -cartoon -clipart -3d -illustration";
     }
+}
+
+// 4. SITEMAP DINÂMICO (SEO V5.7)
+async function generateDynamicSitemap(env) {
+    const baseUrl = "https://lexis.academy";
+    const today = new Date().toISOString().split('T')[0];
+
+    const staticPages = [
+        { loc: "/", priority: "1.0", changefreq: "weekly", lastmod: today },
+        { loc: "/imersao", priority: "0.9", changefreq: "monthly", lastmod: today },
+        { loc: "/maestria", priority: "0.9", changefreq: "monthly", lastmod: today },
+        { loc: "/the-way", priority: "0.9", changefreq: "monthly", lastmod: today },
+        { loc: "/blog", priority: "0.8", changefreq: "daily", lastmod: today },
+    ];
+
+    const clusters = ["ingles", "metodologia", "imersao", "dicas", "estudo", "business", "viagem", "mindset"];
+    const blogPosts = [];
+
+    for (const cluster of clusters) {
+        const indexKey = `index:${cluster}`;
+        const indexData = await env.LEXIS_PAUTA.get(indexKey);
+        if (indexData) {
+            try {
+                const posts = JSON.parse(indexData);
+                for (const post of posts) {
+                    blogPosts.push({
+                        loc: `/blog/${post.slug}`,
+                        priority: "0.7",
+                        changefreq: "monthly",
+                        lastmod: post.published_at || today
+                    });
+                }
+            } catch (e) {
+                console.error(`Erro ao parsear index:${cluster}`, e);
+            }
+        }
+    }
+
+    const urls = [...staticPages, ...blogPosts];
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.map(page => `  <url>
+    <loc>${baseUrl}${page.loc}</loc>
+    <lastmod>${page.lastmod}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
+  </url>`).join('\n')}
+</urlset>`;
+
+    return new Response(xml, {
+        headers: {
+            "Content-Type": "application/xml",
+            "Cache-Control": "public, max-age=3600"
+        }
+    });
+}
+
+// --- RSS FEED DINÂMICO (SEO V5.7) ---
+async function generateDynamicRSS(env) {
+    const baseUrl = "https://lexis.academy";
+    const today = new Date().toUTCString();
+
+    const clusters = ["ingles", "metodologia", "imersao", "dicas", "estudo", "business", "viagem", "mindset"];
+    const allPosts = [];
+
+    for (const cluster of clusters) {
+        const indexKey = `index:${cluster}`;
+        const indexData = await env.LEXIS_PAUTA.get(indexKey);
+        if (indexData) {
+            try {
+                const posts = JSON.parse(indexData);
+                for (const post of posts) {
+                    allPosts.push({
+                        title: post.title,
+                        link: `${baseUrl}/blog/${post.slug}`,
+                        pubDate: post.published_at ? new Date(post.published_at).toUTCString() : today,
+                        category: cluster
+                    });
+                }
+            } catch (e) {
+                console.error(`Erro ao parsear index:${cluster}`, e);
+            }
+        }
+    }
+
+    allPosts.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+
+    const rss = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Lexis Academy Blog</title>
+    <link>${baseUrl}/blog</link>
+    <description>Artigos sobre aprendizado de inglês, imersão e fluência real - Metodologia Lexis</description>
+    <language>pt-BR</language>
+    <lastBuildDate>${today}</lastBuildDate>
+    <atom:link href="${baseUrl}/rss.xml" rel="self" type="application/rss+xml"/>
+${allPosts.slice(0, 20).map(post => `    <item>
+      <title><![CDATA[${post.title}]]></title>
+      <link>${post.link}</link>
+      <guid>${post.link}</guid>
+      <pubDate>${post.pubDate}</pubDate>
+      <category>${post.category}</category>
+    </item>`).join('\n')}
+  </channel>
+</rss>`;
+
+    return new Response(rss, {
+        headers: {
+            "Content-Type": "application/rss+xml",
+            "Cache-Control": "public, max-age=3600"
+        }
+    });
 }
