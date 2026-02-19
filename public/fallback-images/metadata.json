@@ -1,0 +1,67 @@
+{
+  "timestamp": "2026-02-19T21:27:40.647Z",
+  "totalImages": 10,
+  "images": [
+    {
+      "id": "fallback-01",
+      "url": "/fallback-images/fallback-01.jpg",
+      "format": "jpg",
+      "source": "https://pixabay.com/photos/happy-smile-joy-happiness-couple-10123459/"
+    },
+    {
+      "id": "fallback-02",
+      "url": "/fallback-images/fallback-02.jpg",
+      "format": "jpg",
+      "source": "https://pixabay.com/photos/kolkata-india-kolkata-city-city-10106115/"
+    },
+    {
+      "id": "fallback-03",
+      "url": "/fallback-images/fallback-03.jpg",
+      "format": "jpg",
+      "source": "https://pixabay.com/photos/teenagers-people-boho-bohemian-10099104/"
+    },
+    {
+      "id": "fallback-04",
+      "url": "/fallback-images/fallback-04.jpg",
+      "format": "jpg",
+      "source": "https://pixabay.com/photos/people-abstract-motion-blur-crowd-10097300/"
+    },
+    {
+      "id": "fallback-05",
+      "url": "/fallback-images/fallback-05.jpg",
+      "format": "jpg",
+      "source": "https://pixabay.com/photos/infant-small-child-newborn-sleep-10095583/"
+    },
+    {
+      "id": "fallback-06",
+      "url": "/fallback-images/fallback-06.jpg",
+      "format": "jpg",
+      "source": "https://pixabay.com/photos/authentic-conversation-collaboration-10094420/"
+    },
+    {
+      "id": "fallback-07",
+      "url": "/fallback-images/fallback-07.jpg",
+      "format": "jpg",
+      "source": "https://pixabay.com/photos/service-construction-work-10090376/"
+    },
+    {
+      "id": "fallback-08",
+      "url": "/fallback-images/fallback-08.jpg",
+      "format": "jpg",
+      "source": "https://pixabay.com/photos/friends-friendship-costume-10088685/"
+    },
+    {
+      "id": "fallback-09",
+      "url": "/fallback-images/fallback-09.jpg",
+      "format": "jpg",
+      "source": "https://pixabay.com/photos/longevity-middle-aged-grandpa-10083828/"
+    },
+    {
+      "id": "fallback-10",
+      "url": "/fallback-images/fallback-10.jpg",
+      "format": "jpg",
+      "source": "https://pixabay.com/photos/woman-portrait-fashion-model-girl-10084510/"
+    }
+  ],
+  "query": "people talking conversation"
+}
