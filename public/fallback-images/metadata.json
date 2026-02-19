@@ -1,67 +1,67 @@
 {
-  "timestamp": "2026-02-19T21:27:40.647Z",
+  "timestamp": "2026-02-19T21:35:01.409Z",
   "totalImages": 10,
   "images": [
     {
       "id": "fallback-01",
       "url": "/fallback-images/fallback-01.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/happy-smile-joy-happiness-couple-10123459/"
+      "source": "https://pixabay.com/photos/sparrows-house-sparrows-birds-10132567/"
     },
     {
       "id": "fallback-02",
       "url": "/fallback-images/fallback-02.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/kolkata-india-kolkata-city-city-10106115/"
+      "source": "https://pixabay.com/photos/birthday-celebration-cake-friends-10127506/"
     },
     {
       "id": "fallback-03",
       "url": "/fallback-images/fallback-03.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/teenagers-people-boho-bohemian-10099104/"
+      "source": "https://pixabay.com/photos/swans-white-bird-nature-wildlife-10123514/"
     },
     {
       "id": "fallback-04",
       "url": "/fallback-images/fallback-04.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/people-abstract-motion-blur-crowd-10097300/"
+      "source": "https://pixabay.com/photos/classroom-child-school-education-10114943/"
     },
     {
       "id": "fallback-05",
       "url": "/fallback-images/fallback-05.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/infant-small-child-newborn-sleep-10095583/"
+      "source": "https://pixabay.com/photos/koi-fish-pond-water-carp-colorful-10112679/"
     },
     {
       "id": "fallback-06",
       "url": "/fallback-images/fallback-06.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/authentic-conversation-collaboration-10094420/"
+      "source": "https://pixabay.com/photos/zebres-savane-nature-wildlife-10113131/"
     },
     {
       "id": "fallback-07",
       "url": "/fallback-images/fallback-07.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/service-construction-work-10090376/"
+      "source": "https://pixabay.com/photos/festival-boom-dance-party-friends-10111029/"
     },
     {
       "id": "fallback-08",
       "url": "/fallback-images/fallback-08.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/friends-friendship-costume-10088685/"
+      "source": "https://pixabay.com/photos/festival-boom-dance-party-friends-10111027/"
     },
     {
       "id": "fallback-09",
       "url": "/fallback-images/fallback-09.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/longevity-middle-aged-grandpa-10083828/"
+      "source": "https://pixabay.com/photos/water-nature-reflection-lake-10107592/"
     },
     {
       "id": "fallback-10",
       "url": "/fallback-images/fallback-10.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/woman-portrait-fashion-model-girl-10084510/"
+      "source": "https://pixabay.com/photos/corporate-headshots-daphne-reeves-10103093/"
     }
   ],
-  "query": "people talking conversation"
+  "query": "group discussion meeting"
 }

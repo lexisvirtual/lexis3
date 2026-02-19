@@ -18,13 +18,18 @@ const PIXABAY_API_KEY = '54644686-7efa1461402a91a56a1f92e8b';
 const TEMP_DIR = path.join(__dirname, '..', '.temp-fallback');
 const FALLBACK_IMAGES_DIR = path.join(__dirname, '..', 'public', 'fallback-images');
 
-// Tópicos genéricos para buscar imagens de "pessoas conversando"
+// Queries variadas em inglês para buscar imagens de "pessoas conversando" em diferentes cenários
 const FALLBACK_TOPICS = [
-  'people talking conversation',
-  'business meeting discussion',
-  'team collaboration',
-  'people communicating',
-  'conversation group',
+  'people talking conversation',      // Genérico
+  'business meeting discussion',       // Cenário profissional
+  'friends chatting casual',           // Cenário casual
+  'team collaboration discussion',     // Cenário colaborativo
+  'people communicating together',     // Cenário de comunicação
+  'office conversation group',         // Cenário corporativo
+  'dialogue people talking',           // Cenário de diálogo
+  'group discussion meeting',          // Cenário de reunião
+  'people having conversation',        // Cenário geral
+  'communication teamwork people',     // Cenário de trabalho em equipe
 ];
 
 /**
