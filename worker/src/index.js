@@ -1,3 +1,5 @@
+import { getFallbackImage, refreshFallbackPool } from './fallback-manager.js';
+
 export default {
     // --- ROTAS HTTP (API Manual) ---
     async fetch(request, env, ctx) {
@@ -473,15 +475,28 @@ async function getImageWithFallback(cluster, env, specificQuery = null) {
         console.log(`[PIXABAY] Desabilitado ou sem chave. Usando banco curado.`);
     }
 
-    // FALLBACK 1: Banco de imagens curado
-    console.log(`[FALLBACK] Usando banco de imagens estático...`);
+    // FALLBACK 1: Sistema dinamico de fallback (pool de imagens genericas)
+    console.log(`[FALLBACK-DYNAMIC] Buscando imagem do pool dinamico...`);
+    try {
+        const fallbackImage = await getFallbackImage(env);
+        if (fallbackImage) {
+            console.log(`[FALLBACK-DYNAMIC] Imagem de fallback encontrada`);
+            return fallbackImage;
+        }
+    } catch (error) {
+        console.warn(`[FALLBACK-DYNAMIC] Erro: ${error.message}. Usando banco curado...`);
+    }
+
+    // FALLBACK 2: Banco de imagens curado (estatico)
+    console.log(`[FALLBACK-STATIC] Usando banco de imagens estatico...`);
     const curatedImage = getCuratedImage(cluster);
     if (curatedImage) {
-        console.log(`[FALLBACK] ✅ Imagem curada encontrada`);
+        console.log(`[FALLBACK-STATIC] Imagem curada encontrada`);
         return curatedImage;
     }
 
-    // FALLBACK 2: Imagem padrão final
+    // FALLBACK 3: Imagem padrao final
+    console.log(`[FALLBACK-HARDCODED] Usando imagem padrao final`);
     return "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80";
 }
 
