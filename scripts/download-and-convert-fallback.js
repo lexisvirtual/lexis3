@@ -18,9 +18,11 @@ const PIXABAY_API_KEY = '54644686-7efa1461402a91a56a1f92e8b';
 const TEMP_DIR = path.join(__dirname, '..', '.temp-fallback');
 const FALLBACK_IMAGES_DIR = path.join(__dirname, '..', 'public', 'fallback-images');
 
-// Prompt profissional otimizado para Pixabay (máximo 100 caracteres)
-// Baseado em diretrizes de diretor de arte para imagens assertivas
-const FALLBACK_QUERY = 'people conversation coffee shop office casual authentic candid photography natural';
+// Prompt otimizado baseado em filtros iStock que trouxeram bons resultados:
+// - Pessoas felizes conversando
+// - Diversidade etária (teenager, young adult, adult, mature adult)
+// - Grupos de 2+ pessoas
+const FALLBACK_QUERY = 'happy people talking conversation group friends smiling cheerful diverse';
 
 /**
  * Criar diretórios necessários

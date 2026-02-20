@@ -33,8 +33,11 @@ const LOCAL_FALLBACK_IMAGES = [
  */
 async function fetchFallbackImagesFromPixabay() {
   try {
-    // Prompt profissional otimizado para Pixabay (máximo 100 caracteres)
-    const query = 'people conversation coffee shop office casual authentic candid photography natural';
+    // Prompt otimizado baseado em filtros iStock que trouxeram bons resultados:
+    // - Pessoas felizes conversando
+    // - Diversidade etária (teenager, young adult, adult, mature adult)
+    // - Grupos de 2+ pessoas
+    const query = 'happy people talking conversation group friends smiling cheerful diverse';
     const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(query)}&image_type=photo&per_page=${POOL_SIZE}&safesearch=true&order=latest`;
     
     const response = await fetch(url);
