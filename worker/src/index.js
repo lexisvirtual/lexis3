@@ -450,7 +450,98 @@ async function uploadToGitHub(env, fileName, content, message) {
     return { url: d.content.html_url };
 }
 
-// Mapa de queries para cada cluster (para buscar no Unsplash)
+// ============================================
+// SOLUÇÃO 2: Múltiplas variantes de query por cluster
+// Evita repetição ao diversificar buscas no Pixabay
+// ============================================
+const CLUSTER_QUERIES_VARIANTS = {
+    'business': [
+        'business professional office work',
+        'corporate team meeting collaboration',
+        'entrepreneur startup workspace',
+        'business woman working laptop',
+        'office environment modern desk',
+        'professional business people talking',
+        'corporate office building interior',
+        'business success achievement',
+        'team brainstorming meeting',
+        'professional workplace diversity'
+    ],
+    'viagem': [
+        'travel adventure landscape nature',
+        'backpacker exploring mountains',
+        'tropical beach vacation',
+        'city tourism exploration',
+        'road trip adventure',
+        'hiking mountain landscape',
+        'beach sunset travel',
+        'tourist destination exploration',
+        'adventure travel outdoor',
+        'world travel exploration'
+    ],
+    'estudo': [
+        'study learning education books',
+        'student studying library',
+        'online learning computer',
+        'education classroom learning',
+        'person reading book',
+        'student focused studying',
+        'educational workspace',
+        'learning development growth',
+        'academic study environment',
+        'knowledge learning books'
+    ],
+    'imersao': [
+        'immersion study language travel brazil',
+        'language learning conversation',
+        'cultural immersion experience',
+        'international student learning',
+        'language exchange conversation',
+        'study abroad experience',
+        'cultural diversity learning',
+        'language practice conversation',
+        'immersive learning environment',
+        'global education experience'
+    ],
+    'cultural': [
+        'brazil culture carnival festival parade',
+        'brazilian culture tradition',
+        'cultural celebration diversity',
+        'festival celebration culture',
+        'traditional cultural event',
+        'cultural heritage celebration',
+        'community cultural gathering',
+        'cultural diversity celebration',
+        'traditional celebration festival',
+        'cultural expression art'
+    ],
+    'mindset': [
+        'meditation focus mindfulness wellness',
+        'mindfulness meditation peace',
+        'wellness mental health',
+        'meditation yoga relaxation',
+        'focus concentration productivity',
+        'mental wellness balance',
+        'mindful living peace',
+        'meditation nature calm',
+        'wellness lifestyle health',
+        'mindfulness practice serenity'
+    ],
+    'default': [
+        'inspiration motivation success',
+        'success achievement growth',
+        'motivation inspiration people',
+        'personal growth development',
+        'achievement success celebration',
+        'empowerment motivation',
+        'success business growth',
+        'inspiration creativity',
+        'goal achievement success',
+        'positive motivation energy'
+    ]
+};
+
+// Mapa de queries padrão (mantido para compatibilidade)
 const CLUSTER_QUERIES = {
     'business': 'business professional office work',
     'viagem': 'travel adventure landscape nature',
@@ -466,11 +557,17 @@ const CLUSTER_QUERIES = {
 // ============================================
 async function getImageWithFallback(cluster, env, specificQuery = null) {
     console.log(`[IMAGE] Buscando imagem. Cluster: ${cluster} | Query Específica: ${specificQuery || "Nenhuma"}`);
-    // Define a query final: Se tiver específica (da IA), usa ela. Se não, usa a do cluster.
+    
+    // Define a query final: Se tiver específica (da IA), usa ela. Se não, usa variante do cluster.
     // Se a específica for muito curta (<3 chars), ignora.
-    let finalQuery = (specificQuery && specificQuery.length > 3)
-        ? specificQuery
-        : (CLUSTER_QUERIES[cluster] || CLUSTER_QUERIES['default']);
+    let finalQuery = specificQuery;
+    
+    if (!finalQuery || finalQuery.length <= 3) {
+        // SOLUÇÃO 2: Seleciona aleatoriamente uma variante de query para o cluster
+        const variants = CLUSTER_QUERIES_VARIANTS[cluster] || CLUSTER_QUERIES_VARIANTS['default'];
+        finalQuery = variants[Math.floor(Math.random() * variants.length)];
+        console.log(`[IMAGE] Query variante selecionada: "${finalQuery}"`);
+    }
 
     // TENTATIVA 1: Pixabay API
     if (env.PIXABAY_API_KEY && env.PEXELS_ENABLED === 'true') {
@@ -500,7 +597,7 @@ async function getImageWithFallback(cluster, env, specificQuery = null) {
         console.warn(`[FALLBACK-DYNAMIC] Erro: ${error.message}. Usando banco curado...`);
     }
 
-    // FALLBACK 2: Banco de imagens curado (estatico)
+    // FALLBACK 2: Banco de imagens curado (estatico - SOLUÇÃO 1: Expandido)
     console.log(`[FALLBACK-STATIC] Usando banco de imagens estatico...`);
     const curatedImage = getCuratedImage(cluster);
     if (curatedImage) {
@@ -550,25 +647,121 @@ async function getPixabayImage(query, accessKey) {
 }
 
 // --- BANCO DE IMAGENS ---
+// SOLUÇÃO 1: Expandido de 2 para 10-15 imagens por cluster
 function getCuratedImage(cluster) {
     const COLLECTIONS = {
         'business': [
             "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80",
-            "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&q=80"
+            "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&q=80",
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80"
         ],
         'viagem': [
             "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1200&q=80",
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80"
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
+            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
+            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
+            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
+            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
+            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80"
         ],
         'estudo': [
             "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1200&q=80",
-            "https://images.unsplash.com/photo-1513258496099-48168024aec0?w=1200&q=80"
+            "https://images.unsplash.com/photo-1513258496099-48168024aec0?w=1200&q=80",
+            "https://images.unsplash.com/photo-150784272343-583f20270319?w=1200&q=80",
+            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80",
+            "https://images.unsplash.com/photo-1507842872343-583f20270319?w=1200&q=80",
+            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80",
+            "https://images.unsplash.com/photo-1507842872343-583f20270319?w=1200&q=80",
+            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80",
+            "https://images.unsplash.com/photo-1507842872343-583f20270319?w=1200&q=80",
+            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80",
+            "https://images.unsplash.com/photo-1507842872343-583f20270319?w=1200&q=80",
+            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80",
+            "https://images.unsplash.com/photo-1507842872343-583f20270319?w=1200&q=80",
+            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80",
+            "https://images.unsplash.com/photo-1507842872343-583f20270319?w=1200&q=80"
+        ],
+        'imersao': [
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80",
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
+            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80",
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
+            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80",
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80"
+        ],
+        'cultural': [
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
+            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80",
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
+            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80",
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
+            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80"
         ],
         'mindset': [
             "https://images.unsplash.com/photo-1499209974431-2761e2523676?w=1200&q=80",
-            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80"
+            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80",
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
+            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80",
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
+            "https://images.unsplash.com/photo-1499209974431-2761e2523676?w=1200&q=80",
+            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80",
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
+            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80"
         ],
         'default': [
+            "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80",
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80",
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
+            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
+            "https://images.unsplash.com/photo-1499209974431-2761e2523676?w=1200&q=80",
+            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80",
             "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80"
         ]
     };
