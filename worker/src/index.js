@@ -147,7 +147,13 @@ async function processNextJob(env) {
     console.log(`[ORCHESTRATOR] Iniciando: ${jobData.topic} (Cluster: ${jobData.cluster})`);
 
     try {
-        const result = await generateAndPublishPost(env, jobData);
+        let result;
+        try {
+            result = await generateAndPublishPost(env, jobData);
+        } catch (innerError) {
+            console.error("[CRITICAL ERROR]", innerError);
+            return new Response(JSON.stringify({ error: `Worker Error: ${innerError.message}`, details: innerError.stack }), { status: 500, headers: { "Content-Type": "application/json" } });
+        }
 
         if (result.success) {
             await env.LEXIS_PAUTA.delete(jobKey);
@@ -515,7 +521,6 @@ async function getImageWithFallback(cluster, env, specificQuery = null) {
     // FALLBACK 3: Imagem padrao final
     console.log(`[FALLBACK-HARDCODED] Usando imagem padrao final`);
     return "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80";
-        */
 }
 
 // ============================================
