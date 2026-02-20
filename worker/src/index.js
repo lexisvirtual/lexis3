@@ -1,4 +1,4 @@
-import { getFallbackImage, refreshFallbackPool } from './fallback-manager.js';
+// import { getFallbackImage, refreshFallbackPool } from './fallback-manager.js';
 
 export default {
     // --- ROTAS HTTP (API Manual) ---
@@ -451,7 +451,12 @@ const CLUSTER_QUERIES = {
 // FUNÇÃO PRINCIPAL: Buscar imagem com fallback
 // ============================================
 async function getImageWithFallback(cluster, env, specificQuery = null) {
-    console.log(`[IMAGE] Buscando imagem. Cluster: ${cluster} | Query Específica: ${specificQuery || "Nenhuma"}`);
+        // SISTEMA DE IMAGENS DESATIVADO - Blog apenas com texto
+    console.log(`[IMAGE] Sistema de imagens desativado. Posts serão gerados sem imagens.`);
+    return null;
+
+    /* CÓDIGO ANTIGO COMENTADO
+console.log(`[IMAGE] Buscando imagem. Cluster: ${cluster} | Query Específica: ${specificQuery || "Nenhuma"}`);
 
     // Define a query final: Se tiver específica (da IA), usa ela. Se não, usa a do cluster.
     // Se a específica for muito curta (<3 chars), ignora.
@@ -498,6 +503,7 @@ async function getImageWithFallback(cluster, env, specificQuery = null) {
     // FALLBACK 3: Imagem padrao final
     console.log(`[FALLBACK-HARDCODED] Usando imagem padrao final`);
     return "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80";
+        */
 }
 
 // ============================================
