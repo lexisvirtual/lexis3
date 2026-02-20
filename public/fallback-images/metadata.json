@@ -1,74 +1,69 @@
 {
-  "timestamp": "2026-02-20T12:41:56.253Z",
+  "timestamp": "2026-02-20T12:54:04.612Z",
   "totalImages": 10,
   "images": [
     {
       "id": "fallback-01",
       "url": "/fallback-images/fallback-01.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/woman-girl-freedom-happy-sun-591576/"
+      "source": "https://pixabay.com/photos/woman-train-kyoto-japan-people-9189442/"
     },
     {
       "id": "fallback-02",
       "url": "/fallback-images/fallback-02.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/people-business-meeting-1979261/"
+      "source": "https://pixabay.com/photos/landscape-nature-lake-boat-people-9556563/"
     },
     {
       "id": "fallback-03",
       "url": "/fallback-images/fallback-03.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/startup-meeting-brainstorming-594090/"
+      "source": "https://pixabay.com/photos/landscape-people-moutains-bridge-9850937/"
     },
     {
       "id": "fallback-04",
       "url": "/fallback-images/fallback-04.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/people-girls-women-students-2557396/"
+      "source": "https://pixabay.com/photos/shin-osaka-train-station-station-9227711/"
     },
     {
       "id": "fallback-05",
       "url": "/fallback-images/fallback-05.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/concert-confetti-party-event-club-2527495/"
+      "source": "https://pixabay.com/photos/musician-bassist-guitar-player-9763126/"
     },
     {
       "id": "fallback-06",
       "url": "/fallback-images/fallback-06.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/meeting-business-architect-office-2284501/"
+      "source": "https://pixabay.com/photos/asakusa-temple-asakusa-temple-9607420/"
     },
     {
       "id": "fallback-07",
       "url": "/fallback-images/fallback-07.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/friendship-day-black-women-portrait-3104635/"
+      "source": "https://pixabay.com/photos/education-library-people-diversity-9629907/"
     },
     {
       "id": "fallback-08",
       "url": "/fallback-images/fallback-08.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/meeting-brainstorming-business-594091/"
+      "source": "https://pixabay.com/photos/eiffel-tower-car-people-street-9379913/"
     },
     {
       "id": "fallback-09",
       "url": "/fallback-images/fallback-09.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/children-splash-asia-sunset-1822688/"
+      "source": "https://pixabay.com/photos/young-girls-together-walking-9594959/"
     },
     {
       "id": "fallback-10",
       "url": "/fallback-images/fallback-10.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/man-writing-laptop-computer-write-2562325/"
+      "source": "https://pixabay.com/photos/worker-employee-company-people-9694106/"
     }
   ],
-  "queries": [
-    "people talking",
-    "happy conversation",
-    "business meeting discussion",
-    "friends talking indoors",
-    "team meeting office"
-  ],
-  "system": "multi-query with popularity score"
+  "query": "people talking",
+  "order": "latest",
+  "system": "single-query with popularity score"
 }

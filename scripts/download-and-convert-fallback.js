@@ -19,15 +19,10 @@ const TEMP_DIR = path.join(__dirname, '..', '.temp-fallback');
 const FALLBACK_IMAGES_DIR = path.join(__dirname, '..', 'public', 'fallback-images');
 
 /**
- * Queries estratégicas para maximizar qualidade e diversidade
+ * Query única focada em pessoas conversando
+ * Busca as imagens mais recentes para garantir variedade
  */
-const STRATEGIC_QUERIES = [
-  'people talking',
-  'happy conversation',
-  'business meeting discussion',
-  'friends talking indoors',
-  'team meeting office'
-];
+const FALLBACK_QUERY = 'people talking';
 
 /**
  * Calcula score de popularidade ponderado
@@ -96,11 +91,11 @@ function convertToWebP(inputPath, outputPath) {
 }
 
 /**
- * Buscar imagens de uma query específica do Pixabay
+ * Buscar imagens do Pixabay com filtros otimizados
  */
-function searchPixabayQuery(query) {
+function searchPixabayImages() {
   return new Promise((resolve, reject) => {
-    const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(query)}&image_type=photo&category=people&orientation=horizontal&safesearch=true&per_page=100&order=popular&min_width=1200`;
+    const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(FALLBACK_QUERY)}&image_type=photo&category=people&orientation=horizontal&safesearch=true&per_page=100&order=latest&min_width=1200`;
     
     https.get(url, (response) => {
       let data = '';
@@ -118,46 +113,29 @@ function searchPixabayQuery(query) {
 }
 
 /**
- * Buscar imagens do Pixabay com sistema multi-query
+ * Buscar imagens do Pixabay com query única
  */
 async function fetchPixabayImages() {
-  const allImages = [];
+  // 1. Buscar imagens mais recentes
+  console.log(`🔍 Buscando imagens: "${FALLBACK_QUERY}" (order=latest)`);
+  const allImages = await searchPixabayImages();
   
-  // 1. Rodar múltiplas queries
-  console.log('🔍 Executando múltiplas queries estratégicas...');
-  for (const query of STRATEGIC_QUERIES) {
-    console.log(`  - Buscando: "${query}"`);
-    const results = await searchPixabayQuery(query);
-    allImages.push(...results);
-  }
-  
-  // 2. Remover duplicadas
-  const uniqueImages = new Map();
-  for (const img of allImages) {
-    if (!uniqueImages.has(img.id)) {
-      uniqueImages.set(img.id, img);
-    }
-  }
-  
-  let filtered = Array.from(uniqueImages.values());
-  console.log(`📊 ${allImages.length} imagens encontradas, ${filtered.length} únicas`);
-  
-  // 3. Filtrar por dimensões mínimas
-  filtered = filtered.filter(img => 
+  // 2. Filtrar por dimensões mínimas
+  let filtered = allImages.filter(img => 
     img.imageWidth >= 1200 && img.imageHeight >= 630
   );
-  console.log(`✓ ${filtered.length} imagens com dimensões adequadas (≥1200x630)`);
+  console.log(`📋 ${allImages.length} imagens encontradas, ${filtered.length} com dimensões adequadas (≥1200x630)`);
   
-  // 4. Calcular score de popularidade
+  // 3. Calcular score de popularidade
   filtered = filtered.map(img => ({
     ...img,
     popularityScore: calculatePopularityScore(img)
   }));
   
-  // 5. Ordenar por popularidade
+  // 4. Ordenar por popularidade
   filtered.sort((a, b) => b.popularityScore - a.popularityScore);
   
-  // 6. Retornar top 10
+  // 5. Retornar top 10
   const topImages = filtered.slice(0, 10);
   console.log(`🏆 Top 10 imagens mais populares selecionadas`);
   
@@ -232,8 +210,9 @@ async function processImages() {
       timestamp: new Date().toISOString(),
       totalImages: successCount,
       images: processedImages,
-      queries: STRATEGIC_QUERIES,
-      system: 'multi-query with popularity score'
+      query: FALLBACK_QUERY,
+      order: 'latest',
+      system: 'single-query with popularity score'
     };
     
     fs.writeFileSync(

@@ -27,16 +27,10 @@ const LOCAL_FALLBACK_IMAGES = [
 ];
 
 /**
- * Queries estratégicas para maximizar qualidade e diversidade
- * Múltiplas queries garantem variedade de cenários
+ * Query única focada em pessoas conversando
+ * Busca as imagens mais recentes para garantir variedade
  */
-const STRATEGIC_QUERIES = [
-  'people talking',
-  'happy conversation',
-  'business meeting discussion',
-  'friends talking indoors',
-  'team meeting office'
-];
+const FALLBACK_QUERY = 'people talking';
 
 /**
  * Calcula score de popularidade ponderado
@@ -51,65 +45,50 @@ function calculatePopularityScore(image) {
 }
 
 /**
- * Busca imagens de uma query específica do Pixabay
+ * Busca imagens do Pixabay com filtros otimizados
  */
-async function searchPixabayQuery(query) {
+async function searchPixabayImages() {
   try {
-    const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(query)}&image_type=photo&category=people&orientation=horizontal&safesearch=true&per_page=100&order=popular&min_width=1200`;
+    const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(FALLBACK_QUERY)}&image_type=photo&category=people&orientation=horizontal&safesearch=true&per_page=100&order=latest&min_width=1200`;
     
     const response = await fetch(url);
     const data = await response.json();
     
     return data.hits || [];
   } catch (error) {
-    console.error(`Erro ao buscar query "${query}":`, error);
+    console.error(`Erro ao buscar imagens:`, error);
     return [];
   }
 }
 
 /**
  * Busca imagens genéricas do Pixabay para o pool de fallback
- * Sistema multi-query com score de popularidade
- * Garante alta qualidade e diversidade de cenários
+ * Query única "people talking" com order=latest para variedade
+ * Score de popularidade para selecionar as melhores
  */
 async function fetchFallbackImagesFromPixabay() {
   try {
-    const allImages = [];
+    // 1. Buscar imagens mais recentes
+    const allImages = await searchPixabayImages();
     
-    // 1. Rodar múltiplas queries para diversidade
-    for (const query of STRATEGIC_QUERIES) {
-      const results = await searchPixabayQuery(query);
-      allImages.push(...results);
-    }
-    
-    // 2. Remover duplicadas usando ID único
-    const uniqueImages = new Map();
-    for (const img of allImages) {
-      if (!uniqueImages.has(img.id)) {
-        uniqueImages.set(img.id, img);
-      }
-    }
-    
-    let filtered = Array.from(uniqueImages.values());
-    
-    // 3. Filtrar por dimensões mínimas (qualidade)
-    filtered = filtered.filter(img => 
+    // 2. Filtrar por dimensões mínimas (qualidade)
+    let filtered = allImages.filter(img => 
       img.imageWidth >= 1200 && img.imageHeight >= 630
     );
     
-    // 4. Calcular score de popularidade para cada imagem
+    // 3. Calcular score de popularidade para cada imagem
     filtered = filtered.map(img => ({
       ...img,
       popularityScore: calculatePopularityScore(img)
     }));
     
-    // 5. Ordenar por popularidade (mais populares primeiro)
+    // 4. Ordenar por popularidade (mais populares primeiro)
     filtered.sort((a, b) => b.popularityScore - a.popularityScore);
     
-    // 6. Retornar top 10 imagens mais populares
+    // 5. Retornar top 10 imagens mais populares
     const topImages = filtered.slice(0, POOL_SIZE);
     
-    console.log(`Busca multi-query concluída: ${allImages.length} imagens encontradas, ${uniqueImages.size} únicas, ${topImages.length} selecionadas`);
+    console.log(`Busca concluída: ${allImages.length} imagens encontradas, ${filtered.length} com dimensões adequadas, ${topImages.length} selecionadas`);
     
     return topImages.map(hit => ({
       id: hit.id,
