@@ -297,11 +297,14 @@ Intenção: "${job.intent}"
     if (!postData.slug) postData.slug = (job.topic || 'post').toLowerCase().replace(/ /g, '-');
     if (!postData.content_markdown) {
         console.warn("IA ignorou JSON. Usando RAW como conteúdo.");
-        postData.content_markdown = raw;
+        postData.content_markdown = raw || 'Conteúdo não disponível';
     }
 
-    postData.slug = (postData.slug || 'post').toLowerCase().replace(/[^a-z0-9-]/g, '');
-    postData.title = (postData.title || 'Sem Título').trim();
+    // Proteção total contra null/undefined
+    postData.slug = String(postData.slug || 'post').toLowerCase().replace(/[^a-z0-9-]/g, '');
+    postData.title = String(postData.title || 'Sem Título').trim();
+    postData.description = String(postData.description || postData.title || 'Descrição não disponível');
+    postData.tags = Array.isArray(postData.tags) ? postData.tags : ['ingles'];
 
     const validation = validatePost(postData);
     if (!validation.valid) return { success: false, error: validation.reason };
