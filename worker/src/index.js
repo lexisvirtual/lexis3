@@ -110,6 +110,9 @@ export default {
 
     // --- TRIGGERS AGENDADOS ---
     async scheduled(event, env, ctx) {
+        console.log('[CRON] Iniciando processamento agendado às 09:00 UTC...');
+        // OPÇÃO 1: Processa 1 job da fila
+        // OPÇÃO 2: Se fila vazia, gera novas pautas automaticamente
         ctx.waitUntil(processNextJob(env));
     }
 };
@@ -132,6 +135,13 @@ async function processNextJob(env) {
         } catch (e) {
             return new Response(`Fila vazia. Erro no refill: ${e.message}`, { status: 500 });
         }
+    }
+
+    // OPÇÃO 2 MELHORADA: Se fila tem apenas 1 item, gera mais pautas em background
+    if (list.keys.length === 1) {
+        console.log("[PROACTIVE-REFILL] Fila com apenas 1 item. Gerando pautas em background...");
+        // Não aguarda, apenas inicia em background
+        selectThemesByAI(env).catch(e => console.warn("[PROACTIVE-REFILL] Erro:", e.message));
     }
 
     const jobKey = list.keys[0].name;
