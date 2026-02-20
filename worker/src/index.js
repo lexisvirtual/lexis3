@@ -421,7 +421,7 @@ function sanitizeContent(content) {
 }
 function validatePost(post) {
     if (post.content_markdown.length < 400) return { valid: false, reason: "Short Content" };
-    if (!post.content_markdown.includes("##")) return { valid: false, reason: "No Structure (H2)" };
+    // Validacao de H2 removida - aceita posts sem estrutura
     return { valid: true };
 }
 
