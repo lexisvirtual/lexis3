@@ -27,10 +27,10 @@ const LOCAL_FALLBACK_IMAGES = [
 ];
 
 /**
- * Query única focada em pessoas conversando
+ * Query única focada em paisagem urbana
  * Busca as imagens mais recentes para garantir variedade
  */
-const FALLBACK_QUERY = 'people talking';
+const FALLBACK_QUERY = 'paisagem urbana';
 
 /**
  * Calcula score de popularidade ponderado
@@ -49,7 +49,7 @@ function calculatePopularityScore(image) {
  */
 async function searchPixabayImages() {
   try {
-    const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(FALLBACK_QUERY)}&image_type=photo&category=people&orientation=horizontal&safesearch=true&per_page=100&order=latest&min_width=1200`;
+    const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(FALLBACK_QUERY)}&image_type=photo&category=places&orientation=horizontal&safesearch=true&per_page=100&order=latest&min_width=1200`;
     
     const response = await fetch(url);
     const data = await response.json();

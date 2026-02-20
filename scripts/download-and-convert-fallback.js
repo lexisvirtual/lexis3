@@ -19,10 +19,10 @@ const TEMP_DIR = path.join(__dirname, '..', '.temp-fallback');
 const FALLBACK_IMAGES_DIR = path.join(__dirname, '..', 'public', 'fallback-images');
 
 /**
- * Query única focada em pessoas conversando
+ * Query única focada em paisagem urbana
  * Busca as imagens mais recentes para garantir variedade
  */
-const FALLBACK_QUERY = 'people talking';
+const FALLBACK_QUERY = 'paisagem urbana';
 
 /**
  * Calcula score de popularidade ponderado
@@ -95,7 +95,7 @@ function convertToWebP(inputPath, outputPath) {
  */
 function searchPixabayImages() {
   return new Promise((resolve, reject) => {
-    const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(FALLBACK_QUERY)}&image_type=photo&category=people&orientation=horizontal&safesearch=true&per_page=100&order=latest&min_width=1200`;
+    const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(FALLBACK_QUERY)}&image_type=photo&category=places&orientation=horizontal&safesearch=true&per_page=100&order=latest&min_width=1200`;
     
     https.get(url, (response) => {
       let data = '';

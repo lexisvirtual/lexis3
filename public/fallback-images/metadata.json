@@ -1,69 +1,69 @@
 {
-  "timestamp": "2026-02-20T12:54:04.612Z",
+  "timestamp": "2026-02-20T13:20:00.966Z",
   "totalImages": 10,
   "images": [
     {
       "id": "fallback-01",
       "url": "/fallback-images/fallback-01.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/woman-train-kyoto-japan-people-9189442/"
+      "source": "https://pixabay.com/photos/architecture-hanseatic-city-8589487/"
     },
     {
       "id": "fallback-02",
       "url": "/fallback-images/fallback-02.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/landscape-nature-lake-boat-people-9556563/"
+      "source": "https://pixabay.com/photos/seattle-downtown-landmark-8027337/"
     },
     {
       "id": "fallback-03",
       "url": "/fallback-images/fallback-03.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/landscape-people-moutains-bridge-9850937/"
+      "source": "https://pixabay.com/photos/hamburg-building-architecture-city-8573427/"
     },
     {
       "id": "fallback-04",
       "url": "/fallback-images/fallback-04.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/shin-osaka-train-station-station-9227711/"
+      "source": "https://pixabay.com/photos/hamburg-speicherstadt-building-7854198/"
     },
     {
       "id": "fallback-05",
       "url": "/fallback-images/fallback-05.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/musician-bassist-guitar-player-9763126/"
+      "source": "https://pixabay.com/photos/berlin-germany-city-architecture-8429780/"
     },
     {
       "id": "fallback-06",
       "url": "/fallback-images/fallback-06.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/asakusa-temple-asakusa-temple-9607420/"
+      "source": "https://pixabay.com/photos/brussels-belgium-city-europe-7826514/"
     },
     {
       "id": "fallback-07",
       "url": "/fallback-images/fallback-07.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/education-library-people-diversity-9629907/"
+      "source": "https://pixabay.com/photos/vistula-meadows-vistula-river-7553908/"
     },
     {
       "id": "fallback-08",
       "url": "/fallback-images/fallback-08.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/eiffel-tower-car-people-street-9379913/"
+      "source": "https://pixabay.com/photos/berlin-television-tower-landmark-7781669/"
     },
     {
       "id": "fallback-09",
       "url": "/fallback-images/fallback-09.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/young-girls-together-walking-9594959/"
+      "source": "https://pixabay.com/photos/luis-i-bridge-deck-arch-bridge-porto-8201941/"
     },
     {
       "id": "fallback-10",
       "url": "/fallback-images/fallback-10.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/worker-employee-company-people-9694106/"
+      "source": "https://pixabay.com/photos/monument-park-clouds-arches-8172623/"
     }
   ],
-  "query": "people talking",
+  "query": "paisagem urbana",
   "order": "latest",
   "system": "single-query with popularity score"
 }
