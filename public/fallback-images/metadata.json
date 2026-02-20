@@ -1,67 +1,74 @@
 {
-  "timestamp": "2026-02-20T12:32:48.684Z",
+  "timestamp": "2026-02-20T12:41:56.253Z",
   "totalImages": 10,
   "images": [
     {
       "id": "fallback-01",
       "url": "/fallback-images/fallback-01.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/happy-smile-joy-happiness-couple-10123459/"
+      "source": "https://pixabay.com/photos/woman-girl-freedom-happy-sun-591576/"
     },
     {
       "id": "fallback-02",
       "url": "/fallback-images/fallback-02.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/teenagers-people-boho-bohemian-10099104/"
+      "source": "https://pixabay.com/photos/people-business-meeting-1979261/"
     },
     {
       "id": "fallback-03",
       "url": "/fallback-images/fallback-03.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/infant-small-child-newborn-sleep-10095583/"
+      "source": "https://pixabay.com/photos/startup-meeting-brainstorming-594090/"
     },
     {
       "id": "fallback-04",
       "url": "/fallback-images/fallback-04.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/service-construction-work-10090376/"
+      "source": "https://pixabay.com/photos/people-girls-women-students-2557396/"
     },
     {
       "id": "fallback-05",
       "url": "/fallback-images/fallback-05.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/camera-photographer-photography-10083827/"
+      "source": "https://pixabay.com/photos/concert-confetti-party-event-club-2527495/"
     },
     {
       "id": "fallback-06",
       "url": "/fallback-images/fallback-06.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/woman-portrait-fashion-model-girl-10084510/"
+      "source": "https://pixabay.com/photos/meeting-business-architect-office-2284501/"
     },
     {
       "id": "fallback-07",
       "url": "/fallback-images/fallback-07.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/afro-model-fashion-man-guy-10084526/"
+      "source": "https://pixabay.com/photos/friendship-day-black-women-portrait-3104635/"
     },
     {
       "id": "fallback-08",
       "url": "/fallback-images/fallback-08.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/sports-beach-nature-sea-landscape-10057260/"
+      "source": "https://pixabay.com/photos/meeting-brainstorming-business-594091/"
     },
     {
       "id": "fallback-09",
       "url": "/fallback-images/fallback-09.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/minimalistic-jump-child-line-10037939/"
+      "source": "https://pixabay.com/photos/children-splash-asia-sunset-1822688/"
     },
     {
       "id": "fallback-10",
       "url": "/fallback-images/fallback-10.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/minimalistic-jump-child-line-10037974/"
+      "source": "https://pixabay.com/photos/man-writing-laptop-computer-write-2562325/"
     }
   ],
-  "query": "people talking"
+  "queries": [
+    "people talking",
+    "happy conversation",
+    "business meeting discussion",
+    "friends talking indoors",
+    "team meeting office"
+  ],
+  "system": "multi-query with popularity score"
 }

@@ -27,30 +27,100 @@ const LOCAL_FALLBACK_IMAGES = [
 ];
 
 /**
- * Busca imagens genéricas do Pixabay para o pool de fallback
- * Usado apenas quando as imagens locais se esgotam
- * Utiliza prompt profissional de diretor de arte para imagens assertivas
+ * Queries estratégicas para maximizar qualidade e diversidade
+ * Múltiplas queries garantem variedade de cenários
  */
-async function fetchFallbackImagesFromPixabay() {
+const STRATEGIC_QUERIES = [
+  'people talking',
+  'happy conversation',
+  'business meeting discussion',
+  'friends talking indoors',
+  'team meeting office'
+];
+
+/**
+ * Calcula score de popularidade ponderado
+ * Prioriza likes (engajamento) sobre downloads e views
+ */
+function calculatePopularityScore(image) {
+  return (
+    (image.downloads || 0) * 0.5 +
+    (image.likes || 0) * 2 +
+    (image.views || 0) * 0.1
+  );
+}
+
+/**
+ * Busca imagens de uma query específica do Pixabay
+ */
+async function searchPixabayQuery(query) {
   try {
-    // Prompt simples e efetivo baseado em resultados do Pixabay
-    // "people talking" retorna 16.992 fotos de alta qualidade
-    // Pessoas conversando em diversos cenários profissionais e casuais
-    const query = 'people talking';
-    const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(query)}&image_type=photo&per_page=${POOL_SIZE}&safesearch=true&order=latest`;
+    const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(query)}&image_type=photo&category=people&orientation=horizontal&safesearch=true&per_page=100&order=popular&min_width=1200`;
     
     const response = await fetch(url);
     const data = await response.json();
     
-    if (data.hits && data.hits.length > 0) {
-      return data.hits.map(hit => ({
-        id: hit.id,
-        url: hit.webformatURL,
-        source: 'pixabay',
-        timestamp: Date.now()
-      }));
-    }
+    return data.hits || [];
+  } catch (error) {
+    console.error(`Erro ao buscar query "${query}":`, error);
     return [];
+  }
+}
+
+/**
+ * Busca imagens genéricas do Pixabay para o pool de fallback
+ * Sistema multi-query com score de popularidade
+ * Garante alta qualidade e diversidade de cenários
+ */
+async function fetchFallbackImagesFromPixabay() {
+  try {
+    const allImages = [];
+    
+    // 1. Rodar múltiplas queries para diversidade
+    for (const query of STRATEGIC_QUERIES) {
+      const results = await searchPixabayQuery(query);
+      allImages.push(...results);
+    }
+    
+    // 2. Remover duplicadas usando ID único
+    const uniqueImages = new Map();
+    for (const img of allImages) {
+      if (!uniqueImages.has(img.id)) {
+        uniqueImages.set(img.id, img);
+      }
+    }
+    
+    let filtered = Array.from(uniqueImages.values());
+    
+    // 3. Filtrar por dimensões mínimas (qualidade)
+    filtered = filtered.filter(img => 
+      img.imageWidth >= 1200 && img.imageHeight >= 630
+    );
+    
+    // 4. Calcular score de popularidade para cada imagem
+    filtered = filtered.map(img => ({
+      ...img,
+      popularityScore: calculatePopularityScore(img)
+    }));
+    
+    // 5. Ordenar por popularidade (mais populares primeiro)
+    filtered.sort((a, b) => b.popularityScore - a.popularityScore);
+    
+    // 6. Retornar top 10 imagens mais populares
+    const topImages = filtered.slice(0, POOL_SIZE);
+    
+    console.log(`Busca multi-query concluída: ${allImages.length} imagens encontradas, ${uniqueImages.size} únicas, ${topImages.length} selecionadas`);
+    
+    return topImages.map(hit => ({
+      id: hit.id,
+      url: hit.webformatURL,
+      source: 'pixabay',
+      timestamp: Date.now(),
+      score: hit.popularityScore,
+      downloads: hit.downloads,
+      likes: hit.likes,
+      views: hit.views
+    }));
   } catch (error) {
     console.error('Erro ao buscar imagens do Pixabay:', error);
     return [];

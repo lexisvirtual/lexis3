@@ -18,10 +18,27 @@ const PIXABAY_API_KEY = '54644686-7efa1461402a91a56a1f92e8b';
 const TEMP_DIR = path.join(__dirname, '..', '.temp-fallback');
 const FALLBACK_IMAGES_DIR = path.join(__dirname, '..', 'public', 'fallback-images');
 
-// Prompt simples e efetivo baseado em resultados do Pixabay
-// "people talking" retorna 16.992 fotos de alta qualidade
-// Pessoas conversando em diversos cenários profissionais e casuais
-const FALLBACK_QUERY = 'people talking';
+/**
+ * Queries estratégicas para maximizar qualidade e diversidade
+ */
+const STRATEGIC_QUERIES = [
+  'people talking',
+  'happy conversation',
+  'business meeting discussion',
+  'friends talking indoors',
+  'team meeting office'
+];
+
+/**
+ * Calcula score de popularidade ponderado
+ */
+function calculatePopularityScore(image) {
+  return (
+    (image.downloads || 0) * 0.5 +
+    (image.likes || 0) * 2 +
+    (image.views || 0) * 0.1
+  );
+}
 
 /**
  * Criar diretórios necessários
@@ -79,11 +96,11 @@ function convertToWebP(inputPath, outputPath) {
 }
 
 /**
- * Buscar imagens do Pixabay
+ * Buscar imagens de uma query específica do Pixabay
  */
-function fetchPixabayImages(query) {
+function searchPixabayQuery(query) {
   return new Promise((resolve, reject) => {
-    const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(query)}&image_type=photo&per_page=20&safesearch=true&order=latest`;
+    const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(query)}&image_type=photo&category=people&orientation=horizontal&safesearch=true&per_page=100&order=popular&min_width=1200`;
     
     https.get(url, (response) => {
       let data = '';
@@ -91,11 +108,7 @@ function fetchPixabayImages(query) {
       response.on('end', () => {
         try {
           const result = JSON.parse(data);
-          if (result.hits && result.hits.length > 0) {
-            resolve(result.hits);
-          } else {
-            reject(new Error(`Nenhuma imagem encontrada para: ${query}`));
-          }
+          resolve(result.hits || []);
         } catch (err) {
           reject(err);
         }
@@ -105,15 +118,61 @@ function fetchPixabayImages(query) {
 }
 
 /**
+ * Buscar imagens do Pixabay com sistema multi-query
+ */
+async function fetchPixabayImages() {
+  const allImages = [];
+  
+  // 1. Rodar múltiplas queries
+  console.log('🔍 Executando múltiplas queries estratégicas...');
+  for (const query of STRATEGIC_QUERIES) {
+    console.log(`  - Buscando: "${query}"`);
+    const results = await searchPixabayQuery(query);
+    allImages.push(...results);
+  }
+  
+  // 2. Remover duplicadas
+  const uniqueImages = new Map();
+  for (const img of allImages) {
+    if (!uniqueImages.has(img.id)) {
+      uniqueImages.set(img.id, img);
+    }
+  }
+  
+  let filtered = Array.from(uniqueImages.values());
+  console.log(`📊 ${allImages.length} imagens encontradas, ${filtered.length} únicas`);
+  
+  // 3. Filtrar por dimensões mínimas
+  filtered = filtered.filter(img => 
+    img.imageWidth >= 1200 && img.imageHeight >= 630
+  );
+  console.log(`✓ ${filtered.length} imagens com dimensões adequadas (≥1200x630)`);
+  
+  // 4. Calcular score de popularidade
+  filtered = filtered.map(img => ({
+    ...img,
+    popularityScore: calculatePopularityScore(img)
+  }));
+  
+  // 5. Ordenar por popularidade
+  filtered.sort((a, b) => b.popularityScore - a.popularityScore);
+  
+  // 6. Retornar top 10
+  const topImages = filtered.slice(0, 10);
+  console.log(`🏆 Top 10 imagens mais populares selecionadas`);
+  
+  return topImages;
+}
+
+/**
  * Processar e salvar imagens
  */
 async function processImages() {
   try {
     setupDirectories();
     
-    console.log('\n🔄 Buscando imagens do Pixabay com prompt profissional...');
-    console.log(`🎨 Query: ${FALLBACK_QUERY}`);
-    const images = await fetchPixabayImages(FALLBACK_QUERY);
+    console.log('\n🔄 Buscando imagens do Pixabay com sistema multi-query...');
+    const images = await fetchPixabayImages();
     
     console.log(`📥 Processando ${Math.min(10, images.length)} imagens...`);
     
@@ -173,7 +232,8 @@ async function processImages() {
       timestamp: new Date().toISOString(),
       totalImages: successCount,
       images: processedImages,
-      query: FALLBACK_QUERY
+      queries: STRATEGIC_QUERIES,
+      system: 'multi-query with popularity score'
     };
     
     fs.writeFileSync(
