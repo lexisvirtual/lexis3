@@ -283,15 +283,15 @@ Intenção: "${job.intent}"
     }
 
     // FALLBACKS DE SEGURANÇA (Se tudo falhar, não perde o post)
-    if (!postData.title) postData.title = job.topic;
-    if (!postData.slug) postData.slug = job.topic.toLowerCase().replace(/ /g, '-');
+    if (!postData.title) postData.title = job.topic || 'Sem Título';
+    if (!postData.slug) postData.slug = (job.topic || 'post').toLowerCase().replace(/ /g, '-');
     if (!postData.content_markdown) {
         console.warn("IA ignorou JSON. Usando RAW como conteúdo.");
         postData.content_markdown = raw;
     }
 
-    postData.slug = postData.slug.toLowerCase().replace(/[^a-z0-9-]/g, '');
-    postData.title = postData.title.trim();
+    postData.slug = (postData.slug || 'post').toLowerCase().replace(/[^a-z0-9-]/g, '');
+    postData.title = (postData.title || 'Sem Título').trim();
 
     const validation = validatePost(postData);
     if (!validation.valid) return { success: false, error: validation.reason };
