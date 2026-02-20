@@ -33,11 +33,10 @@ const LOCAL_FALLBACK_IMAGES = [
  */
 async function fetchFallbackImagesFromPixabay() {
   try {
-    // Prompt otimizado baseado em filtros iStock que trouxeram bons resultados:
-    // - Pessoas felizes conversando
-    // - Diversidade etária (teenager, young adult, adult, mature adult)
-    // - Grupos de 2+ pessoas
-    const query = 'happy people talking conversation group friends smiling cheerful diverse';
+    // Prompt simples e efetivo baseado em resultados do Pixabay
+    // "people talking" retorna 16.992 fotos de alta qualidade
+    // Pessoas conversando em diversos cenários profissionais e casuais
+    const query = 'people talking';
     const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(query)}&image_type=photo&per_page=${POOL_SIZE}&safesearch=true&order=latest`;
     
     const response = await fetch(url);
