@@ -176,6 +176,10 @@ async function processNextJob(env) {
 
 // --- NÚCLEO INTELIGENTE (IA + VALIDAÇÃO) ---
 async function generateAndPublishPost(env, job) {
+    // Validação inicial do job
+    if (!job || !job.topic) {
+        return { success: false, error: "Job inválido: topic ausente" };
+    }
     const relatedPosts = await getRelatedPosts(env, job.cluster);
     const internalLinksPrompt = relatedPosts.length > 0
         ? `INCLUA LINKS INTERNOS PARA: ${relatedPosts.map(p => `[${p.title}](/blog/${p.slug})`).join(", ")}`
