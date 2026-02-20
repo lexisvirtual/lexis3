@@ -466,8 +466,6 @@ async function getImageWithFallback(cluster, env, specificQuery = null) {
     
     console.log(`[IMAGE] Nenhuma imagem no cache. Retornando null.`);
     return null;
-console.log(`[IMAGE] Buscando imagem. Cluster: ${cluster} | Query Específica: ${specificQuery || "Nenhuma"}`);
-
     // Define a query final: Se tiver específica (da IA), usa ela. Se não, usa a do cluster.
     // Se a específica for muito curta (<3 chars), ignora.
     let finalQuery = (specificQuery && specificQuery.length > 3)
