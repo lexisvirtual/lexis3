@@ -29,10 +29,12 @@ const LOCAL_FALLBACK_IMAGES = [
 /**
  * Busca imagens genéricas do Pixabay para o pool de fallback
  * Usado apenas quando as imagens locais se esgotam
+ * Utiliza prompt profissional de diretor de arte para imagens assertivas
  */
 async function fetchFallbackImagesFromPixabay() {
   try {
-    const query = 'people talking conversation';
+    // Prompt profissional otimizado para Pixabay (máximo 100 caracteres)
+    const query = 'people conversation coffee shop office casual authentic candid photography natural';
     const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(query)}&image_type=photo&per_page=${POOL_SIZE}&safesearch=true&order=latest`;
     
     const response = await fetch(url);

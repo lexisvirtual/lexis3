@@ -1,67 +1,67 @@
 {
-  "timestamp": "2026-02-19T21:35:01.409Z",
+  "timestamp": "2026-02-20T12:04:58.690Z",
   "totalImages": 10,
   "images": [
     {
       "id": "fallback-01",
       "url": "/fallback-images/fallback-01.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/sparrows-house-sparrows-birds-10132567/"
+      "source": "https://pixabay.com/photos/austria-alps-hallstatt-mountains-10133704/"
     },
     {
       "id": "fallback-02",
       "url": "/fallback-images/fallback-02.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/birthday-celebration-cake-friends-10127506/"
+      "source": "https://pixabay.com/photos/mountain-snow-summit-huesca-10133582/"
     },
     {
       "id": "fallback-03",
       "url": "/fallback-images/fallback-03.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/swans-white-bird-nature-wildlife-10123514/"
+      "source": "https://pixabay.com/photos/cassowary-helmeted-cassowary-bird-10132957/"
     },
     {
       "id": "fallback-04",
       "url": "/fallback-images/fallback-04.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/classroom-child-school-education-10114943/"
+      "source": "https://pixabay.com/photos/mountain-snow-summit-huesca-clouds-10133581/"
     },
     {
       "id": "fallback-05",
       "url": "/fallback-images/fallback-05.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/koi-fish-pond-water-carp-colorful-10112679/"
+      "source": "https://pixabay.com/photos/spider-web-dew-nature-entomology-10132540/"
     },
     {
       "id": "fallback-06",
       "url": "/fallback-images/fallback-06.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/zebres-savane-nature-wildlife-10113131/"
+      "source": "https://pixabay.com/photos/ouessant-ram-sheep-black-horn-10133092/"
     },
     {
       "id": "fallback-07",
       "url": "/fallback-images/fallback-07.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/festival-boom-dance-party-friends-10111029/"
+      "source": "https://pixabay.com/photos/reptile-nature-animal-captivity-10133515/"
     },
     {
       "id": "fallback-08",
       "url": "/fallback-images/fallback-08.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/festival-boom-dance-party-friends-10111027/"
+      "source": "https://pixabay.com/photos/ram-ouessant-animal-mammal-horns-10133115/"
     },
     {
       "id": "fallback-09",
       "url": "/fallback-images/fallback-09.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/water-nature-reflection-lake-10107592/"
+      "source": "https://pixabay.com/photos/skiing-mountains-winter-sport-10132571/"
     },
     {
       "id": "fallback-10",
       "url": "/fallback-images/fallback-10.jpg",
       "format": "jpg",
-      "source": "https://pixabay.com/photos/corporate-headshots-daphne-reeves-10103093/"
+      "source": "https://pixabay.com/photos/egypt-sinai-mountains-nature-road-10133706/"
     }
   ],
-  "query": "group discussion meeting"
+  "query": "people conversation coffee shop office casual authentic candid photography natural"
 }

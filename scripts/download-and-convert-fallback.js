@@ -18,19 +18,9 @@ const PIXABAY_API_KEY = '54644686-7efa1461402a91a56a1f92e8b';
 const TEMP_DIR = path.join(__dirname, '..', '.temp-fallback');
 const FALLBACK_IMAGES_DIR = path.join(__dirname, '..', 'public', 'fallback-images');
 
-// Queries variadas em inglês para buscar imagens de "pessoas conversando" em diferentes cenários
-const FALLBACK_TOPICS = [
-  'people talking conversation',      // Genérico
-  'business meeting discussion',       // Cenário profissional
-  'friends chatting casual',           // Cenário casual
-  'team collaboration discussion',     // Cenário colaborativo
-  'people communicating together',     // Cenário de comunicação
-  'office conversation group',         // Cenário corporativo
-  'dialogue people talking',           // Cenário de diálogo
-  'group discussion meeting',          // Cenário de reunião
-  'people having conversation',        // Cenário geral
-  'communication teamwork people',     // Cenário de trabalho em equipe
-];
+// Prompt profissional otimizado para Pixabay (máximo 100 caracteres)
+// Baseado em diretrizes de diretor de arte para imagens assertivas
+const FALLBACK_QUERY = 'people conversation coffee shop office casual authentic candid photography natural';
 
 /**
  * Criar diretórios necessários
@@ -120,9 +110,9 @@ async function processImages() {
   try {
     setupDirectories();
     
-    console.log('\n🔄 Buscando imagens do Pixabay...');
-    const query = FALLBACK_TOPICS[Math.floor(Math.random() * FALLBACK_TOPICS.length)];
-    const images = await fetchPixabayImages(query);
+    console.log('\n🔄 Buscando imagens do Pixabay com prompt profissional...');
+    console.log(`🎨 Query: ${FALLBACK_QUERY}`);
+    const images = await fetchPixabayImages(FALLBACK_QUERY);
     
     console.log(`📥 Processando ${Math.min(10, images.length)} imagens...`);
     
@@ -182,7 +172,7 @@ async function processImages() {
       timestamp: new Date().toISOString(),
       totalImages: successCount,
       images: processedImages,
-      query: query
+      query: FALLBACK_QUERY
     };
     
     fs.writeFileSync(
