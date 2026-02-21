@@ -1,5 +1,6 @@
 // import { getFallbackImage, refreshFallbackPool } from './fallback-manager.js';
 import { getImageFromCache, getImageWithCacheFallback } from './imageCache.js';
+import { validateImageRelevance, cleanupImageHistory, getImageHistoryStats } from './image-validation.js';
 
 export default {
     // --- ROTAS HTTP (API Manual) ---
@@ -105,7 +106,24 @@ export default {
             return await generateDynamicRSS(env);
         }
 
-        return new Response("Lexis Publisher V5.8 (Advanced Art Director) Ativo", { status: 200 });
+        // 10. VALIDAÇÃO DE IMAGENS (Histórico + Relevância)
+        if (url.pathname === "/image-history") {
+            const stats = await getImageHistoryStats(env);
+            return new Response(JSON.stringify(stats, null, 2), {
+                headers: { "Content-Type": "application/json" }
+            });
+        }
+
+        // 11. LIMPEZA DE HISTÓRICO DE IMAGENS
+        if (url.pathname === "/cleanup-image-history") {
+            const daysOld = parseInt(url.searchParams.get("days")) || 365;
+            const result = await cleanupImageHistory(env, daysOld);
+            return new Response(JSON.stringify(result, null, 2), {
+                headers: { "Content-Type": "application/json" }
+            });
+        }
+
+        return new Response("Lexis Publisher V5.9 (Image Validation System) Ativo", { status: 200 });
     },
 
     // --- TRIGGERS AGENDADOS ---
@@ -324,7 +342,7 @@ Intenção: "${job.intent}"
     }
 
     // ETAPA 6: MONTAGEM FINAL
-    // INJEÇÃO DE IMAGEM AUTOMÁTICA (Curador V8.1 - Reativado)
+    // INJEÇÃO DE IMAGEM AUTOMÁTICA (Curador V8.1 - Reativado + VALIDAÇÃO)
     if (!postData.image) {
         // [MELHORIA] Tradução de Query
         // Se a query visual não veio, ou se parece com o título em PT, tentamos traduzir/gerar keywords em inglês.
@@ -335,8 +353,14 @@ Intenção: "${job.intent}"
             if (translated) searchQuery = translated;
         }
 
-        // Passamos a query final (da AI ou traduzida) + o cluster
-        postData.image = await getImageWithFallback(job.cluster, env, searchQuery || job.topic);
+        // Passamos a query final (da AI ou traduzida) + o cluster + título e conteúdo para validação
+        postData.image = await getImageWithFallback(
+            job.cluster, 
+            env, 
+            searchQuery || job.topic,
+            postData.title,
+            postData.content_markdown
+        );
     }
 
     // LIMPEZA DE CONTEÚDO V8.3 - Remove metadados técnicos vazados
@@ -563,9 +587,9 @@ const CLUSTER_QUERIES = {
 };
 
 // ============================================
-// FUNÇÃO PRINCIPAL: Buscar imagem com fallback
+// FUNÇÃO PRINCIPAL: Buscar imagem com fallback + VALIDAÇÃO
 // ============================================
-async function getImageWithFallback(cluster, env, specificQuery = null) {
+async function getImageWithFallback(cluster, env, specificQuery = null, postTitle = "", postContent = "") {
     console.log(`[IMAGE] Buscando imagem. Cluster: ${cluster} | Query Específica: ${specificQuery || "Nenhuma"}`);
     
     // Define a query final: Se tiver específica (da IA), usa ela. Se não, usa variante do cluster.
@@ -579,14 +603,21 @@ async function getImageWithFallback(cluster, env, specificQuery = null) {
         console.log(`[IMAGE] Query variante selecionada: "${finalQuery}"`);
     }
 
-    // TENTATIVA 1: Pixabay API
+    // TENTATIVA 1: Pixabay API com VALIDAÇÃO
     if (env.PIXABAY_API_KEY && env.PEXELS_ENABLED === 'true') {
         try {
             console.log(`[PIXABAY] Buscando: "${finalQuery}"`);
             const image = await getPixabayImage(finalQuery, env.PIXABAY_API_KEY);
             if (image) {
-                console.log(`[PIXABAY] ✅ Sucesso! URL: ${image.substring(0, 50)}...`);
-                return image;
+                // NOVA: Validar imagem antes de usar
+                const validation = await validateImageRelevance(image, postTitle, postContent, env);
+                if (validation.valid) {
+                    console.log(`[PIXABAY] ✅ Sucesso! URL: ${image.substring(0, 50)}... (Score: ${validation.score})`);
+                    return image;
+                } else {
+                    console.log(`[PIXABAY] ⚠️ Imagem rejeitada: ${validation.reason} (Score: ${validation.score}). Tentando outra...`);
+                    // Continua para fallback
+                }
             }
         } catch (error) {
             console.warn(`[PIXABAY] ❌ Falha: ${error.message}. Usando fallback...`);
@@ -600,8 +631,12 @@ async function getImageWithFallback(cluster, env, specificQuery = null) {
     try {
         const fallbackImage = await getFallbackImage(env);
         if (fallbackImage) {
-            console.log(`[FALLBACK-DYNAMIC] Imagem de fallback encontrada`);
-            return fallbackImage;
+            // Validar fallback também
+            const validation = await validateImageRelevance(fallbackImage, postTitle, postContent, env);
+            if (validation.valid) {
+                console.log(`[FALLBACK-DYNAMIC] Imagem de fallback encontrada (Score: ${validation.score})`);
+                return fallbackImage;
+            }
         }
     } catch (error) {
         console.warn(`[FALLBACK-DYNAMIC] Erro: ${error.message}. Usando banco curado...`);
@@ -611,13 +646,19 @@ async function getImageWithFallback(cluster, env, specificQuery = null) {
     console.log(`[FALLBACK-STATIC] Usando banco de imagens estatico...`);
     const curatedImage = getCuratedImage(cluster);
     if (curatedImage) {
-        console.log(`[FALLBACK-STATIC] Imagem curada encontrada`);
-        return curatedImage;
+        // Validar imagem curada
+        const validation = await validateImageRelevance(curatedImage, postTitle, postContent, env);
+        if (validation.valid) {
+            console.log(`[FALLBACK-STATIC] Imagem curada encontrada (Score: ${validation.score})`);
+            return curatedImage;
+        }
     }
 
-    // FALLBACK 3: Imagem padrao final
+    // FALLBACK 3: Imagem padrao final (sem validação - é o último recurso)
     console.log(`[FALLBACK-HARDCODED] Usando imagem padrao final`);
-    return "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80";
+    const defaultImage = "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80";
+    await validateImageRelevance(defaultImage, postTitle, postContent, env); // Registrar mesmo assim
+    return defaultImage;
 }
 
 // ============================================
