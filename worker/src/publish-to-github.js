@@ -71,11 +71,23 @@ export async function publishPostsToGitHub(env, maxPosts = 3) {
         JSON.stringify(publishedRecord)
       );
 
-      // 6. Registrar hash do título (deduplicação futura)
+      // 6. Registrar hash do título e da imagem (deduplicação futura)
       await env.LEXIS_PUBLISHED_POSTS.put(
         `title:${simpleHash(post.title)}`,
         'true'
       );
+
+      // Registrar imagem como usada
+      if (post.image && !post.image.includes('default.webp')) {
+        const imgUrl = typeof post.image === 'string' ? post.image : (post.image.url || post.image.originalUrl);
+        if (imgUrl) {
+          await env.LEXIS_PUBLISHED_POSTS.put(
+            `img:${simpleHash(imgUrl)}`,
+            'true',
+            { expirationTtl: 31536000 } // Guardar por 1 ano
+          );
+        }
+      }
 
       // 7. Remover da fila
       await env.LEXIS_REWRITTEN_POSTS.delete(key.name);
@@ -149,6 +161,7 @@ function buildMarkdown(post, imagePath) {
   const category = post.category || 'Dicas';
   const date = new Date().toISOString().split('T')[0];
   const content = post.content || '';
+  const keywords = post.keywords || 'aprender inglês, praticar inglês, curso de inglês';
 
   return `---
 title: "${title}"
@@ -156,6 +169,10 @@ date: "${date}"
 category: "${category}"
 description: "${description}"
 image: "${imagePath}"
+keywords: "${keywords}"
+author: "Lexis Academy"
+publisher: "Lexis English Academy"
+mainEntityOfPage: "https://lexis.academy/blog/${post.slug}"
 ---
 
 ${content}

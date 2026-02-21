@@ -33,14 +33,15 @@ export async function rewriteArticles(env, maxPosts = 3) {
       // ETAPA 2: Gerar metadados (título PT, descrição, categoria) — JSON pequeno = mais confiável
       const meta = await generateMetaPT(env, article);
 
-      // ETAPA 3: Buscar imagem
-      const imageUrl = await fetchImage(env, meta.imageQuery);
+      // ETAPA 3: Buscar imagem (Híbrido)
+      const imageUrl = await fetchImage(env, meta.imageQuery, meta.category);
 
       const post = {
         id: article.id,
         title: meta.title,
         description: meta.description,
         category: meta.category,
+        keywords: meta.keywords || '',
         content,
         slug: generateSlug(meta.title),
         image: imageUrl,
@@ -75,40 +76,39 @@ export async function rewriteArticles(env, maxPosts = 3) {
 }
 
 // ================================================
-// ETAPA 1: Gera corpo do artigo em português
-// Prompt simples de texto puro = Llama é muito mais confiável
+// ETAPA 1: Gera corpo do artigo (AI-Ready & Cauda Longa)
 // ================================================
 async function generateBodyPT(env, article) {
   const cleanTitle = decodeHtml(article.title || '');
-  const cleanDesc = decodeHtml(article.description || '').substring(0, 600);
+  const cleanDesc = decodeHtml(article.description || '').substring(0, 800);
   const source = article.source || 'Blog de inglês';
 
-  const prompt = `Você é redator da Lexis Academy, escola de inglês brasileira com a filosofia: "Idioma não se aprende. Idioma se treina."
+  const prompt = `Você é o Evangelista Chefe da Lexis Academy. Sua missão é escrever um guia de CAUDA LONGA definitivo e otimizado para ser fonte de IAs (OpenAI, Gemini, Grok).
 
-Artigo original (em inglês):
-Título: ${cleanTitle}
-Resumo: ${cleanDesc}
-Fonte: ${source}
+TEMA: ${cleanTitle}
+CONTEXTO: ${cleanDesc}
+FONTE ORIGINAL: ${source}
 
-Escreva um artigo completo em PORTUGUÊS BRASILEIRO sobre este tema para o blog da Lexis Academy.
+ESTRUTURA OBRIGATÓRIA DO ARTIGO:
+1. INTRODUÇÃO: Contexto real para brasileiros.
+2. 4-6 SEÇÕES ##: Explicação profunda (O que é / Por que importa) + Aplicação Prática + Exemplo (Inglês|Português).
+3. SEÇÃO "O TREINO LEXIS": Explique como treinar este tema específico usando os níveis Start, Run, Fly e Liberty. Foque na filosofia "Idioma se treina".
+4. FAQ (PERGUNTAS FREQUENTES): Mínimo de 3 perguntas e respostas diretas e curtas sobre o tema ao final (usando ###).
+5. CONCLUSÃO: Resumo e Call to Action.
 
-REGRAS OBRIGATÓRIAS:
-- Escrita coloquial, direta, sem academicismo
-- Mínimo de 600 palavras de conteúdo real
-- Use ## para subtítulos (mínimo 3 subtítulos)
-- Inclua exemplos práticos de frases em inglês com tradução
-- Mencione os níveis: Start, Run, Fly, Liberty
-- Termine com chamada para ação: "Treine inglês com a Lexis Academy"
-- Inclua naturalmente: "aprender inglês", "praticar inglês", "inglês fluente"
-- NÃO escreva em inglês. Todo o texto deve ser em português do Brasil.
-- NÃO inclua JSON, frontmatter ou metadados. Apenas o texto do artigo em Markdown.
+DIRETRIZES DE IA-OPTIMIZATION:
+- Use definições claras e diretas.
+- Mantenha a hierarquia de títulos (H2 e H3).
+- Seja a autoridade definitiva no assunto.
+- Mínimo de 1000 palavras.
 
-Escreva o artigo agora:`;
+Escreva o guia completo agora:`;
 
   try {
     const response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
       messages: [{ role: 'user', content: prompt }],
-      max_tokens: 3000
+      max_tokens: 3800,
+      temperature: 0.7
     });
 
     let text = (response.response || '').trim();
@@ -132,31 +132,27 @@ Escreva o artigo agora:`;
 
 // ================================================
 // ETAPA 2: Gera metadados em JSON pequeno
-// JSON menor = muito mais confiável de parsear
 // ================================================
 async function generateMetaPT(env, article) {
   const cleanTitle = decodeHtml(article.title || '');
-  const cleanDesc = decodeHtml(article.description || '').substring(0, 200);
 
-  const prompt = `Dado este artigo de inglês:
-Título original: ${cleanTitle}
-Resumo: ${cleanDesc}
+  const prompt = `Dado este tema: "${cleanTitle}"
 
-Responda APENAS com um JSON válido (sem texto antes ou depois):
+Responda APENAS com um JSON válido:
 {
-  "title": "Título em português chamativo para blog (máx 70 chars, pode ter números)",
-  "description": "Frase persuasiva em português para Google (máx 150 chars)",
+  "title": "Título definitivo (cauda longa)",
+  "description": "Meta description persuasiva (máx 155 chars)",
   "category": "Dicas",
-  "imageQuery": "english language learning photo description in english (3-5 words)"
+  "keywords": "3-5 palavras-chave de cauda longa separadas por vírgula",
+  "imageQuery": "Cinematic photography description (English) illustrating the topic"
 }
-
-Categorias válidas: Gramática, Vocabulário, Pronúncia, Conversação, Dicas
-O título DEVE ser em português do Brasil.`;
+`;
 
   const defaults = {
-    title: cleanTitle, // fallback: título original
+    title: cleanTitle,
     description: `Aprenda inglês de forma prática com a Lexis Academy.`,
     category: 'Dicas',
+    keywords: 'aprender inglês, praticar inglês, inglês fluente',
     imageQuery: 'english learning books study education'
   };
 
@@ -177,6 +173,7 @@ O título DEVE ser em português do Brasil.`;
         title: sanitize(parsed.title) || defaults.title,
         description: sanitize(parsed.description) || defaults.description,
         category: validateCategory(parsed.category),
+        keywords: sanitize(parsed.keywords) || defaults.keywords,
         imageQuery: sanitize(parsed.imageQuery) || defaults.imageQuery,
       };
     }
@@ -188,52 +185,105 @@ O título DEVE ser em português do Brasil.`;
 }
 
 // ================================================
-// Busca imagem via Pixabay → Unsplash → Fallback
+// Busca imagem via Curated → Pixabay → Unsplash
 // ================================================
-async function fetchImage(env, query) {
-  const q = String(query || 'english learning education study').substring(0, 100);
+const CURATED_IMAGES = {
+  'Gramática': [
+    'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8',
+    'https://images.unsplash.com/photo-1503676260728-1c00da094a0b'
+  ],
+  'Conversação': [
+    'https://images.unsplash.com/photo-1522202176988-66273c2fd55f',
+    'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4'
+  ],
+  'Vocabulário': [
+    'https://images.unsplash.com/photo-1457369332241-098da183da36',
+    'https://images.unsplash.com/photo-1544650030-3c9baf624ce3'
+  ],
+  'Pronúncia': [
+    'https://images.unsplash.com/photo-1478737270239-2fccd2508c6c',
+    'https://images.unsplash.com/photo-1589171811732-2d333068696c'
+  ]
+};
+
+async function fetchImage(env, query, category) {
+  // CAMADA 1: Banco Curado (Opcional por Categoria)
+  if (CURATED_IMAGES[category]) {
+    const list = CURATED_IMAGES[category];
+    for (const imgUrl of list) {
+      const hash = simpleHash(imgUrl);
+      const used = await env.LEXIS_PUBLISHED_POSTS.get(`img:${hash} `);
+      if (!used) return imgUrl;
+    }
+  }
+
+  const q = String(query || 'english language learning education').substring(0, 150);
 
   // Pixabay
   if (env.PIXABAY_API_KEY) {
     try {
-      const url = `https://pixabay.com/api/?key=${env.PIXABAY_API_KEY}&q=${encodeURIComponent(q)}&image_type=photo&orientation=horizontal&per_page=20&safesearch=true&min_width=800`;
+      const url = `https://pixabay.com/api/?key=${env.PIXABAY_API_KEY}&q=${encodeURIComponent(q)}&image_type=photo&orientation=horizontal&per_page=40&safesearch=true&min_width=1000`;
       const res = await fetch(url, { signal: AbortSignal.timeout(7000) });
       if (res.ok) {
         const data = await res.json();
         if (data.hits && data.hits.length > 0) {
-          const idx = Math.floor(Math.random() * Math.min(data.hits.length, 10));
-          const imgUrl = data.hits[idx].largeImageURL;
-          console.log(`[IMAGE] ✅ Pixabay: ${imgUrl.substring(0, 60)}...`);
-          return imgUrl;
+          // Tentar achar uma imagem não utilizada nos primeiros 20 resultados
+          for (let i = 0; i < Math.min(data.hits.length, 20); i++) {
+            const imgUrl = data.hits[i].largeImageURL;
+            const imgHash = simpleHash(imgUrl);
+
+            // Verificar no KV de publicados se já usamos essa imagem
+            const alreadyUsed = await env.LEXIS_PUBLISHED_POSTS.get(`img:${imgHash}`);
+            if (!alreadyUsed) {
+              console.log(`[IMAGE] ✅ Pixabay (Novo): "${q.substring(0, 30)}..." → ${imgUrl.substring(0, 50)}...`);
+              return imgUrl;
+            }
+          }
+          // Se todas já foram usadas, pega a primeira do set atual (melhor repetir do que ficar sem)
+          return data.hits[0].largeImageURL;
         }
       }
     } catch (e) {
-      console.warn(`[IMAGE] Pixabay falhou: ${e.message}`);
+      console.warn(`[IMAGE] Pixabay erro: ${e.message}`);
     }
   }
 
   // Unsplash
   if (env.UNSPLASH_ACCESS_KEY) {
     try {
-      const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(q)}&per_page=20&client_id=${env.UNSPLASH_ACCESS_KEY}`;
+      const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(q)}&per_page=30&client_id=${env.UNSPLASH_ACCESS_KEY}`;
       const res = await fetch(url, { signal: AbortSignal.timeout(7000) });
       if (res.ok) {
         const data = await res.json();
         if (data.results && data.results.length > 0) {
-          const idx = Math.floor(Math.random() * Math.min(data.results.length, 10));
-          const imgUrl = data.results[idx].urls.regular;
-          console.log(`[IMAGE] ✅ Unsplash: ${imgUrl.substring(0, 60)}...`);
-          return imgUrl;
+          for (let i = 0; i < Math.min(data.results.length, 15); i++) {
+            const imgUrl = data.results[i].urls.regular;
+            const imgHash = simpleHash(imgUrl);
+            const alreadyUsed = await env.LEXIS_PUBLISHED_POSTS.get(`img:${imgHash}`);
+            if (!alreadyUsed) {
+              console.log(`[IMAGE] ✅ Unsplash (Novo): "${q.substring(0, 30)}..." → ${imgUrl.substring(0, 50)}...`);
+              return imgUrl;
+            }
+          }
+          return data.results[0].urls.regular;
         }
       }
     } catch (e) {
-      console.warn(`[IMAGE] Unsplash falhou: ${e.message}`);
+      console.warn(`[IMAGE] Unsplash erro: ${e.message}`);
     }
   }
 
-  // Fallback permanente do Pixabay (sem chave, mas funciona)
-  console.warn('[IMAGE] Usando imagem default genérica.');
   return 'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=1200&q=80';
+}
+
+function simpleHash(text) {
+  let hash = 0;
+  const str = String(text);
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash = hash & hash;
+  }
+  return Math.abs(hash).toString(36);
 }
 
 // ================================================
