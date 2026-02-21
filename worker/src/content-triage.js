@@ -6,10 +6,9 @@
  */
 
 const PREMIUM_SOURCES = [
-  'BBC Learning English', 'Duolingo', 'FluentU', 'TED',
-  'Cambridge', 'British Council', 'Merriam-Webster',
-  'bbc.co.uk', 'duolingo.com', 'fluentu.com', 'ted.com',
-  'cambridge.org', 'britishcouncil.org'
+  'BBC 6-Minute English', 'VOA Learning English', 'News in Levels',
+  'EnglishClass101', 'Real English Conversations', 'English in Brazil',
+  'EngFluent', 'Deep English', 'TED-Ed Lessons', 'British Council LearnEnglish'
 ];
 
 // Keywords relacionadas a inglês, aprendizado e idiomas
@@ -25,6 +24,13 @@ const RELEVANT_KEYWORDS = [
   'brain', 'memory', 'habit', 'routine', 'daily', 'app',
   'duolingo', 'cambridge', 'ielts', 'toefl', 'toeic',
   'ted', 'talk', 'lecture', 'podcast', 'video'
+];
+
+// Blacklist de idiomas proibidos (Lexis é EXCLUSIVA para Inglês)
+const FORBIDDEN_LANGUAGES = [
+  'alemão', 'german', 'deutsch', 'espanhol', 'spanish', 'español',
+  'francês', 'french', 'français', 'italiano', 'italian', 'mandarim',
+  'mandarin', 'japonês', 'japanese', 'russo', 'russian', 'árabe', 'arabic'
 ];
 
 // Threshold reduzido: fontes já são premium, não precisa de 70+
@@ -131,6 +137,23 @@ function calculateScore(article) {
   const titleLower = (article.title || '').toLowerCase();
   const descLower = (article.description || '').toLowerCase();
   const combinedText = titleLower + ' ' + descLower;
+
+  // TRAVA DE SEGURANÇA: Proibir outros idiomas
+  for (const forbidden of FORBIDDEN_LANGUAGES) {
+    if (combinedText.includes(forbidden)) {
+      console.log(`[TRIAGE] 🚫 Rejeitando por idioma proibido: ${forbidden}`);
+      return -500; // Garantia de rejeição imediata
+    }
+  }
+
+  // TRAVA DE SEGURANÇA 2: Proibir conteúdo para professores/coordenadores
+  const TEACHER_KEYWORDS = ['teacher', 'teaching', 'classroom management', 'leaders', 'school leaders', 'parents', 'lesson plan'];
+  for (const tk of TEACHER_KEYWORDS) {
+    if (combinedText.includes(tk)) {
+      console.log(`[TRIAGE] 🚫 Rejeitando por foco institucional/professor: ${tk}`);
+      return -100;
+    }
+  }
 
   let relevanceScore = 0;
   let keywordsFound = 0;

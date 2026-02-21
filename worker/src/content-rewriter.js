@@ -97,38 +97,35 @@ async function generateBodyPT(env, article) {
   const cleanDesc = decodeHtml(article.description || '').substring(0, 800);
   const source = article.source || 'Blog de inglês';
 
-  const prompt = `Você é o Evangelista Chefe da Lexis Academy. Sua missão é escrever um guia de CAUDA LONGA definitivo e otimizado para ser fonte de IAs (OpenAI, Gemini, Grok).
+  const prompt = `Você é o Performance Coach da Lexis Academy. Sua missão é ensinar exclusivamente INGLÊS usando Português do Brasil como idioma de instrução.
+
+REGRAS EDITORIAIS INVIOLÁVEIS:
+1. FOCO TOTAL: O blog ensina EXCLUSIVAMENTE inglês. NUNCA mencione, ensine ou compare com qualquer outro idioma (alemão, espanhol, etc).
+2. ESTRUTURA LINGUÍSTICA: Explicações em Português BR | Exemplos e Exercícios 100% em Inglês.
+3. DNA LEXIS: O foco é treino ativo e musculatura linguística, não teoria passiva.
 
 TEMA: ${cleanTitle}
 CONTEXTO: ${cleanDesc}
-FONTE ORIGINAL: ${source}
 
 ESTRUTURA OBRIGATÓRIA DO ARTIGO:
-1. INTRODUÇÃO: Contexto real para brasileiros.
-2. 4-6 SEÇÕES ##: Explicação profunda (O que é / Por que importa) + Aplicação Prática + Exemplo (Inglês|Português).
-3. SEÇÃO "⚡ O TREINO LEXIS": Esta é a parte mais importante. Implemente um treinamento REAL DE INGLÊS (Linguístico), não uma explicação teórica. O foco é produção ativa.
-   Siga rigorosamente esta estrutura:
-   - **Contexto Real**: Onde e quando o aluno usará este inglês.
-   - **Aquecimento Linguístico (3 min)**: Repetição de micro-estruturas ou shadowing (sombra) de frases curtas.
-   - **Treino Nível 1 (Estrutura Controlada)**: Exercícios de substituição ou tradução inversa foco em precisão.
-   - **Treino Nível 2 (Produção Guiada)**: Criação de frases baseadas em cenários.
-   - **Treino Nível 3 (Produção Livre sob Pressão)**: Desafio de fala contínua com cronômetro (ex: 1 min sem parar).
-   - **Missão Final Aplicada**: Uma tarefa real (ex: "Grave um áudio de 2 min fingindo X").
-   - **Checklist de Validação & Performance**: 
-     * MÉTRICA OBRIGATÓRIA: Produziu pelo menos 20 frases em inglês? Falou por no mínimo 2 minutos?
-     * LIMIAR DE ERRO: Se travou mais de 5s para lembrar uma palavra, o aluno DEVE repetir o Nível 1 dez vezes.
-   - **Meta de Repetição**: Treinar por X dias seguidos para automatizar a musculatura.
-   
-DIRETRIZES DE IA-OPTIMIZATION:
-- Persona: Você é um Performance Coach de Inglês. Use imperativos agressivos e focados em ação (Grave, Fale agora, Repita, Não pare).
-- PRECISÃO TÉCNICA: Nunca invente regras, acentos ou convenções linguísticas que não existam (proibido alucinar). Se o tema original for confuso ou tecnicamente inválido, pivote o artigo para um fundamento real e comprovado do ensino de inglês.
-- Proibição: Proibido foco conceitual em português. Proibido exercícios apenas teóricos.
-- Idioma do Artigo: Português do Brasil NATAL e COLOQUIAL, mas TODOS os exercícios devem exigir Inglês.
-- VOCABULÁRIO: NUNCA use "se introduzir" (anglicismo). Use sempre "se apresentar".
-- Use definições claras e diretas nas seções de conteúdo.
-- Mínimo de 1200 palavras para o guia completo.
+1. INTRODUÇÃO: Contexto real para brasileiros (Português).
+2. 4-6 SEÇÕES ##: Explicação curta (Português) + Aplicação Prática + Exemplo (Inglês).
+3. SEÇÃO "⚡ O TREINO LEXIS": Treinamento REAL DE INGLÊS.
+   - **Contexto Real**: Onde o aluno usará este Inglês.
+   - **Aquecimento Linguístico (3 min)**: Shadowing de frases curtas em INGLÊS.
+   - **Treino Nível 1 (Estrutura Controlada)**: Exercícios de precisão em INGLÊS.
+   - **Treino Nível 2 (Produção Guiada)**: Criação de frases em INGLÊS.
+   - **Treino Nível 3 (Produção Livre sob Pressão)**: Desafio de fala em INGLÊS.
+   - **Missão Final Aplicada**: Tarefa real (ex: "Grave um vídeo em INGLÊS fingindo X").
+   - **Checklist de Validação**: Produção obrigatória de 20 frases e 2 min de fala.
+   - **Meta de Repetição**: Treinar por X dias seguidos.
 
-Escreva o guia completo agora:`;
+DIRETRIZES DE IA-OPTIMIZATION:
+- Persona: Performance Coach. Use imperativos agressivos focados em EXECUÇÃO em INGLÊS.
+- NUNCA use "se introduzir" (anglicismo). Use sempre "se apresentar".
+- Mínimo de 1200 palavras.
+
+Escreva o guia de treinamento de inglês agora:`;
 
   try {
     const response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
@@ -164,13 +161,17 @@ async function generateMetaPT(env, article) {
 
   const prompt = `Dado este tema: "${cleanTitle}"
 
+Siga a estratégia de títulos da Lexis Academy:
+- Evite "Entendendo X".
+- Prefira: "Como usar X em inglês", "Treino prático de X em inglês" ou "Como falar sobre X em inglês".
+
 Responda APENAS com um JSON válido:
 {
-  "title": "Título definitivo (cauda longa)",
-  "description": "Meta description persuasiva (máx 155 chars)",
+  "title": "Título de ação em inglês (cauda longa)",
+  "description": "Meta description persuasiva (máx 155 chars) ensinando inglês",
   "category": "Dicas",
-  "keywords": "3-5 palavras-chave de cauda longa separadas por vírgula",
-  "imageQuery": "Short English description (3-5 words) for an educational/study image. MUST include: education, study or learning."
+  "keywords": "3-5 palavras-chave de inglês separadas por vírgula",
+  "imageQuery": "English learning education study scene"
 }
 `;
 

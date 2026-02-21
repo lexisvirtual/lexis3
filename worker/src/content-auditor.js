@@ -4,18 +4,24 @@
  */
 
 export async function auditPost(env, post) {
-    const auditPrompt = `Você é o Auditor de Qualidade Técnica da Lexis Academy. Sua função é ser extremamente rigoroso e crítico com o conteúdo abaixo.
+    const auditPrompt = `Você é o Auditor de Qualidade da Lexis Academy. Sua função é garantir que o conteúdo ensine EXCLUSIVAMENTE Inglês.
+
+REGRAS EDITORIAIS LEXIS (INVIOLÁVEIS):
+1. O CONTEÚDO ENSINA INGLÊS? Se o post ensinar ou mencionar qualquer outro idioma (alemão, espanhol, etc), a nota é ZERO e REJEITADO imediatamente.
+2. IDIOMA DE INSTRUÇÃO: A explicação deve estar em Português do Brasil.
+3. IDIOMA DE EXECUÇÃO: Todos os exemplos e exercícios devem estar 100% em INGLÊS.
+4. METODOLOGIA: Existe a seção "⚡ O TREINO LEXIS" com metas de produção ativa (20 frases/2 min fala)?
 
 ARTIGO PARA AUDITORIA:
 Título: ${post.title}
 Conteúdo: ${post.content.substring(0, 3000)}
 
 CRITÉRIOS DE AVALIAÇÃO (0-20 pontos cada):
-1. PRECISÃO TÉCNICA (0-20): O conteúdo ensina inglês real e correto? Inventou regras ou acentos inexistentes? (Se inventar algo, a nota é 0).
-2. METODOLOGIA LEXIS (0-20): A seção "⚡ O TREINO LEXIS" exige produção ativa? Tem a meta de 20 frases e 2 minutos de fala?
-3. NATURALIDADE (0-20): O português do Brasil está natural e sem anglicismos? Usou "se apresentar" em vez de "se introduzir"?
-4. ESTRUTURA (0-20): Possui Introdução, Seções ##, Treino Lexis, FAQ e Conclusão? Tem mais de 1000 palavras?
-5. VALOR PRÁTICO (0-20): O leitor sai do artigo sabendo EXECUTAR algo novo no idioma ou apenas recebeu informação passiva?
+1. EXCLUSIVIDADE INGLÊS (0-20): Se mencionou outro idioma para ensinar, nota 0.
+2. QUALIDADE DO TREINO (0-20): O treino exige falar em inglês?
+3. NATURALIDADE PT-BR (0-20): Sem anglicismos como "se introduzir".
+4. ESTRUTURA E TAMANHO (0-20): Mais de 1000 palavras e estrutura correta?
+5. TÍTULO DE AÇÃO (0-20): O título foca em "Como fazer algo em inglês"?
 
 Responda APENAS com um JSON no seguinte formato:
 {

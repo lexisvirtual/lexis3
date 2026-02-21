@@ -4,18 +4,16 @@
  */
 
 const RSS_FEEDS = [
-  // BBC Learning English - feed alternativo
-  { url: 'https://www.bbc.co.uk/learningenglish/english/topics/rss.xml', name: 'BBC Learning English' },
-  // Duolingo Blog
-  { url: 'https://blog.duolingo.com/feed/', name: 'Duolingo' },
-  // FluentU English Blog
-  { url: 'https://www.fluentu.com/blog/english/feed/', name: 'FluentU' },
-  // TED Blog (aprendizado e linguagem)
-  { url: 'https://www.ted.com/talks/rss', name: 'TED' },
-  // Cambridge English Blog
-  { url: 'https://www.cambridge.org/elt/blog/feed/', name: 'Cambridge' },
-  // British Council Blog
-  { url: 'https://www.britishcouncil.org/voices-magazine/feed', name: 'British Council' },
+  { url: 'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/rss', name: 'BBC 6-Minute English' },
+  { url: 'https://learningenglish.voanews.com/rss?count=20', name: 'VOA Learning English' },
+  { url: 'https://www.newsinlevels.com/feed/', name: 'News in Levels' },
+  { url: 'https://www.englishclass101.com/blog/feed/', name: 'EnglishClass101' },
+  { url: 'https://realenglishconversations.com/feed/', name: 'Real English Conversations' },
+  { url: 'https://www.englishinbrazil.com.br/feed', name: 'English in Brazil' },
+  { url: 'https://engfluent.com/feed/', name: 'EngFluent' },
+  { url: 'https://deepenglish.com/feed/', name: 'Deep English' },
+  { url: 'https://ed.ted.com/lessons/rss', name: 'TED-Ed Lessons' },
+  { url: 'https://learnenglish.britishcouncil.org/rss/all', name: 'British Council LearnEnglish' },
 ];
 
 export async function scrapeBlogArticles(env) {
