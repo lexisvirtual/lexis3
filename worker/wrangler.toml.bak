@@ -22,24 +22,9 @@ binding = "AI"
 binding = "LEXIS_PAUTA"
 id = "071364560008455bad2f86d070c9f4bd"
 
-# KV Namespaces para Sistema de Automação de Blog
-[[kv_namespaces]]
-binding = "LEXIS_RAW_ARTICLES"
-id = "43f7c7e8fcdf46af84f3c4ee1970ae61"
-
-[[kv_namespaces]]
-binding = "LEXIS_TRIAGED_ARTICLES"
-id = "1b96dbd0c3a940c0b9bf74ff0ad6d576"
-
-[[kv_namespaces]]
-binding = "LEXIS_REWRITTEN_POSTS"
-id = "218ec351ca98422794378764b26897d7"
-
-[[kv_namespaces]]
-binding = "LEXIS_PUBLISHED_POSTS"
-id = "6b829145766e4a95b2eb656371532ff1"
-
 # Agendamento Automático (CRON)
 # Roda todo dia às 09:00 UTC (06:00 BRT)
 [triggers]
 crons = ["0 9 * * *"]
+
+

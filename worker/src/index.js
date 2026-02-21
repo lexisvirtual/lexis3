@@ -3,7 +3,7 @@ import { getImageFromCache, getImageWithCacheFallback } from './imageCache.js';
 import { validateImageRelevance, cleanupImageHistory, getImageHistoryStats } from './image-validation.js';
 import { scrapeBlogArticles } from './blog-scraper.js';
 import { triageArticles } from './content-triage.js';
-import { rewriteArticleWithAI } from './content-rewriter.js';
+import { rewriteArticles } from './content-rewriter.js';
 import { extractAndOptimizeImage } from './image-source-extractor.js';
 
 export default {
@@ -177,11 +177,12 @@ export default {
         if (url.pathname === "/rewrite-articles") {
             try {
                 const limit = parseInt(url.searchParams.get("limit")) || 3;
-                const rewritten = await rewriteArticleWithAI(env, limit);
+                const rewritten = await rewriteArticles(env, limit);
+                const posts = rewritten.posts || [];
                 return new Response(JSON.stringify({
                     success: true,
-                    rewritten_count: rewritten.length,
-                    articles: rewritten
+                    rewritten_count: posts.length,
+                    articles: posts
                 }, null, 2), {
                     headers: { "Content-Type": "application/json" }
                 });
@@ -209,7 +210,8 @@ export default {
 
                 // Fase 3: Reescrita (1-3 posts)
                 const limit = Math.min(triaged.approved.length, 3);
-                const rewritten = await rewriteArticleWithAI(env, limit);
+                const rewrittenResult = await rewriteArticles(env, limit);
+                const rewritten = rewrittenResult.posts || [];
                 console.log(`[CURATED] Reescritos ${rewritten.length} posts`);
 
                 // Fase 4: Imagens
