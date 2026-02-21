@@ -33,8 +33,8 @@ export async function rewriteArticles(env, maxPosts = 3) {
       // ETAPA 2: Gerar metadados (título PT, descrição, categoria) — JSON pequeno = mais confiável
       const meta = await generateMetaPT(env, article);
 
-      // ETAPA 3: Buscar imagem (Híbrido)
-      const imageUrl = await fetchImage(env, meta.imageQuery, meta.category);
+      // ETAPA 3: Buscar imagem (Híbrido) - PRIORIZA FONTE ORIGINAL
+      const imageUrl = await fetchImage(env, meta.imageQuery, meta.category, article.thumbnail);
 
       const post = {
         id: article.id,
@@ -92,11 +92,21 @@ FONTE ORIGINAL: ${source}
 ESTRUTURA OBRIGATÓRIA DO ARTIGO:
 1. INTRODUÇÃO: Contexto real para brasileiros.
 2. 4-6 SEÇÕES ##: Explicação profunda (O que é / Por que importa) + Aplicação Prática + Exemplo (Inglês|Português).
-3. SEÇÃO "O TREINO LEXIS": Explique como treinar este tema específico usando os níveis Start, Run, Fly e Liberty. Foque na filosofia "Idioma se treina".
+3. SEÇÃO "⚡ O TREINO LEXIS": Não explique teoria. Gere um protocolo de execução seguindo:
+   - CONTEXTO: Onde isso acontece na vida real.
+   - AQUECIMENTO (3 min): Exercício muscular ou auditivo rápido.
+   - TREINO PRINCIPAL: Protocolo progressivo (Start -> Run -> Fly).
+   - PRESSÃO DE EXECUÇÃO: Desafio com tempo limitado ou simulação de estresse.
+   - MISSÃO FINAL: Tarefa prática aplicada (ex: gravar áudio, simular reunião).
+   - CHECKLIST DE VALIDAÇÃO: Critérios objetivos para o aluno saber se treinou certo.
 4. FAQ (PERGUNTAS FREQUENTES): Mínimo de 3 perguntas e respostas diretas e curtas sobre o tema ao final (usando ###).
 5. CONCLUSÃO: Resumo e Call to Action.
 
 DIRETRIZES DE IA-OPTIMIZATION:
+- Persona: Você é um Performance Coach de Inglês. Use verbos de ação no imperativo (Grave, Fale, Cronometre).
+- Filosofia: Respeite o lema "Inglês não se aprende, se treina".
+- Idioma: Português do Brasil NATURAL e COLOQUIAL.
+- VOCABULÁRIO: NUNCA use "se introduzir" (anglicismo). Use sempre "se apresentar".
 - Use definições claras e diretas.
 - Mantenha a hierarquia de títulos (H2 e H3).
 - Seja a autoridade definitiva no assunto.
@@ -144,7 +154,7 @@ Responda APENAS com um JSON válido:
   "description": "Meta description persuasiva (máx 155 chars)",
   "category": "Dicas",
   "keywords": "3-5 palavras-chave de cauda longa separadas por vírgula",
-  "imageQuery": "Cinematic photography description (English) illustrating the topic"
+  "imageQuery": "Short English description (3-5 words) for an educational/study image. MUST include: education, study or learning."
 }
 `;
 
@@ -203,76 +213,22 @@ const CURATED_IMAGES = {
   'Pronúncia': [
     'https://images.unsplash.com/photo-1478737270239-2fccd2508c6c',
     'https://images.unsplash.com/photo-1589171811732-2d333068696c'
+  ],
+  'Dicas': [
+    'https://images.unsplash.com/photo-1434030216411-0b793f4b4173',
+    'https://images.unsplash.com/photo-1523240795612-9a054b0db644'
   ]
 };
 
-async function fetchImage(env, query, category) {
-  // CAMADA 1: Banco Curado (Opcional por Categoria)
-  if (CURATED_IMAGES[category]) {
-    const list = CURATED_IMAGES[category];
-    for (const imgUrl of list) {
-      const hash = simpleHash(imgUrl);
-      const used = await env.LEXIS_PUBLISHED_POSTS.get(`img:${hash} `);
-      if (!used) return imgUrl;
-    }
+async function fetchImage(env, query, category, sourceThumbnail) {
+  // O sistema agora é 100% baseado na imagem original da fonte curada
+  if (sourceThumbnail && sourceThumbnail.startsWith('http')) {
+    console.log(`[IMAGE] 🚀 Usando imagem original validada: ${sourceThumbnail.substring(0, 50)}...`);
+    return sourceThumbnail;
   }
 
-  const q = String(query || 'english language learning education').substring(0, 150);
-
-  // Pixabay
-  if (env.PIXABAY_API_KEY) {
-    try {
-      const url = `https://pixabay.com/api/?key=${env.PIXABAY_API_KEY}&q=${encodeURIComponent(q)}&image_type=photo&orientation=horizontal&per_page=40&safesearch=true&min_width=1000`;
-      const res = await fetch(url, { signal: AbortSignal.timeout(7000) });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.hits && data.hits.length > 0) {
-          // Tentar achar uma imagem não utilizada nos primeiros 20 resultados
-          for (let i = 0; i < Math.min(data.hits.length, 20); i++) {
-            const imgUrl = data.hits[i].largeImageURL;
-            const imgHash = simpleHash(imgUrl);
-
-            // Verificar no KV de publicados se já usamos essa imagem
-            const alreadyUsed = await env.LEXIS_PUBLISHED_POSTS.get(`img:${imgHash}`);
-            if (!alreadyUsed) {
-              console.log(`[IMAGE] ✅ Pixabay (Novo): "${q.substring(0, 30)}..." → ${imgUrl.substring(0, 50)}...`);
-              return imgUrl;
-            }
-          }
-          // Se todas já foram usadas, pega a primeira do set atual (melhor repetir do que ficar sem)
-          return data.hits[0].largeImageURL;
-        }
-      }
-    } catch (e) {
-      console.warn(`[IMAGE] Pixabay erro: ${e.message}`);
-    }
-  }
-
-  // Unsplash
-  if (env.UNSPLASH_ACCESS_KEY) {
-    try {
-      const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(q)}&per_page=30&client_id=${env.UNSPLASH_ACCESS_KEY}`;
-      const res = await fetch(url, { signal: AbortSignal.timeout(7000) });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.results && data.results.length > 0) {
-          for (let i = 0; i < Math.min(data.results.length, 15); i++) {
-            const imgUrl = data.results[i].urls.regular;
-            const imgHash = simpleHash(imgUrl);
-            const alreadyUsed = await env.LEXIS_PUBLISHED_POSTS.get(`img:${imgHash}`);
-            if (!alreadyUsed) {
-              console.log(`[IMAGE] ✅ Unsplash (Novo): "${q.substring(0, 30)}..." → ${imgUrl.substring(0, 50)}...`);
-              return imgUrl;
-            }
-          }
-          return data.results[0].urls.regular;
-        }
-      }
-    } catch (e) {
-      console.warn(`[IMAGE] Unsplash erro: ${e.message}`);
-    }
-  }
-
+  // Backup ultra-seguro (nunca deve chegar aqui devido à triagem)
+  console.warn('[IMAGE] Fonte sem imagem, usando padrão Lexis.');
   return 'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=1200&q=80';
 }
 

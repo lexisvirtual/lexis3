@@ -26,12 +26,12 @@ export default {
                 status: 'online',
                 description: 'Sistema de automação de blog curado',
                 routes: {
-                    '/scrape-blogs':           'Fase 1 - Coleta artigos dos RSS feeds',
-                    '/triage-articles':        'Fase 2 - Triagem e scoring dos artigos',
-                    '/rewrite-articles':       'Fase 3 - Reescrita com IA (param: ?limit=3)',
-                    '/publish-posts':          'Fase 4 - Publicação no GitHub (param: ?limit=3)',
-                    '/auto-publish':           'Fluxo completo (Fases 1-4)',
-                    '/status':                 'Status das filas KV',
+                    '/scrape-blogs': 'Fase 1 - Coleta artigos dos RSS feeds',
+                    '/triage-articles': 'Fase 2 - Triagem e scoring dos artigos',
+                    '/rewrite-articles': 'Fase 3 - Reescrita com IA (param: ?limit=3)',
+                    '/publish-posts': 'Fase 4 - Publicação no GitHub (param: ?limit=3)',
+                    '/auto-publish': 'Fluxo completo (Fases 1-4)',
+                    '/status': 'Status das filas KV',
                 }
             }, null, 2), {
                 headers: { 'Content-Type': 'application/json' }
@@ -103,14 +103,14 @@ export default {
                 return jsonResponse({
                     success: true,
                     queues: {
-                        raw_articles:      raw.keys.length,
-                        triaged_articles:  triaged.keys.length,
-                        rewritten_posts:   rewritten.keys.length,
-                        published_posts:   published.keys.length
+                        raw_articles: raw.keys.length,
+                        triaged_articles: triaged.keys.length,
+                        rewritten_posts: rewritten.keys.length,
+                        published_posts: published.keys.length
                     },
                     pipeline_health: {
-                        ready_to_rewrite:  triaged.keys.length,
-                        ready_to_publish:  rewritten.keys.length
+                        ready_to_rewrite: triaged.keys.length,
+                        ready_to_publish: rewritten.keys.length
                     }
                 });
             } catch (error) {
@@ -118,18 +118,23 @@ export default {
             }
         }
 
-        // --- Limpar filas de artigos brutos/triados (manutenção) ---
+        // --- Limpar TODAS as filas (Reseta tudo para o Zero) ---
         if (url.pathname === '/cleanup-queues') {
             try {
-                const raw = await env.LEXIS_RAW_ARTICLES.list({ prefix: 'article:', limit: 500 });
-                for (const key of raw.keys) {
-                    await env.LEXIS_RAW_ARTICLES.delete(key.name);
+                const namespaces = [
+                    env.LEXIS_RAW_ARTICLES,
+                    env.LEXIS_TRIAGED_ARTICLES,
+                    env.LEXIS_REWRITTEN_POSTS,
+                    env.LEXIS_PUBLISHED_POSTS
+                ];
+
+                for (const ns of namespaces) {
+                    const list = await ns.list({ limit: 1000 });
+                    for (const key of list.keys) {
+                        await ns.delete(key.name);
+                    }
                 }
-                const triaged = await env.LEXIS_TRIAGED_ARTICLES.list({ prefix: 'triaged:', limit: 500 });
-                for (const key of triaged.keys) {
-                    await env.LEXIS_TRIAGED_ARTICLES.delete(key.name);
-                }
-                return jsonResponse({ success: true, message: 'Filas de artigos brutos e triados limpas.' });
+                return jsonResponse({ success: true, message: 'Sistema resetado com sucesso! KVs limpos.' });
             } catch (error) {
                 return jsonResponse({ success: false, error: error.message }, 500);
             }
@@ -210,12 +215,12 @@ function buildResult(log, startTime, scrape, triage, rewrite, publish) {
     return {
         success: true,
         summary: {
-            articles_scraped:    scrape?.articlesCollected || 0,
-            articles_approved:   triage?.approved || 0,
-            articles_rejected:   triage?.rejected || 0,
-            posts_rewritten:     rewrite?.postsRewritten || 0,
-            posts_published:     publish?.published || 0,
-            publish_errors:      publish?.errors?.length || 0
+            articles_scraped: scrape?.articlesCollected || 0,
+            articles_approved: triage?.approved || 0,
+            articles_rejected: triage?.rejected || 0,
+            posts_rewritten: rewrite?.postsRewritten || 0,
+            posts_published: publish?.published || 0,
+            publish_errors: publish?.errors?.length || 0
         },
         log,
         durationMs: Date.now() - startTime

@@ -48,6 +48,7 @@ export async function scrapeBlogArticles(env) {
           id: generateId(item.link || item.title),
           title: cleanText(item.title),
           link: item.link,
+          thumbnail: item.thumbnail || '', // Capturado do RSS/Atom
           description: cleanText(item.description),
           pubDate: item.pubDate,
           source: feed.name,
@@ -102,7 +103,8 @@ function parseRSSItems(xml) {
     const pubDate = extractTag(itemXml, 'pubDate') || extractTag(itemXml, 'published') || extractTag(itemXml, 'updated');
 
     if (title || link) {
-      items.push({ title, link, description, pubDate });
+      const thumbnail = extractImage(itemXml);
+      items.push({ title, link, description, pubDate, thumbnail });
     }
   }
 
@@ -117,7 +119,8 @@ function parseRSSItems(xml) {
       const pubDate = extractTag(entryXml, 'published') || extractTag(entryXml, 'updated');
 
       if (title || link) {
-        items.push({ title, link, description, pubDate });
+        const thumbnail = extractImage(entryXml);
+        items.push({ title, link, description, pubDate, thumbnail });
       }
     }
   }
@@ -143,6 +146,27 @@ function extractAttrFromTag(xml, tagName, attr) {
   const regex = new RegExp(`<${tagName}[^>]+${attr}=["']([^"']+)["']`, 'i');
   const match = xml.match(regex);
   return match ? match[1].trim() : '';
+}
+
+function extractImage(xml) {
+  // 1. media:content ou media:thumbnail
+  let img = extractAttrFromTag(xml, 'media:content', 'url') ||
+    extractAttrFromTag(xml, 'media:thumbnail', 'url') ||
+    extractAttrFromTag(xml, 'enclosure', 'url');
+
+  if (img) return img;
+
+  // 2. Busca <img> tag dentro da descrição/conteúdo
+  const imgTagRegex = /<img[^>]+src=["']([^"']+)["']/i;
+  const match = xml.match(imgTagRegex);
+  if (match) return match[1].trim();
+
+  // 3. Atom: <link rel="enclosure" href="..." />
+  const enclosureRegex = /<link[^>]+rel=["']enclosure["'][^>]+href=["']([^"']+)["']/i;
+  const encMatch = xml.match(enclosureRegex);
+  if (encMatch) return encMatch[1].trim();
+
+  return '';
 }
 
 function cleanText(text) {

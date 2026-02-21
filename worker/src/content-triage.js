@@ -46,7 +46,13 @@ export async function triageArticles(env, limit = 30) {
       continue;
     }
 
-    // Verificar duplicata contra posts já publicados
+    // 1. REQUISITO OBRIGATÓRIO: Ter imagem original da fonte
+    if (!article.thumbnail || !article.thumbnail.startsWith('http')) {
+      rejected.push({ title: article.title, reason: 'no_image' });
+      continue;
+    }
+
+    // 2. Verificar duplicata contra posts já publicados
     if (article.title) {
       const isDuplicate = await checkDuplicate(env, article.title);
       if (isDuplicate) {
@@ -55,7 +61,7 @@ export async function triageArticles(env, limit = 30) {
       }
     }
 
-    // Calcular score
+    // 3. Calcular score
     const score = calculateScore(article);
 
     if (score >= APPROVAL_THRESHOLD) {
