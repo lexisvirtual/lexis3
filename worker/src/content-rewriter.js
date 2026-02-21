@@ -92,25 +92,26 @@ FONTE ORIGINAL: ${source}
 ESTRUTURA OBRIGATÓRIA DO ARTIGO:
 1. INTRODUÇÃO: Contexto real para brasileiros.
 2. 4-6 SEÇÕES ##: Explicação profunda (O que é / Por que importa) + Aplicação Prática + Exemplo (Inglês|Português).
-3. SEÇÃO "⚡ O TREINO LEXIS": Não explique teoria. Gere um protocolo de execução seguindo:
-   - CONTEXTO: Onde isso acontece na vida real.
-   - AQUECIMENTO (3 min): Exercício muscular ou auditivo rápido.
-   - TREINO PRINCIPAL: Protocolo progressivo (Start -> Run -> Fly).
-   - PRESSÃO DE EXECUÇÃO: Desafio com tempo limitado ou simulação de estresse.
-   - MISSÃO FINAL: Tarefa prática aplicada (ex: gravar áudio, simular reunião).
-   - CHECKLIST DE VALIDAÇÃO: Critérios objetivos para o aluno saber se treinou certo.
-4. FAQ (PERGUNTAS FREQUENTES): Mínimo de 3 perguntas e respostas diretas e curtas sobre o tema ao final (usando ###).
-5. CONCLUSÃO: Resumo e Call to Action.
-
+3. SEÇÃO "⚡ O TREINO LEXIS": Esta é a parte mais importante. Implemente um treinamento REAL DE INGLÊS (Linguístico), não uma explicação teórica. O foco é produção ativa.
+   Siga rigorosamente esta estrutura:
+   - **Contexto Real**: Onde e quando o aluno usará este inglês.
+   - **Aquecimento Linguístico (3 min)**: Repetição de micro-estruturas ou shadowing (sombra) de frases curtas.
+   - **Treino Nível 1 (Estrutura Controlada)**: Exercícios de substituição ou tradução inversa foco em precisão.
+   - **Treino Nível 2 (Produção Guiada)**: Criação de frases baseadas em cenários.
+   - **Treino Nível 3 (Produção Livre sob Pressão)**: Desafio de fala contínua com cronômetro (ex: 1 min sem parar).
+   - **Missão Final Aplicada**: Uma tarefa real (ex: "Grave um áudio de 2 min fingindo X").
+   - **Checklist de Validação & Performance**: 
+     * MÉTRICA OBRIGATÓRIA: Produziu pelo menos 20 frases em inglês? Falou por no mínimo 2 minutos?
+     * LIMIAR DE ERRO: Se travou mais de 5s para lembrar uma palavra, o aluno DEVE repetir o Nível 1 dez vezes.
+   - **Meta de Repetição**: Treinar por X dias seguidos para automatizar a musculatura.
+   
 DIRETRIZES DE IA-OPTIMIZATION:
-- Persona: Você é um Performance Coach de Inglês. Use verbos de ação no imperativo (Grave, Fale, Cronometre).
-- Filosofia: Respeite o lema "Inglês não se aprende, se treina".
-- Idioma: Português do Brasil NATURAL e COLOQUIAL.
+- Persona: Você é um Performance Coach de Inglês. Use imperativos agressivos e focados em ação (Grave, Fale agora, Repita, Não pare).
+- Proibição: Proibido foco conceitual em português. Proibido exercícios apenas teóricos.
+- Idioma do Artigo: Português do Brasil NATAL e COLOQUIAL, mas TODOS os exercícios devem exigir Inlglês.
 - VOCABULÁRIO: NUNCA use "se introduzir" (anglicismo). Use sempre "se apresentar".
-- Use definições claras e diretas.
-- Mantenha a hierarquia de títulos (H2 e H3).
-- Seja a autoridade definitiva no assunto.
-- Mínimo de 1000 palavras.
+- Use definições claras e diretas nas seções de conteúdo.
+- Mínimo de 1200 palavras para o guia completo.
 
 Escreva o guia completo agora:`;
 
