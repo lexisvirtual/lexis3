@@ -1,6 +1,10 @@
 // import { getFallbackImage, refreshFallbackPool } from './fallback-manager.js';
 import { getImageFromCache, getImageWithCacheFallback } from './imageCache.js';
 import { validateImageRelevance, cleanupImageHistory, getImageHistoryStats } from './image-validation.js';
+import { scrapeBlogArticles } from './blog-scraper.js';
+import { triageArticles } from './content-triage.js';
+import { rewriteArticleWithAI } from './content-rewriter.js';
+import { extractAndOptimizeImage } from './image-source-extractor.js';
 
 export default {
     // --- ROTAS HTTP (API Manual) ---
@@ -121,6 +125,124 @@ export default {
             return new Response(JSON.stringify(result, null, 2), {
                 headers: { "Content-Type": "application/json" }
             });
+        }
+
+        // 12. SCRAPING DE BLOGS (Fase 1)
+        if (url.pathname === "/scrape-blogs") {
+            try {
+                const articles = await scrapeBlogArticles(env);
+                return new Response(JSON.stringify({
+                    success: true,
+                    articles_collected: articles.length,
+                    articles: articles
+                }, null, 2), {
+                    headers: { "Content-Type": "application/json" }
+                });
+            } catch (error) {
+                return new Response(JSON.stringify({
+                    success: false,
+                    error: error.message
+                }, null, 2), {
+                    status: 500,
+                    headers: { "Content-Type": "application/json" }
+                });
+            }
+        }
+
+        // 13. TRIAGEM DE ARTIGOS (Fase 2)
+        if (url.pathname === "/triage-articles") {
+            try {
+                const triaged = await triageArticles(env);
+                return new Response(JSON.stringify({
+                    success: true,
+                    approved_count: triaged.approved.length,
+                    rejected_count: triaged.rejected.length,
+                    approved: triaged.approved,
+                    rejected: triaged.rejected
+                }, null, 2), {
+                    headers: { "Content-Type": "application/json" }
+                });
+            } catch (error) {
+                return new Response(JSON.stringify({
+                    success: false,
+                    error: error.message
+                }, null, 2), {
+                    status: 500,
+                    headers: { "Content-Type": "application/json" }
+                });
+            }
+        }
+
+        // 14. REESCRITA COM IA (Fase 3)
+        if (url.pathname === "/rewrite-articles") {
+            try {
+                const limit = parseInt(url.searchParams.get("limit")) || 3;
+                const rewritten = await rewriteArticleWithAI(env, limit);
+                return new Response(JSON.stringify({
+                    success: true,
+                    rewritten_count: rewritten.length,
+                    articles: rewritten
+                }, null, 2), {
+                    headers: { "Content-Type": "application/json" }
+                });
+            } catch (error) {
+                return new Response(JSON.stringify({
+                    success: false,
+                    error: error.message
+                }, null, 2), {
+                    status: 500,
+                    headers: { "Content-Type": "application/json" }
+                });
+            }
+        }
+
+        // 15. PROCESSAMENTO COMPLETO (Scraping → Triagem → Reescrita → Imagens)
+        if (url.pathname === "/process-curated-content") {
+            try {
+                // Fase 1: Scraping
+                const articles = await scrapeBlogArticles(env);
+                console.log(`[CURATED] Coletados ${articles.length} artigos`);
+
+                // Fase 2: Triagem
+                const triaged = await triageArticles(env);
+                console.log(`[CURATED] Aprovados ${triaged.approved.length} artigos`);
+
+                // Fase 3: Reescrita (1-3 posts)
+                const limit = Math.min(triaged.approved.length, 3);
+                const rewritten = await rewriteArticleWithAI(env, limit);
+                console.log(`[CURATED] Reescritos ${rewritten.length} posts`);
+
+                // Fase 4: Imagens
+                const postsWithImages = [];
+                for (const post of rewritten) {
+                    const imageData = await extractAndOptimizeImage(env, post);
+                    postsWithImages.push({
+                        ...post,
+                        image: imageData
+                    });
+                }
+
+                return new Response(JSON.stringify({
+                    success: true,
+                    summary: {
+                        articles_scraped: articles.length,
+                        articles_approved: triaged.approved.length,
+                        posts_rewritten: rewritten.length,
+                        posts_with_images: postsWithImages.length
+                    },
+                    posts: postsWithImages
+                }, null, 2), {
+                    headers: { "Content-Type": "application/json" }
+                });
+            } catch (error) {
+                return new Response(JSON.stringify({
+                    success: false,
+                    error: error.message
+                }, null, 2), {
+                    status: 500,
+                    headers: { "Content-Type": "application/json" }
+                });
+            }
         }
 
         return new Response("Lexis Publisher V5.9 (Image Validation System) Ativo", { status: 200 });
