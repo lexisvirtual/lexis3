@@ -1,1373 +1,231 @@
-// import { getFallbackImage, refreshFallbackPool } from './fallback-manager.js';
-import { getImageFromCache, getImageWithCacheFallback } from './imageCache.js';
-import { validateImageRelevance, cleanupImageHistory, getImageHistoryStats } from './image-validation.js';
+/**
+ * Lexis Publisher - Sistema de Automação de Blog Curado
+ * Versão: 6.0 (Novo Sistema Completo)
+ * 
+ * Fluxo: Scraping → Triagem → Reescrita com IA → Imagens → Publicação no GitHub
+ * Calibrado para: 1-3 posts de qualidade por dia
+ */
+
 import { scrapeBlogArticles } from './blog-scraper.js';
 import { triageArticles } from './content-triage.js';
 import { rewriteArticles } from './content-rewriter.js';
 import { extractAndOptimizeImage } from './image-source-extractor.js';
+import { publishPostsToGitHub } from './publish-to-github.js';
 
 export default {
-    // --- ROTAS HTTP (API Manual) ---
+    // =========================================================
+    // ROTAS HTTP (API Manual + Diagnóstico)
+    // =========================================================
     async fetch(request, env, ctx) {
         const url = new URL(request.url);
 
-        // 1. Adicionar Pauta (ETAPA 1: Input Rico)
-        if (url.pathname === "/add-topic") {
-            if (request.method !== "POST") return new Response("Use POST", { status: 405 });
-
-            const body = await request.json().catch(() => ({}));
-
-            // Validação de Schema (ETAPA 1.2)
-            if (!body.topic || !body.cluster) {
-                return new Response(JSON.stringify({
-                    error: "Schema Inválido. Obrigatório: 'topic' e 'cluster'.",
-                    required: { query: "string", cluster: "string", intent: "informacional|dor|decisao" }
-                }), { status: 400, headers: { "Content-Type": "application/json" } });
-            }
-
-            const jobData = {
-                topic: body.topic.trim(),
-                cluster: body.cluster.trim().toLowerCase(),
-                intent: body.intent || "informacional",
-                type: body.type || "evergreen",
-                priority: body.priority || 1,
-                status: 'pending',
-                created_at: new Date().toISOString()
-            };
-
-            const id = Date.now().toString();
-            await env.LEXIS_PAUTA.put(`job:${id}`, JSON.stringify(jobData));
-
-            return new Response(JSON.stringify({ success: true, id, job: jobData }), {
-                headers: { "Content-Type": "application/json" }
-            });
-        }
-
-        // 2. Ver Fila
-        if (url.pathname === "/queue") {
-            const limit = parseInt(url.searchParams.get("limit")) || 100; // Default: 100 items
-            const list = await env.LEXIS_PAUTA.list({ prefix: "job:", limit });
-            const jobs = [];
-            for (const key of list.keys) {
-                const value = await env.LEXIS_PAUTA.get(key.name);
-                jobs.push({ id: key.name, ...JSON.parse(value) });
-            }
-            return new Response(JSON.stringify(jobs, null, 2), { headers: { "Content-Type": "application/json" } });
-        }
-
-        // 3. Forçar Processamento
-        if (url.pathname === "/process-queue") {
-            return await processNextJob(env);
-        }
-
-        // 4. LIMPEZA TOTAL (NUCLEAR - TEMP)
-        if (url.pathname === "/purge") {
-            const list = await env.LEXIS_PAUTA.list({ prefix: "job:" });
-            for (const key of list.keys) {
-                await env.LEXIS_PAUTA.delete(key.name);
-            }
-            return new Response("Fila limpa! Zero items.", { status: 200 });
-        }
-
-        // 5. RESET MEMÓRIA (Apaga índices de posts antigos)
-        if (url.pathname === "/reset-memory") {
-            const list = await env.LEXIS_PAUTA.list({ prefix: "index:" });
-            for (const key of list.keys) {
-                await env.LEXIS_PAUTA.delete(key.name);
-            }
-            return new Response("Memória limpa: Índices apagados.", { status: 200 });
-        }
-
-        // 6. ANALYTICS (Ver dados)
-        if (url.pathname === "/analytics") {
-            const analysis = await analyzePostHistory(env);
-            const context = getTemporalContext();
-
+        // --- Raiz: Status do sistema ---
+        if (url.pathname === '/' || url.pathname === '') {
             return new Response(JSON.stringify({
-                analysis,
-                context,
-                recommendations: analysis.gaps
-            }, null, 2), {
-                headers: { "Content-Type": "application/json" }
-            });
-        }
-
-        // 7. PLANEJAMENTO IA (Gerar Pautas)
-        if (url.pathname === "/ai-plan") {
-            const result = await selectThemesByAI(env);
-            return new Response(JSON.stringify(result, null, 2), {
-                headers: { "Content-Type": "application/json" }
-            });
-        }
-
-        // 8. SITEMAP DINÂMICO (SEO)
-        if (url.pathname === "/sitemap.xml") {
-            return await generateDynamicSitemap(env);
-        }
-
-        // 9. RSS FEED DINÂMICO (SEO)
-        if (url.pathname === "/rss.xml" || url.pathname === "/feed.xml") {
-            return await generateDynamicRSS(env);
-        }
-
-        // 10. VALIDAÇÃO DE IMAGENS (Histórico + Relevância)
-        if (url.pathname === "/image-history") {
-            const stats = await getImageHistoryStats(env);
-            return new Response(JSON.stringify(stats, null, 2), {
-                headers: { "Content-Type": "application/json" }
-            });
-        }
-
-        // 11. LIMPEZA DE HISTÓRICO DE IMAGENS
-        if (url.pathname === "/cleanup-image-history") {
-            const daysOld = parseInt(url.searchParams.get("days")) || 365;
-            const result = await cleanupImageHistory(env, daysOld);
-            return new Response(JSON.stringify(result, null, 2), {
-                headers: { "Content-Type": "application/json" }
-            });
-        }
-
-        // 12. SCRAPING DE BLOGS (Fase 1)
-        if (url.pathname === "/scrape-blogs") {
-            try {
-                const articles = await scrapeBlogArticles(env);
-                return new Response(JSON.stringify({
-                    success: true,
-                    articles_collected: articles.length,
-                    articles: articles
-                }, null, 2), {
-                    headers: { "Content-Type": "application/json" }
-                });
-            } catch (error) {
-                return new Response(JSON.stringify({
-                    success: false,
-                    error: error.message
-                }, null, 2), {
-                    status: 500,
-                    headers: { "Content-Type": "application/json" }
-                });
-            }
-        }
-
-        // 13. TRIAGEM DE ARTIGOS (Fase 2)
-        if (url.pathname === "/triage-articles") {
-            try {
-                const triaged = await triageArticles(env);
-                return new Response(JSON.stringify({
-                    success: true,
-                    approved_count: triaged.approved.length,
-                    rejected_count: triaged.rejected.length,
-                    approved: triaged.approved,
-                    rejected: triaged.rejected
-                }, null, 2), {
-                    headers: { "Content-Type": "application/json" }
-                });
-            } catch (error) {
-                return new Response(JSON.stringify({
-                    success: false,
-                    error: error.message
-                }, null, 2), {
-                    status: 500,
-                    headers: { "Content-Type": "application/json" }
-                });
-            }
-        }
-
-        // 14. REESCRITA COM IA (Fase 3)
-        if (url.pathname === "/rewrite-articles") {
-            try {
-                const limit = parseInt(url.searchParams.get("limit")) || 3;
-                const rewritten = await rewriteArticles(env, limit);
-                const posts = rewritten.posts || [];
-                return new Response(JSON.stringify({
-                    success: true,
-                    rewritten_count: posts.length,
-                    articles: posts
-                }, null, 2), {
-                    headers: { "Content-Type": "application/json" }
-                });
-            } catch (error) {
-                return new Response(JSON.stringify({
-                    success: false,
-                    error: error.message
-                }, null, 2), {
-                    status: 500,
-                    headers: { "Content-Type": "application/json" }
-                });
-            }
-        }
-
-        // 15. PROCESSAMENTO COMPLETO (Scraping → Triagem → Reescrita → Imagens)
-        if (url.pathname === "/process-curated-content") {
-            try {
-                // Fase 1: Scraping
-                const articles = await scrapeBlogArticles(env);
-                console.log(`[CURATED] Coletados ${articles.length} artigos`);
-
-                // Fase 2: Triagem
-                const triaged = await triageArticles(env);
-                console.log(`[CURATED] Aprovados ${triaged.approved.length} artigos`);
-
-                // Fase 3: Reescrita (1-3 posts)
-                const limit = Math.min(triaged.approved.length, 3);
-                const rewrittenResult = await rewriteArticles(env, limit);
-                const rewritten = rewrittenResult.posts || [];
-                console.log(`[CURATED] Reescritos ${rewritten.length} posts`);
-
-                // Fase 4: Imagens
-                const postsWithImages = [];
-                for (const post of rewritten) {
-                    const imageData = await extractAndOptimizeImage(env, post);
-                    postsWithImages.push({
-                        ...post,
-                        image: imageData
-                    });
+                system: 'Lexis Publisher v6.0',
+                status: 'online',
+                description: 'Sistema de automação de blog curado',
+                routes: {
+                    '/scrape-blogs':           'Fase 1 - Coleta artigos dos RSS feeds',
+                    '/triage-articles':        'Fase 2 - Triagem e scoring dos artigos',
+                    '/rewrite-articles':       'Fase 3 - Reescrita com IA (param: ?limit=3)',
+                    '/publish-posts':          'Fase 4 - Publicação no GitHub (param: ?limit=3)',
+                    '/auto-publish':           'Fluxo completo (Fases 1-4)',
+                    '/status':                 'Status das filas KV',
                 }
+            }, null, 2), {
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
 
-                return new Response(JSON.stringify({
-                    success: true,
-                    summary: {
-                        articles_scraped: articles.length,
-                        articles_approved: triaged.approved.length,
-                        posts_rewritten: rewritten.length,
-                        posts_with_images: postsWithImages.length
-                    },
-                    posts: postsWithImages
-                }, null, 2), {
-                    headers: { "Content-Type": "application/json" }
-                });
+        // --- Fase 1: Scraping ---
+        if (url.pathname === '/scrape-blogs') {
+            try {
+                const result = await scrapeBlogArticles(env);
+                return jsonResponse(result);
             } catch (error) {
-                return new Response(JSON.stringify({
-                    success: false,
-                    error: error.message
-                }, null, 2), {
-                    status: 500,
-                    headers: { "Content-Type": "application/json" }
-                });
+                return jsonResponse({ success: false, error: error.message }, 500);
             }
         }
 
-        return new Response("Lexis Publisher V5.9 (Image Validation System) Ativo", { status: 200 });
+        // --- Fase 2: Triagem ---
+        if (url.pathname === '/triage-articles') {
+            try {
+                const result = await triageArticles(env);
+                return jsonResponse(result);
+            } catch (error) {
+                return jsonResponse({ success: false, error: error.message }, 500);
+            }
+        }
+
+        // --- Fase 3: Reescrita com IA ---
+        if (url.pathname === '/rewrite-articles') {
+            try {
+                const limit = Math.min(parseInt(url.searchParams.get('limit')) || 3, 3);
+                const result = await rewriteArticles(env, limit);
+                return jsonResponse(result);
+            } catch (error) {
+                return jsonResponse({ success: false, error: error.message }, 500);
+            }
+        }
+
+        // --- Fase 4: Publicação no GitHub ---
+        if (url.pathname === '/publish-posts') {
+            try {
+                const limit = Math.min(parseInt(url.searchParams.get('limit')) || 3, 3);
+                const result = await publishPostsToGitHub(env, limit);
+                return jsonResponse(result);
+            } catch (error) {
+                return jsonResponse({ success: false, error: error.message }, 500);
+            }
+        }
+
+        // --- Fluxo Completo ---
+        if (url.pathname === '/auto-publish') {
+            try {
+                const result = await runFullPipeline(env);
+                return jsonResponse(result);
+            } catch (error) {
+                return jsonResponse({ success: false, error: error.message }, 500);
+            }
+        }
+
+        // --- Status das Filas KV ---
+        if (url.pathname === '/status') {
+            try {
+                const [raw, triaged, rewritten, published] = await Promise.all([
+                    env.LEXIS_RAW_ARTICLES.list({ prefix: 'article:', limit: 100 }),
+                    env.LEXIS_TRIAGED_ARTICLES.list({ prefix: 'triaged:', limit: 100 }),
+                    env.LEXIS_REWRITTEN_POSTS.list({ prefix: 'post:', limit: 100 }),
+                    env.LEXIS_PUBLISHED_POSTS.list({ prefix: 'published:', limit: 100 })
+                ]);
+
+                return jsonResponse({
+                    success: true,
+                    queues: {
+                        raw_articles:      raw.keys.length,
+                        triaged_articles:  triaged.keys.length,
+                        rewritten_posts:   rewritten.keys.length,
+                        published_posts:   published.keys.length
+                    },
+                    pipeline_health: {
+                        ready_to_rewrite:  triaged.keys.length,
+                        ready_to_publish:  rewritten.keys.length
+                    }
+                });
+            } catch (error) {
+                return jsonResponse({ success: false, error: error.message }, 500);
+            }
+        }
+
+        // --- Limpar filas de artigos brutos/triados (manutenção) ---
+        if (url.pathname === '/cleanup-queues') {
+            try {
+                const raw = await env.LEXIS_RAW_ARTICLES.list({ prefix: 'article:', limit: 500 });
+                for (const key of raw.keys) {
+                    await env.LEXIS_RAW_ARTICLES.delete(key.name);
+                }
+                const triaged = await env.LEXIS_TRIAGED_ARTICLES.list({ prefix: 'triaged:', limit: 500 });
+                for (const key of triaged.keys) {
+                    await env.LEXIS_TRIAGED_ARTICLES.delete(key.name);
+                }
+                return jsonResponse({ success: true, message: 'Filas de artigos brutos e triados limpas.' });
+            } catch (error) {
+                return jsonResponse({ success: false, error: error.message }, 500);
+            }
+        }
+
+        return new Response('Lexis Publisher v6.0 - Online. Use /status para verificar as filas.', { status: 200 });
     },
 
-    // --- TRIGGERS AGENDADOS ---
+    // =========================================================
+    // CRON: Executa o pipeline completo todo dia às 09:00 UTC
+    // =========================================================
     async scheduled(event, env, ctx) {
-        console.log('[CRON] Iniciando processamento agendado às 09:00 UTC...');
-        // OPÇÃO 1: Processa 1 job da fila
-        // OPÇÃO 2: Se fila vazia, gera novas pautas automaticamente
-        ctx.waitUntil(processNextJob(env));
+        console.log('[CRON] Iniciando pipeline de blog curado às 09:00 UTC (06:00 BRT)...');
+        ctx.waitUntil(runFullPipeline(env));
     }
 };
 
-// --- ORQUESTRADOR ---
-async function processNextJob(env) {
-    const list = await env.LEXIS_PAUTA.list({ prefix: "job:", limit: 1 });
-
-    if (list.keys.length === 0) {
-        console.log("[AUTO-REFILL] Fila vazia. Iniciando geração automática de pautas...");
-        try {
-            const plan = await selectThemesByAI(env);
-            if (plan.success && plan.new_jobs && plan.new_jobs.length > 0) {
-                console.log(`[AUTO-REFILL] Sucesso! ${plan.new_jobs.length} novas pautas geradas.`);
-                // Recursivamente processa o primeiro da nova lista
-                return await processNextJob(env);
-            } else {
-                return new Response(`Fila vazia. Auto-geração falhou: ${plan.error || "Sem Jobs"}`, { status: 200 });
-            }
-        } catch (e) {
-            return new Response(`Fila vazia. Erro no refill: ${e.message}`, { status: 500 });
-        }
-    }
-
-    // OPÇÃO 2 MELHORADA: Se fila tem apenas 1 item, gera mais pautas em background
-    if (list.keys.length === 1) {
-        console.log("[PROACTIVE-REFILL] Fila com apenas 1 item. Gerando pautas em background...");
-        // Não aguarda, apenas inicia em background
-        selectThemesByAI(env).catch(e => console.warn("[PROACTIVE-REFILL] Erro:", e.message));
-    }
-
-    const jobKey = list.keys[0].name;
-    const rawValue = await env.LEXIS_PAUTA.get(jobKey);
-
-    if (!rawValue) {
-        console.warn(`[ZOMBIE] Limpando item vazio: ${jobKey}`);
-        await env.LEXIS_PAUTA.delete(jobKey);
-        return new Response("Item fantasma removido. Tente novamente.", { status: 200 });
-    }
-
-    const jobData = JSON.parse(rawValue);
-    console.log(`[ORCHESTRATOR] Iniciando: ${jobData.topic} (Cluster: ${jobData.cluster})`);
+// =========================================================
+// PIPELINE COMPLETO: Scraping → Triagem → Reescrita → Publicação
+// =========================================================
+async function runFullPipeline(env) {
+    const log = [];
+    const startTime = Date.now();
 
     try {
-        let result;
-        try {
-            result = await generateAndPublishPost(env, jobData);
-        } catch (innerError) {
-            console.error("[CRITICAL ERROR]", innerError);
-            return new Response(JSON.stringify({ error: `Worker Error: ${innerError.message}`, details: innerError.stack }), { status: 500, headers: { "Content-Type": "application/json" } });
+        // FASE 1: Scraping
+        log.push('[FASE 1] Iniciando scraping de blogs premium...');
+        const scrapeResult = await scrapeBlogArticles(env);
+        log.push(`[FASE 1] ✅ ${scrapeResult.articlesCollected} artigos coletados`);
+        if (scrapeResult.errors?.length > 0) {
+            log.push(`[FASE 1] ⚠️ Erros: ${scrapeResult.errors.map(e => e.feed + ': ' + e.error).join(' | ')}`);
         }
 
-        if (result.success) {
-            await env.LEXIS_PAUTA.delete(jobKey);
-            await addToClusterIndex(env, jobData.cluster, {
-                title: result.title,
-                slug: result.slug,
-                intent: jobData.intent,
-                published_at: new Date().toISOString().split('T')[0]
-            });
+        // FASE 2: Triagem
+        log.push('[FASE 2] Iniciando triagem inteligente...');
+        const triageResult = await triageArticles(env);
+        log.push(`[FASE 2] ✅ ${triageResult.approved} aprovados, ${triageResult.rejected} rejeitados`);
 
-            return new Response(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
-        } else {
-            console.error(`[FAIL] ${result.error}`);
-            const isValidationError = ["Short Content", "No Structure (H2)", "Missing Fields", "Parsing Failed"].includes(result.error) || result.reason === "DUPLICATE_SLUG";
-
-            if (isValidationError) {
-                console.warn(`[DELETE] Removendo job inválido da fila: ${jobData.topic}`);
-                await env.LEXIS_PAUTA.delete(jobKey);
-            }
-            return new Response(JSON.stringify(result), { status: 422, headers: { "Content-Type": "application/json" } });
-        }
-    } catch (e) {
-        return new Response(JSON.stringify({ error: e.message }), { status: 500 });
-    }
-}
-
-// --- NÚCLEO INTELIGENTE (IA + VALIDAÇÃO) ---
-async function generateAndPublishPost(env, job) {
-    // Validação inicial do job
-    if (!job || !job.topic) {
-        return { success: false, error: "Job inválido: topic ausente" };
-    }
-    const relatedPosts = await getRelatedPosts(env, job.cluster);
-    const internalLinksPrompt = relatedPosts.length > 0
-        ? `INCLUA LINKS INTERNOS PARA: ${relatedPosts.map(p => `[${p.title}](/blog/${p.slug})`).join(", ")}`
-        : "";
-
-    const systemPrompt = `
-    Você é o Evangelista Chefe da Lexis Academy.
-    
-    SUA MISSÃO: Escrever um artigo de blog polêmico e profundo.
-    
-    PRINCÍPIOS EDITORIAIS:
-    1. "Idioma não se aprende. Idioma se treina."
-    2. Ataque métodos tradicionais (gramática, decoreba).
-    3. Use H2 para subtítulos (##).
-    
-    FORMATO DE SAÍDA: JSON (ESTRITAMENTE)
-    {
-      "title": "Título H1 Impactante",
-      "slug": "slug-otimizado-seo",
-      "description": "Meta description persuasiva para Google (max 150 chars)",
-      "tags": ["tag1", "tag2"],
-      "content": "Texto completo do artigo em Markdown. Use ## para subtítulos. NÃO coloque o título H1 aqui dentro, apenas o corpo do texto. NUNCA coloque 'Imagem:', 'Search query:' ou descrições da imagem dentro deste campo.",
-      "image_search_query": "English visual search query for Pixabay. Follow the Advanced Anti-Noise template: [who], [specific action], [specific environment], [emotional tone], [lighting], [color direction], [composition], [quality markers], [minimum 6 exclusions with -]"
-    }
-  `;
-
-    const userPrompt = `
-Tópico: "${job.topic}"
-Cluster: "${job.cluster}"
-Intenção: "${job.intent}"
-    
-    ${internalLinksPrompt}
-    
-    Escreva um artigo de > 1000 palavras.
-    Use Português do Brasil.
-
-    IMPORTANTE: Retorne APENAS o JSON válido.
-  `;
-
-    let aiResponse;
-    try {
-        aiResponse = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
-            messages: [
-                { role: 'system', content: systemPrompt },
-                { role: 'user', content: userPrompt }
-            ],
-            max_tokens: 4000
-        });
-    } catch (e) {
-        return { success: false, error: `AI Failed: ${e.message}` };
-    }
-
-    let raw = aiResponse.response.trim();
-    const firstBrace = raw.indexOf('{');
-    const lastBrace = raw.lastIndexOf('}');
-
-    if (firstBrace >= 0 && lastBrace > firstBrace) {
-        raw = raw.substring(firstBrace, lastBrace + 1);
-    }
-
-    const postData = { cluster: job.cluster, intent: job.intent };
-    let parseSuccess = false;
-
-    try {
-        const parsed = JSON.parse(raw);
-        Object.assign(postData, parsed);
-        if (parsed.content) postData.content_markdown = parsed.content;
-        parseSuccess = true;
-    } catch (e) {
-        console.warn("[PARSER] JSON.parse falhou. Tentando extração manual...");
-    }
-
-    if (!parseSuccess) {
-        try {
-            const extract = (key) => {
-                const match = raw.match(new RegExp(`"${key}"\\s *: \\s * "(.*?)"`, 's'));
-                return match ? match[1] : null;
-            };
-
-            postData.title = extract("title");
-            postData.slug = extract("slug");
-            postData.description = extract("description");
-
-            const contentMatch = raw.match(/"content"\s*:\s*"(.*)"\s*}/s) || raw.match(/"content"\s*:\s*"(.*)/s);
-            if (contentMatch) {
-                let content = contentMatch[1];
-                if (content.endsWith('"}')) content = content.slice(0, -2);
-                else if (content.endsWith('"')) content = content.slice(0, -1);
-                postData.content_markdown = content.replace(/\\n/g, '\n').replace(/\\"/g, '"');
-            }
-
-            const tagsMatch = raw.match(/"tags"\s*:\s*\[(.*?)\]/s);
-            if (tagsMatch) {
-                postData.tags = tagsMatch[1].split(',').map(t => t.replace(/["\s]/g, ''));
-            }
-        } catch (e2) {
-            console.error("Parser Regex falhou também.");
-        }
-    }
-
-    // TENTATIVA 3 (Extra): Extrair image_search_query via Regex isolado se não veio
-    if (!postData.image_search_query) {
-        const imgMatch = raw.match(/"image_search_query"\s*:\s*"(.*?)"/s);
-        if (imgMatch) postData.image_search_query = imgMatch[1];
-    }
-
-    // FALLBACKS DE SEGURANÇA (Se tudo falhar, não perde o post)
-    if (!postData.title) postData.title = job.topic || 'Sem Título';
-    if (!postData.slug) postData.slug = (job.topic || 'post').toLowerCase().replace(/ /g, '-');
-    if (!postData.content_markdown) {
-        console.warn("IA ignorou JSON. Usando RAW como conteúdo.");
-        postData.content_markdown = raw || 'Conteúdo não disponível';
-    }
-
-    // Proteção total contra null/undefined
-    postData.slug = String(postData.slug || 'post').toLowerCase().replace(/[^a-z0-9-]/g, '');
-    postData.title = String(postData.title || 'Sem Título').trim();
-    postData.description = String(postData.description || postData.title || 'Descrição não disponível');
-    postData.tags = Array.isArray(postData.tags) ? postData.tags : ['ingles'];
-
-    const validation = validatePost(postData);
-    if (!validation.valid) return { success: false, error: validation.reason };
-
-    if (await checkFileExists(env, `${postData.slug}.md`)) {
-        return { success: false, reason: "DUPLICATE_SLUG", error: "Exists" };
-    }
-
-    // ETAPA 6: MONTAGEM FINAL
-    // INJEÇÃO DE IMAGEM AUTOMÁTICA (Curador V8.1 - Reativado + VALIDAÇÃO)
-    if (!postData.image) {
-        // [MELHORIA] Tradução de Query
-        // Se a query visual não veio, ou se parece com o título em PT, tentamos traduzir/gerar keywords em inglês.
-        let searchQuery = postData.image_search_query;
-
-        if (!searchQuery || searchQuery.trim() === job.topic.trim()) {
-            const translated = await generateVisualKeywords(env, job.topic);
-            if (translated) searchQuery = translated;
+        if (triageResult.approved === 0) {
+            log.push('[FASE 2] ℹ️ Nenhum artigo aprovado. Pipeline encerrado.');
+            return buildResult(log, startTime, scrapeResult, triageResult, null, null);
         }
 
-        // Passamos a query final (da AI ou traduzida) + o cluster + título e conteúdo para validação
-        postData.image = await getImageWithFallback(
-            job.cluster, 
-            env, 
-            searchQuery || job.topic,
-            postData.title,
-            postData.content_markdown
-        );
-    }
+        // FASE 3: Reescrita com IA (máx 3 posts por dia)
+        const postsToRewrite = Math.min(triageResult.approved, 3);
+        log.push(`[FASE 3] Reescrevendo ${postsToRewrite} post(s) com IA...`);
+        const rewriteResult = await rewriteArticles(env, postsToRewrite);
+        log.push(`[FASE 3] ✅ ${rewriteResult.postsRewritten} post(s) reescritos`);
 
-    // LIMPEZA DE CONTEÚDO V8.3 - Remove metadados técnicos vazados
-    postData.content_markdown = sanitizeContent(postData.content_markdown);
-
-    const finalMarkdown = `---
-title: "${postData.title.replace(/"/g, '\\"')}"
-date: "${new Date().toISOString().split('T')[0]}"
-description: "${postData.description.replace(/"/g, '\\"')}"
-tags: [${postData.tags.map(t => `"${t}"`).join(', ')}]
-category: "${job.cluster}"
-author: "Lexis Intel AI"
-image: "${postData.image}"
-cluster: "${job.cluster}"
-intent: "${job.intent}"
----
-
-${postData.content_markdown}
-
----
-*Este artigo é parte da nossa série sobre **${job.cluster}**. Continue treinando:*
-${relatedPosts.map(p => `- [${p.title}](/blog/${p.slug})`).join('\n')}
-`;
-
-    const result = await uploadToGitHub(env, `${postData.slug}.md`, finalMarkdown, `feat(blog): [${job.cluster}] ${postData.title} `);
-    return { success: true, url: result.url, slug: postData.slug, title: postData.title };
-}
-
-// --- KV HELPER (BRAIN) ---
-async function addToClusterIndex(env, cluster, postMeta) {
-    const key = `index:${cluster}`;
-    let current = await env.LEXIS_PAUTA.get(key);
-    let posts = current ? JSON.parse(current) : [];
-
-    if (!postMeta.published_at) {
-        postMeta.published_at = new Date().toISOString().split('T')[0];
-    }
-
-    if (!posts.find(p => p.slug === postMeta.slug)) {
-        posts.push(postMeta);
-        await env.LEXIS_PAUTA.put(key, JSON.stringify(posts));
-    }
-}
-
-async function getRelatedPosts(env, cluster) {
-    const key = `index:${cluster}`;
-    const data = await env.LEXIS_PAUTA.get(key);
-    if (!data) return [];
-
-    const posts = JSON.parse(data);
-    return posts.sort(() => 0.5 - Math.random()).slice(0, 3);
-}
-
-// --- UTILS ---
-function sanitizeContent(content) {
-    if (!content) return content;
-
-    let cleaned = content;
-
-    // 1. Remove linhas com "image_search_query" (formato JSON ou texto solto)
-    cleaned = cleaned.replace(/[,\s]*"image_search_query"\s*:\s*"[^"]*"/gi, '');
-    cleaned = cleaned.replace(/.*image_search_query.*\n?/gi, '');
-
-    // 2. Remove restos de JSON artifacts (chaves soltas, vírgulas extras)
-    cleaned = cleaned.replace(/^\s*[,}\]]\s*$/gm, ''); // Linhas com apenas }, ], ou vírgulas
-    cleaned = cleaned.replace(/,\s*}/g, '}'); // Vírgulas antes de fechar objeto
-    cleaned = cleaned.replace(/,\s*\]/g, ']'); // Vírgulas antes de fechar array
-
-    // 3. Remove aspas escapadas desnecessárias no meio do texto
-    cleaned = cleaned.replace(/\\"/g, '"');
-
-    // 4. Remove blocos de código JSON vazios ou quebrados
-    cleaned = cleaned.replace(/```json\s*\n\s*```/gi, '');
-    cleaned = cleaned.replace(/```\s*\n\s*```/g, '');
-
-    // 5. Limpa múltiplas linhas em branco consecutivas (deixa no máximo 2)
-    cleaned = cleaned.replace(/\n{4,}/g, '\n\n\n');
-
-    // 6. Remove espaços em branco no final das linhas
-    cleaned = cleaned.replace(/[ \t]+$/gm, '');
-
-    // 7. Remove artefatos de final de JSON (", ou " ou }, no final do arquivo)
-    cleaned = cleaned.replace(/",\s*$/, "");
-    cleaned = cleaned.replace(/"\s*$/, "");
-
-    // 8. [NOVO] Remove metadados descritivos de imagem vazados (Identificados pelo User)
-    // Ex: "Imagem: Uma foto...", "Search query: ...", "| A imagem não condiz..."
-    cleaned = cleaned.replace(/^Imagem:.*$/gim, '');
-    cleaned = cleaned.replace(/^Image:.*$/gim, '');
-    cleaned = cleaned.replace(/^Search query:.*$/gim, '');
-    cleaned = cleaned.replace(/^Query:.*$/gim, '');
-    cleaned = cleaned.replace(/\| A imagem não condiz com o tema/gi, ''); // Remoção cirúrgica do erro relatado
-
-    return cleaned.trim();
-}
-function validatePost(post) {
-    if (post.content_markdown.length < 400) return { valid: false, reason: "Short Content" };
-    // Validacao de H2 removida - aceita posts sem estrutura
-    return { valid: true };
-}
-
-async function checkFileExists(env, fileName) {
-    const r = await fetch(`https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/src/posts/${fileName}`, {
-        headers: { "Authorization": `Bearer ${env.GITHUB_TOKEN}`, "User-Agent": "Lexis-Worker" }
-    });
-    return r.status === 200;
-}
-
-async function uploadToGitHub(env, fileName, content, message) {
-    const r = await fetch(`https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/src/posts/${fileName}`, {
-        method: "PUT",
-        headers: { "Authorization": `Bearer ${env.GITHUB_TOKEN}`, "User-Agent": "Lexis-Worker" },
-        body: JSON.stringify({
-            message,
-            content: btoa(unescape(encodeURIComponent(content))),
-            branch: env.GITHUB_BRANCH
-        })
-    });
-    const d = await r.json();
-    if (!r.ok) throw new Error(d.message);
-    return { url: d.content.html_url };
-}
-
-// ============================================
-// SOLUÇÃO 2: Múltiplas variantes de query por cluster
-// Evita repetição ao diversificar buscas no Pixabay
-// ============================================
-const CLUSTER_QUERIES_VARIANTS = {
-    'business': [
-        'business professional office work',
-        'corporate team meeting collaboration',
-        'entrepreneur startup workspace',
-        'business woman working laptop',
-        'office environment modern desk',
-        'professional business people talking',
-        'corporate office building interior',
-        'business success achievement',
-        'team brainstorming meeting',
-        'professional workplace diversity'
-    ],
-    'viagem': [
-        'travel adventure landscape nature',
-        'backpacker exploring mountains',
-        'tropical beach vacation',
-        'city tourism exploration',
-        'road trip adventure',
-        'hiking mountain landscape',
-        'beach sunset travel',
-        'tourist destination exploration',
-        'adventure travel outdoor',
-        'world travel exploration'
-    ],
-    'estudo': [
-        'study learning education books',
-        'student studying library',
-        'online learning computer',
-        'education classroom learning',
-        'person reading book',
-        'student focused studying',
-        'educational workspace',
-        'learning development growth',
-        'academic study environment',
-        'knowledge learning books'
-    ],
-    'imersao': [
-        'immersion study language travel brazil',
-        'language learning conversation',
-        'cultural immersion experience',
-        'international student learning',
-        'language exchange conversation',
-        'study abroad experience',
-        'cultural diversity learning',
-        'language practice conversation',
-        'immersive learning environment',
-        'global education experience'
-    ],
-    'cultural': [
-        'brazil culture carnival festival parade',
-        'brazilian culture tradition',
-        'cultural celebration diversity',
-        'festival celebration culture',
-        'traditional cultural event',
-        'cultural heritage celebration',
-        'community cultural gathering',
-        'cultural diversity celebration',
-        'traditional celebration festival',
-        'cultural expression art'
-    ],
-    'mindset': [
-        'meditation focus mindfulness wellness',
-        'mindfulness meditation peace',
-        'wellness mental health',
-        'meditation yoga relaxation',
-        'focus concentration productivity',
-        'mental wellness balance',
-        'mindful living peace',
-        'meditation nature calm',
-        'wellness lifestyle health',
-        'mindfulness practice serenity'
-    ],
-    'default': [
-        'inspiration motivation success',
-        'success achievement growth',
-        'motivation inspiration people',
-        'personal growth development',
-        'achievement success celebration',
-        'empowerment motivation',
-        'success business growth',
-        'inspiration creativity',
-        'goal achievement success',
-        'positive motivation energy'
-    ]
-};
-
-// Mapa de queries padrão (mantido para compatibilidade)
-const CLUSTER_QUERIES = {
-    'business': 'business professional office work',
-    'viagem': 'travel adventure landscape nature',
-    'estudo': 'study learning education books',
-    'imersao': 'immersion study language travel brazil',
-    'cultural': 'brazil culture carnival festival parade',
-    'mindset': 'meditation focus mindfulness wellness',
-    'default': 'inspiration motivation success'
-};
-
-// ============================================
-// FUNÇÃO PRINCIPAL: Buscar imagem com fallback + VALIDAÇÃO
-// ============================================
-async function getImageWithFallback(cluster, env, specificQuery = null, postTitle = "", postContent = "") {
-    console.log(`[IMAGE] Buscando imagem. Cluster: ${cluster} | Query Específica: ${specificQuery || "Nenhuma"}`);
-    
-    // Define a query final: Se tiver específica (da IA), usa ela. Se não, usa variante do cluster.
-    // Se a específica for muito curta (<3 chars), ignora.
-    let finalQuery = specificQuery;
-    
-    if (!finalQuery || finalQuery.length <= 3) {
-        // SOLUÇÃO 2: Seleciona aleatoriamente uma variante de query para o cluster
-        const variants = CLUSTER_QUERIES_VARIANTS[cluster] || CLUSTER_QUERIES_VARIANTS['default'];
-        finalQuery = variants[Math.floor(Math.random() * variants.length)];
-        console.log(`[IMAGE] Query variante selecionada: "${finalQuery}"`);
-    }
-
-    // TENTATIVA 1: Pixabay API com VALIDAÇÃO
-    if (env.PIXABAY_API_KEY && env.PEXELS_ENABLED === 'true') {
-        try {
-            console.log(`[PIXABAY] Buscando: "${finalQuery}"`);
-            const image = await getPixabayImage(finalQuery, env.PIXABAY_API_KEY);
-            if (image) {
-                // NOVA: Validar imagem antes de usar
-                const validation = await validateImageRelevance(image, postTitle, postContent, env);
-                if (validation.valid) {
-                    console.log(`[PIXABAY] ✅ Sucesso! URL: ${image.substring(0, 50)}... (Score: ${validation.score})`);
-                    return image;
-                } else {
-                    console.log(`[PIXABAY] ⚠️ Imagem rejeitada: ${validation.reason} (Score: ${validation.score}). Tentando outra...`);
-                    // Continua para fallback
-                }
-            }
-        } catch (error) {
-            console.warn(`[PIXABAY] ❌ Falha: ${error.message}. Usando fallback...`);
+        if (rewriteResult.postsRewritten === 0) {
+            log.push('[FASE 3] ℹ️ Nenhum post reescrito. Pipeline encerrado.');
+            return buildResult(log, startTime, scrapeResult, triageResult, rewriteResult, null);
         }
-    } else {
-        console.log(`[PIXABAY] Desabilitado ou sem chave. Usando banco curado.`);
-    }
 
-    // FALLBACK 1: Sistema dinamico de fallback (pool de imagens genericas)
-    console.log(`[FALLBACK-DYNAMIC] Buscando imagem do pool dinamico...`);
-    try {
-        const fallbackImage = await getFallbackImage(env);
-        if (fallbackImage) {
-            // Validar fallback também
-            const validation = await validateImageRelevance(fallbackImage, postTitle, postContent, env);
-            if (validation.valid) {
-                console.log(`[FALLBACK-DYNAMIC] Imagem de fallback encontrada (Score: ${validation.score})`);
-                return fallbackImage;
-            }
+        // FASE 4: Publicação no GitHub
+        log.push(`[FASE 4] Publicando ${rewriteResult.postsRewritten} post(s) no GitHub...`);
+        const publishResult = await publishPostsToGitHub(env, rewriteResult.postsRewritten);
+        log.push(`[FASE 4] ✅ ${publishResult.published} post(s) publicados`);
+        if (publishResult.errors?.length > 0) {
+            log.push(`[FASE 4] ⚠️ Erros de publicação: ${publishResult.errors.map(e => e.post + ': ' + e.error).join(' | ')}`);
         }
+
+        return buildResult(log, startTime, scrapeResult, triageResult, rewriteResult, publishResult);
+
     } catch (error) {
-        console.warn(`[FALLBACK-DYNAMIC] Erro: ${error.message}. Usando banco curado...`);
-    }
-
-    // FALLBACK 2: Banco de imagens curado (estatico - SOLUÇÃO 1: Expandido)
-    console.log(`[FALLBACK-STATIC] Usando banco de imagens estatico...`);
-    const curatedImage = getCuratedImage(cluster);
-    if (curatedImage) {
-        // Validar imagem curada
-        const validation = await validateImageRelevance(curatedImage, postTitle, postContent, env);
-        if (validation.valid) {
-            console.log(`[FALLBACK-STATIC] Imagem curada encontrada (Score: ${validation.score})`);
-            return curatedImage;
-        }
-    }
-
-    // FALLBACK 3: Imagem padrao final (sem validação - é o último recurso)
-    console.log(`[FALLBACK-HARDCODED] Usando imagem padrao final`);
-    const defaultImage = "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80";
-    await validateImageRelevance(defaultImage, postTitle, postContent, env); // Registrar mesmo assim
-    return defaultImage;
-}
-
-// ============================================
-// FUNÇÃO: Buscar do Pixabay API
-// ============================================
-async function getPixabayImage(query, accessKey) {
-    try {
-        const url = `https://pixabay.com/api/?key=${accessKey}&q=${encodeURIComponent(query)}&image_type=photo&orientation=horizontal&per_page=20`;
-
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-        const response = await fetch(url, {
-            signal: controller.signal
-        });
-
-        clearTimeout(timeoutId);
-
-        if (!response.ok) return null;
-
-        const data = await response.json();
-
-        // CORREÇÃO: Seleciona aleatoriamente uma das imagens retornadas para evitar duplicidade
-        if (data.hits && data.hits.length > 0) {
-            const randomIndex = Math.floor(Math.random() * data.hits.length);
-            const imageUrl = data.hits[randomIndex].largeImageURL;
-
-            console.log(`[PIXABAY] ✅ Sucesso! URL: ${imageUrl.substring(0, 50)}... (Index: ${randomIndex}/${data.hits.length})`);
-            return imageUrl;
-        }
-
-        return null;
-    } catch (error) {
-        console.error(`[PIXABAY API] ❌ Erro: ${error.message}`);
-        return null;
+        log.push(`[PIPELINE] ❌ Erro crítico: ${error.message}`);
+        console.error('[PIPELINE] Erro crítico:', error);
+        return {
+            success: false,
+            error: error.message,
+            log,
+            durationMs: Date.now() - startTime
+        };
     }
 }
 
-// --- BANCO DE IMAGENS ---
-// SOLUÇÃO 1: Expandido de 2 para 10-15 imagens por cluster
-function getCuratedImage(cluster) {
-    const COLLECTIONS = {
-        'business': [
-            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80",
-            "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80"
-        ],
-        'viagem': [
-            "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1200&q=80",
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
-            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
-            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
-            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
-            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
-            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
-            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
-            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
-            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
-            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
-            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
-            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
-            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
-            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80"
-        ],
-        'estudo': [
-            "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1200&q=80",
-            "https://images.unsplash.com/photo-1513258496099-48168024aec0?w=1200&q=80",
-            "https://images.unsplash.com/photo-150784272343-583f20270319?w=1200&q=80",
-            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80",
-            "https://images.unsplash.com/photo-1507842872343-583f20270319?w=1200&q=80",
-            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80",
-            "https://images.unsplash.com/photo-1507842872343-583f20270319?w=1200&q=80",
-            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80",
-            "https://images.unsplash.com/photo-1507842872343-583f20270319?w=1200&q=80",
-            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80",
-            "https://images.unsplash.com/photo-1507842872343-583f20270319?w=1200&q=80",
-            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80",
-            "https://images.unsplash.com/photo-1507842872343-583f20270319?w=1200&q=80",
-            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80",
-            "https://images.unsplash.com/photo-1507842872343-583f20270319?w=1200&q=80"
-        ],
-        'imersao': [
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80",
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
-            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
-            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
-            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80",
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
-            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
-            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
-            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80",
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80"
-        ],
-        'cultural': [
-            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
-            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
-            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80",
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
-            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
-            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
-            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80",
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
-            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
-            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
-            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80"
-        ],
-        'mindset': [
-            "https://images.unsplash.com/photo-1499209974431-2761e2523676?w=1200&q=80",
-            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80",
-            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
-            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
-            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80",
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
-            "https://images.unsplash.com/photo-1499209974431-2761e2523676?w=1200&q=80",
-            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80",
-            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
-            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
-            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80"
-        ],
-        'default': [
-            "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80",
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
-            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80",
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
-            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
-            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
-            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
-            "https://images.unsplash.com/photo-1499209974431-2761e2523676?w=1200&q=80",
-            "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80",
-            "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80"
-        ]
-    };
-    const key = cluster ? cluster.toLowerCase() : 'default';
-    const collection = COLLECTIONS[key] || COLLECTIONS['default'];
-    return collection[Math.floor(Math.random() * collection.length)];
-}
-
-// ============================================
-// MODULO: PLANEJAMENTO ESTRATÉGICO (IA)
-// ============================================
-
-// 1. Analisar Histórico do GitHub
-async function analyzePostHistory(env) {
-    console.log('[ANALISE] Iniciando análise de histórico...');
-
-    try {
-        const response = await fetch(
-            `https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/src/posts`,
-            {
-                headers: {
-                    'Authorization': `Bearer ${env.GITHUB_TOKEN}`,
-                    'User-Agent': 'Lexis-Worker'
-                }
-            }
-        );
-
-        if (!response.ok) throw new Error(`GitHub API Error: ${response.status}`);
-        const files = await response.json();
-
-        const categoryCounts = {};
-        let totalFiles = 0;
-
-        // Categorias base para garantir que existam no objeto
-        const baseCategories = ['estudo', 'imersao', 'viagem', 'vocabulario', 'profissional', 'mindset', 'pronuncia', 'gramatica', 'conversacao', 'neurociencia'];
-        baseCategories.forEach(c => categoryCounts[c] = 0);
-
-        // Amostragem: Analisar os 20 últimos posts para ser rápido (ou todos se der)
-        // O GitHub retorna em ordem alfabética. Vamos pegar os últimos 20.
-        // Slice(-20) pega os últimos 20 elementos do array.
-        const allFiles = files.filter(f => f.name.endsWith('.md'));
-        const targetFiles = allFiles.slice(-20);
-
-        console.log(`[ANALISE] Encontrados ${targetFiles.length} arquivos.`);
-
-        // Processamento paralelo limitado (batch de 5)
-        for (let i = 0; i < targetFiles.length; i += 5) {
-            const batch = targetFiles.slice(i, i + 5);
-            await Promise.all(batch.map(async (file) => {
-                try {
-                    const contentResponse = await fetch(file.download_url);
-                    const content = await contentResponse.text();
-
-                    // Extrair cluster/categoria
-                    const match = content.match(/cluster:\s*["']?([^"'\n]+)["']?/i) || content.match(/category:\s*["']?([^"'\n]+)["']?/i);
-                    if (match) {
-                        const cat = match[1].trim().toLowerCase();
-                        categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
-                        totalFiles++;
-                    }
-                } catch (e) {
-                    console.warn(`Erro ao ler ${file.name}: ${e.message}`);
-                }
-            }));
-        }
-
-        // Estatísticas
-        const distribution = {};
-        for (const [cat, count] of Object.entries(categoryCounts)) {
-            distribution[cat] = {
-                count,
-                percentage: totalFiles > 0 ? ((count / totalFiles) * 100).toFixed(1) : "0.0"
-            };
-        }
-
-        // Gaps (< 10%)
-        const gaps = Object.entries(distribution)
-            .filter(([_, data]) => parseFloat(data.percentage) < 10)
-            .map(([cat]) => cat);
-
-        return { distribution, gaps, totalPosts: totalFiles };
-
-    } catch (e) {
-        console.error(`[ANALISE] Falha Fatal: ${e.message}`);
-        return { distribution: {}, gaps: ['geral'], error: e.message };
-    }
-}
-
-// 2. Contexto Temporal
-function getTemporalContext() {
-    const hoje = new Date();
-    const mes = hoje.getMonth() + 1;
-
-    // Eventos (Simplificado & Localizado)
-    const eventosVals = [
-        { m: 1, d: 1, n: 'Ano Novo' },
-        { m: 2, d: 14, n: 'Valentine\'s Day (Data Americana/Internacional)' },
-        { m: 2, d: 20, n: 'Carnaval (Brasil)' },
-        { m: 3, d: 8, n: 'Dia da Mulher' },
-        { m: 3, d: 17, n: 'St. Patrick\'s Day (Cultural)' },
-        { m: 4, d: 21, n: 'Páscoa' },
-        { m: 6, d: 12, n: 'Dia dos Namorados (Brasil)' },
-        { m: 7, d: 4, n: 'Independence Day (USA - Cultural)' },
-        { m: 10, d: 12, n: 'Dia das Crianças / N. Sra. Aparecida' },
-        { m: 10, d: 31, n: 'Halloween (Cultural)' },
-        { m: 11, d: 2, n: 'Finados' },
-        { m: 11, d: 15, n: 'Proclamação da República' },
-        { m: 11, d: 25, n: 'Thanksgiving (USA - Cultural)' },
-        { m: 12, d: 25, n: 'Natal' }
-    ];
-
-    const eventosProximos = eventosVals
-        .filter(e => e.m === mes || e.m === mes + 1)
-        .map(e => e.n);
-
-    let estacao = (mes >= 12 || mes <= 2) ? 'Verão (Brasil)' : (mes >= 6 && mes <= 8) ? 'Inverno (Brasil)' : (mes >= 3 && mes <= 5) ? 'Outono (Brasil)' : 'Primavera (Brasil)';
-
+function buildResult(log, startTime, scrape, triage, rewrite, publish) {
     return {
-        data: hoje.toISOString().split('T')[0],
-        estacao,
-        eventosProximos
+        success: true,
+        summary: {
+            articles_scraped:    scrape?.articlesCollected || 0,
+            articles_approved:   triage?.approved || 0,
+            articles_rejected:   triage?.rejected || 0,
+            posts_rewritten:     rewrite?.postsRewritten || 0,
+            posts_published:     publish?.published || 0,
+            publish_errors:      publish?.errors?.length || 0
+        },
+        log,
+        durationMs: Date.now() - startTime
     };
 }
 
-// 3. Seleção IA
-async function selectThemesByAI(env) {
-    const analysis = await analyzePostHistory(env);
-    const context = getTemporalContext();
-
-    const prompt = `
-    ATUE COMO: Estrategista de Conteúdo Sênior da Lexis Academy (Escola de Inglês para Brasileiros).
-    
-    DADOS:
-    - Total Posts: ${analysis.totalPosts}
-    - GAPS (Prioridade): ${analysis.gaps.join(', ')}
-    - Contexto: ${context.data} (${context.estacao}). Eventos Próximos: ${context.eventosProximos.join(', ')}
-    
-    TAREFA:
-    Gere 3 sugestões de pauta INÉDITAS para preencher os gaps e aproveitar o contexto.
-    
-    REGRAS:
-    1. Público: Brasileiros aprendendo inglês.
-    2. Contexto Cultural: Se citar datas comemorativas estrangeiras (ex: Valentine's Day em Fev), aborde como "Curiosidade Cultural" ou "Vocabulário Específico", deixando claro a diferença para o Brasil.
-    3. Títulos: Magnéticos e em Português.
-    4. Diversifique os clusters.
-    
-    SAÍDA (JSON Puro):
-    {
-      "temas": [
-        {
-          "topic": "Título do Post",
-          "cluster": "categoria-do-gap",
-          "intent": "dor|decisao|cultural",
-          "justificativa": "Motivo da escolha"
-        }
-      ]
-    }
-    `;
-
-    try {
-        const aiRes = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
-            messages: [{ role: 'user', content: prompt }]
-        });
-
-        let text = aiRes.response;
-        let temas = [];
-
-        // TENTATIVA 1: JSON.parse DIRETO
-        try {
-            const jsonMatch = text.match(/\{[\s\S]*\}/);
-            if (jsonMatch) {
-                const data = JSON.parse(jsonMatch[0]);
-                temas = data.temas || data.themes || [];
-            }
-        } catch (e) {
-            console.warn("[IA-PLAN] JSON Parse falhou. Tentando Regex...");
-        }
-
-        // TENTATIVA 2: REGEX FALLBACK (Se o JSON veio quebrado)
-        if (temas.length === 0) {
-            // Regex para capturar objetos { "topic": ... } individualmente
-            const objectRegex = /{\s*"topic":\s*"(.*?)",\s*"cluster":\s*"(.*?)",\s*"intent":\s*"(.*?)",\s*"justificativa":\s*"(.*?)"\s*}/g;
-            let match;
-            while ((match = objectRegex.exec(text)) !== null) {
-                temas.push({
-                    topic: match[1],
-                    cluster: match[2],
-                    intent: match[3],
-                    justificativa: match[4]
-                });
-            }
-        }
-
-        // TENTATIVA 3 (Último recurso): Regex mais permissivo
-        if (temas.length === 0) {
-            const simpleRegex = /"topic":\s*"(.*?)".*?"cluster":\s*"(.*?)"/gs;
-            let match;
-            while ((match = simpleRegex.exec(text)) !== null) {
-                temas.push({
-                    topic: match[1],
-                    cluster: match[2],
-                    intent: 'informacional', // Default
-                    justificativa: 'Recuperado via Regex Simples'
-                });
-                if (temas.length >= 3) break;
-            }
-        }
-
-        if (temas.length === 0) {
-            return {
-                success: false,
-                error: "IA não retornou temas válidos. Parse falhou.",
-                raw: text
-            };
-        }
-
-        const added = [];
-        for (const tema of temas) {
-            const id = Date.now().toString() + Math.floor(Math.random() * 1000);
-            const job = {
-                topic: tema.topic,
-                cluster: tema.cluster.toLowerCase(),
-                intent: tema.intent || 'informacional',
-                status: 'pending',
-                created_at: new Date().toISOString(),
-                ai_generated: true,
-                justification: tema.justificativa || tema.justification
-            };
-
-            await env.LEXIS_PAUTA.put(`job:${id}`, JSON.stringify(job));
-            added.push(job);
-        }
-
-        return { success: true, analysis, new_jobs: added };
-
-    } catch (e) {
-        return { success: false, error: e.message };
-    }
-}
-
-// ============================================
-// HELPER: GERAÇÃO DE PROMPTS PROFISSIONAIS (ART DIRECTOR)
-// ============================================
-async function generateVisualKeywords(env, topic) {
-    if (!topic) return null;
-    console.log(`[ART DIRECTOR] Gerando prompt avançado (TEMPLATE ANTIRRUÍDO) para: "${topic}"`);
-
-    const FORBIDDEN_KEYWORDS = [
-        'neuroscience', 'brain', 'science', 'concept', 'abstract',
-        'success', 'motivation', 'inspiration', 'achievement',
-        'communication', 'connection', 'network', 'idea',
-        'innovation', 'creativity', 'strategy', 'solution'
-    ];
-
-    try {
-        const artDirectorPrompt = `
-        ACT AS: Strategic Art Director specialized in keyword-based image banks (Pixabay, Unsplash, Pexels).
-        USER MISSION: Create a highly assertive English prompt for a blog hero image.
-
-        BLOG TOPIC: "${topic}"
-
-        STEP 1: INTERNAL DIAGNOSIS (Do not include in output)
-        1. Classify the theme into ONE category: Relationship, Business, Technology, Culture, Education, Productivity, Health, Marketing, or Other.
-        2. Convert the abstract theme into a CONCRETE HUMAN SCENE with:
-           - Specific Action
-           - Real Environment
-           - Predominant Emotion
-        3. Identify ambiguous words in the theme that might cause "noise" in the image bank.
-
-        STEP 2: PROMPT CONSTRUCTION RULES
-        - 100% English
-        - Real life scenes, NO abstract concepts
-        - Defined characters and clear actions
-        - Specific environment and explicit emotion
-        - Defined lighting and suggested color palette
-        - Hero Image requirements: Include "wide horizontal composition" and "negative space for headline"
-        - Mandatory Quality Markers: "realistic editorial photography", "high resolution", "natural expressions"
-        - Category-based Exclusions (Include at least 6 with a minus sign):
-          * Relationship: -festival -decoration -ceramic -handmade -craft -cartoon -wedding stage -proposal ring closeup
-          * Business: -handshake closeup -cartoon office -3d render -clipart -illustration -graph isolated
-          * Technology: -futuristic neon -robot cartoon -3d abstract background -digital illustration -metaverse art
-          * Culture: -pottery -traditional craft -costume performance -folk dance stage -artisan workshop -decoration closeup
-          * Education: -children cartoon -clipart -school drawing -illustration -blackboard isolated
-          * Productivity: -abstract concept -3d clock -floating icons -illustration -minimal icon set
-
-        OUTPUT FORMAT (Strictly one line, no explanation):
-        [who], [specific action], [specific environment], [emotional tone], [lighting], [color direction], [composition], [quality markers], [minimum 6 exclusions]
-
-        EXAMPLE:
-        A group of diverse friends laughing, sharing a meal at a rustic outdoor wooden table, feeling joyful and connected, soft golden hour sunlight, warm earth tones, wide horizontal composition, negative space for headline, realistic editorial photography, high resolution, natural expressions, -festival -decoration -ceramic -handmade -craft -cartoon -wedding stage -proposal ring closeup
-        `;
-
-        const response = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
-            messages: [
-                { role: 'system', content: artDirectorPrompt },
-                { role: 'user', content: `Generate the assertive English prompt for: ${topic}` }
-            ],
-            max_tokens: 250
-        });
-
-        let prompt = response.response.trim();
-
-        // Limpeza de artifacts
-        prompt = prompt.replace(/^["']|["']$/g, ''); // Remove aspas
-        prompt = prompt.replace(/^(Here is|Here's|Prompt:|The prompt is:?|Result:?)/gi, '').trim();
-        prompt = prompt.replace(/\n.*/g, ''); // Remove linhas extras
-
-        // Validação básica: Se o prompt for muito curto ou não tiver exclusões, tenta forçar
-        if (prompt.length < 50 || !prompt.includes('-')) {
-            console.warn("[ART DIRECTOR] Prompt gerado parece incompleto. Usando estrutura de segurança.");
-            const fallbackSuffix = "wide horizontal composition, negative space for headline, realistic editorial photography, high resolution, natural expressions, -cartoon -clipart -3d -illustration -abstract -background";
-            prompt = `${topic} scene with people, ${fallbackSuffix}`;
-        }
-
-        console.log(`[ART DIRECTOR] Prompt final: "${prompt.substring(0, 100)}..."`);
-        return prompt;
-
-    } catch (e) {
-        console.warn(`[ART DIRECTOR] Falha: ${e.message}`);
-        return "authentic diverse people engaged in real activity, natural lighting, specific environment, wide horizontal composition, negative space for headline, realistic editorial photography, high resolution, -cartoon -clipart -3d -illustration";
-    }
-}
-
-// 4. SITEMAP DINÂMICO (SEO V5.7)
-async function generateDynamicSitemap(env) {
-    const baseUrl = "https://lexis.academy";
-    const today = new Date().toISOString().split('T')[0];
-
-    const staticPages = [
-        { loc: "/", priority: "1.0", changefreq: "weekly", lastmod: today },
-        { loc: "/imersao", priority: "0.9", changefreq: "monthly", lastmod: today },
-        { loc: "/maestria", priority: "0.9", changefreq: "monthly", lastmod: today },
-        { loc: "/the-way", priority: "0.9", changefreq: "monthly", lastmod: today },
-        { loc: "/blog", priority: "0.8", changefreq: "daily", lastmod: today },
-    ];
-
-    const clusters = ["ingles", "metodologia", "imersao", "dicas", "estudo", "business", "viagem", "mindset"];
-    const blogPosts = [];
-
-    for (const cluster of clusters) {
-        const indexKey = `index:${cluster}`;
-        const indexData = await env.LEXIS_PAUTA.get(indexKey);
-        if (indexData) {
-            try {
-                const posts = JSON.parse(indexData);
-                for (const post of posts) {
-                    blogPosts.push({
-                        loc: `/blog/${post.slug}`,
-                        priority: "0.7",
-                        changefreq: "monthly",
-                        lastmod: post.published_at || today
-                    });
-                }
-            } catch (e) {
-                console.error(`Erro ao parsear index:${cluster}`, e);
-            }
-        }
-    }
-
-    const urls = [...staticPages, ...blogPosts];
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map(page => `  <url>
-    <loc>${baseUrl}${page.loc}</loc>
-    <lastmod>${page.lastmod}</lastmod>
-    <changefreq>${page.changefreq}</changefreq>
-    <priority>${page.priority}</priority>
-  </url>`).join('\n')}
-</urlset>`;
-
-    return new Response(xml, {
-        headers: {
-            "Content-Type": "application/xml",
-            "Cache-Control": "public, max-age=3600"
-        }
-    });
-}
-
-// --- RSS FEED DINÂMICO (SEO V5.7) ---
-async function generateDynamicRSS(env) {
-    const baseUrl = "https://lexis.academy";
-    const today = new Date().toUTCString();
-
-    const clusters = ["ingles", "metodologia", "imersao", "dicas", "estudo", "business", "viagem", "mindset"];
-    const allPosts = [];
-
-    for (const cluster of clusters) {
-        const indexKey = `index:${cluster}`;
-        const indexData = await env.LEXIS_PAUTA.get(indexKey);
-        if (indexData) {
-            try {
-                const posts = JSON.parse(indexData);
-                for (const post of posts) {
-                    allPosts.push({
-                        title: post.title,
-                        link: `${baseUrl}/blog/${post.slug}`,
-                        pubDate: post.published_at ? new Date(post.published_at).toUTCString() : today,
-                        category: cluster
-                    });
-                }
-            } catch (e) {
-                console.error(`Erro ao parsear index:${cluster}`, e);
-            }
-        }
-    }
-
-    allPosts.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-
-    const rss = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Lexis Academy Blog</title>
-    <link>${baseUrl}/blog</link>
-    <description>Artigos sobre aprendizado de inglês, imersão e fluência real - Metodologia Lexis</description>
-    <language>pt-BR</language>
-    <lastBuildDate>${today}</lastBuildDate>
-    <atom:link href="${baseUrl}/rss.xml" rel="self" type="application/rss+xml"/>
-${allPosts.slice(0, 20).map(post => `    <item>
-      <title><![CDATA[${post.title}]]></title>
-      <link>${post.link}</link>
-      <guid>${post.link}</guid>
-      <pubDate>${post.pubDate}</pubDate>
-      <category>${post.category}</category>
-    </item>`).join('\n')}
-  </channel>
-</rss>`;
-
-    return new Response(rss, {
-        headers: {
-            "Content-Type": "application/rss+xml",
-            "Cache-Control": "public, max-age=3600"
-        }
+// Utilitário: Resposta JSON
+function jsonResponse(data, status = 200) {
+    return new Response(JSON.stringify(data, null, 2), {
+        status,
+        headers: { 'Content-Type': 'application/json' }
     });
 }
