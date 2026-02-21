@@ -34,6 +34,8 @@ export async function triageArticles(env, limit = 30) {
   const rawArticles = await env.LEXIS_RAW_ARTICLES.list({ prefix: 'article:', limit });
   const approved = [];
   const rejected = [];
+  const processedLinks = new Set();
+  const processedTitles = new Set();
 
   for (const key of rawArticles.keys) {
     const articleData = await env.LEXIS_RAW_ARTICLES.get(key.name);
@@ -52,13 +54,27 @@ export async function triageArticles(env, limit = 30) {
       continue;
     }
 
-    // 2. Verificar duplicata contra posts já publicados
-    if (article.title) {
-      const isDuplicate = await checkDuplicate(env, article.title);
+    // 2. Verificar duplicata contra posts já publicados (Link ou Título Normalizado)
+    if (article.link || article.title) {
+      const linkH = article.link ? simpleHash(article.link) : null;
+      const titleH = article.title ? simpleHash(article.title) : null;
+
+      // Check against current batch
+      if ((linkH && processedLinks.has(linkH)) || (titleH && processedTitles.has(titleH))) {
+        rejected.push({ title: article.title, reason: 'duplicate_in_batch' });
+        continue;
+      }
+
+      // Check against history
+      const isDuplicate = await checkDuplicate(env, article.title, article.link);
       if (isDuplicate) {
         rejected.push({ title: article.title, reason: 'duplicate' });
         continue;
       }
+
+      // Add to current batch trackers
+      if (linkH) processedLinks.add(linkH);
+      if (titleH) processedTitles.add(titleH);
     }
 
     // 3. Calcular score
@@ -159,15 +175,35 @@ function calculateScore(article) {
 // ================================================
 // Verificação de duplicata por hash do título
 // ================================================
-async function checkDuplicate(env, title) {
+// ================================================
+// Verificação de duplicata por hash do título e link
+// ================================================
+async function checkDuplicate(env, title, link) {
+  // 1. Checar Link (Deduplicação absoluta)
+  if (link) {
+    const linkHash = simpleHash(link);
+    const existingLink = await env.LEXIS_PUBLISHED_POSTS.get(`link:${linkHash}`);
+    if (existingLink) return true;
+  }
+
+  // 2. Checar Título Normalizado (Deduplicação semântica/preposições)
   const hash = simpleHash(title);
-  const existing = await env.LEXIS_PUBLISHED_POSTS.get(`title:${hash}`);
-  return existing !== null;
+  const existingTitle = await env.LEXIS_PUBLISHED_POSTS.get(`title:${hash}`);
+  return existingTitle !== null;
 }
 
 function simpleHash(text) {
   let hash = 0;
-  const normalized = String(text).toLowerCase().replace(/[^a-z0-9]/g, '');
+  // Normalização agressiva: lowercase, remove acentos, remove pontuação
+  // E remove preposições/artigos comuns (de, da, do, em, na, no, a, o, as, os, para, com)
+  const stopwords = /\b(de|da|do|em|na|no|a|o|as|os|para|com|um|uma|nas|nos|pelo|pela|dos|das)\b/gi;
+
+  const normalized = String(text)
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove acentos
+    .replace(stopwords, '') // Remove conectores
+    .replace(/[^a-z0-9]/g, ''); // Remove todo o resto (espaços, pontuação)
+
   for (let i = 0; i < normalized.length; i++) {
     hash = ((hash << 5) - hash) + normalized.charCodeAt(i);
     hash = hash & hash;

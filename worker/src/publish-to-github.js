@@ -71,11 +71,19 @@ export async function publishPostsToGitHub(env, maxPosts = 3) {
         JSON.stringify(publishedRecord)
       );
 
-      // 6. Registrar hash do título e da imagem (deduplicação futura)
+      // 6. Registrar hash do título, link e imagem (deduplicação futura)
       await env.LEXIS_PUBLISHED_POSTS.put(
         `title:${simpleHash(post.title)}`,
         'true'
       );
+
+      // Registrar Link Original
+      if (post.originalSource) {
+        await env.LEXIS_PUBLISHED_POSTS.put(
+          `link:${simpleHash(post.originalSource)}`,
+          'true'
+        );
+      }
 
       // Registrar imagem como usada
       if (post.image && !post.image.includes('default.webp')) {
@@ -271,7 +279,16 @@ function generateSlug(title) {
 
 function simpleHash(text) {
   let hash = 0;
-  const normalized = String(text).toLowerCase().replace(/[^a-z0-9]/g, '');
+  // Normalização agressiva: lowercase, remove acentos, remove pontuação
+  // E remove preposições/artigos comuns (de, da, do, em, na, no, a, o, as, os, para, com)
+  const stopwords = /\b(de|da|do|em|na|no|a|o|as|os|para|com|um|uma|nas|nos|pelo|pela|dos|das)\b/gi;
+
+  const normalized = String(text)
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove acentos
+    .replace(stopwords, '') // Remove conectores
+    .replace(/[^a-z0-9]/g, ''); // Remove todo o resto (espaços, pontuação)
+
   for (let i = 0; i < normalized.length; i++) {
     hash = ((hash << 5) - hash) + normalized.charCodeAt(i);
     hash = hash & hash;

@@ -3,7 +3,10 @@
  * Estratégia: 2 chamadas de IA separadas (evita falha de JSON)
  *   1ª chamada: gera texto em português (mais confiável)
  *   2ª chamada: gera apenas título/descrição/categoria (JSON pequeno)
+ *   3ª chamada: Auditoria de qualidade técnica
  */
+
+import { auditPost } from './content-auditor.js';
 
 export async function rewriteArticles(env, maxPosts = 3) {
   const triagedList = await env.LEXIS_TRIAGED_ARTICLES.list({ prefix: 'triaged:', limit: maxPosts });
@@ -50,6 +53,17 @@ export async function rewriteArticles(env, maxPosts = 3) {
         rewrittenAt: new Date().toISOString(),
         status: 'ready_to_publish'
       };
+
+      // ETAPA 4: Auditoria de Qualidade
+      const auditResult = await auditPost(env, { ...post, content });
+
+      if (auditResult.verdict === 'REJEITADO') {
+        console.warn(`[REWRITER] 🔴 Post REJEITADO pela auditoria: "${post.title}" | Motivo: ${auditResult.reason}`);
+        // Remove da fila triaged para não ficar tentando infinitamente o mesmo erro, ou deixa lá? 
+        // Vamos remover para manter o fluxo limpo.
+        await env.LEXIS_TRIAGED_ARTICLES.delete(key.name);
+        continue;
+      }
 
       await env.LEXIS_REWRITTEN_POSTS.put(
         `post:${post.id}`,
@@ -236,9 +250,18 @@ async function fetchImage(env, query, category, sourceThumbnail) {
 
 function simpleHash(text) {
   let hash = 0;
-  const str = String(text);
-  for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+  // Normalização agressiva: lowercase, remove acentos, remove pontuação
+  // E remove preposições/artigos comuns (de, da, do, em, na, no, a, o, as, os, para, com)
+  const stopwords = /\b(de|da|do|em|na|no|a|o|as|os|para|com|um|uma|nas|nos|pelo|pela|dos|das)\b/gi;
+
+  const normalized = String(text)
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove acentos
+    .replace(stopwords, '') // Remove conectores
+    .replace(/[^a-z0-9]/g, ''); // Remove todo o resto (espaços, pontuação)
+
+  for (let i = 0; i < normalized.length; i++) {
+    hash = ((hash << 5) - hash) + normalized.charCodeAt(i);
     hash = hash & hash;
   }
   return Math.abs(hash).toString(36);
