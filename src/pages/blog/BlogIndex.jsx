@@ -39,7 +39,9 @@ const BlogIndex = () => {
                                 </div>
                             )}
                             <div className="p-8">
-                                <div className="text-[#fbd24c] text-xs font-bold uppercase tracking-widest mb-4">{Array.isArray(post.tags) ? post.tags[0] : post.tags?.replace(/['"\[\]]/g, '') || 'Artigo'}</div>
+                                <div className="text-[#fbd24c] text-xs font-bold uppercase tracking-widest mb-4">
+                                    {post.date ? new Date(post.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '').toUpperCase() : 'ARTIGO'}
+                                </div>
                                 <h2 className="text-2xl font-bold text-white mb-3 group-hover:text-[#fbd24c] transition-colors line-clamp-2">{post.title}</h2>
                                 <p className="text-slate-400 mb-6 line-clamp-3 text-sm leading-relaxed">{post.description}</p>
                                 <span className="text-white text-sm font-bold border-b border-[#fbd24c] pb-0.5">Ler artigo →</span>
