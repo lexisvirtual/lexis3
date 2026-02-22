@@ -118,7 +118,7 @@ ESTRUTURA OBRIGATÓRIA DO ARTIGO:
    - **Treino Nível 3 (Produção Livre sob Pressão)**: Desafio de fala em INGLÊS.
    - **Missão Final Aplicada**: Tarefa real (ex: "Grave um vídeo em INGLÊS fingindo X").
    - **Checklist de Validação**: Produção obrigatória de 20 frases e 2 min de fala.
-   - **Meta de Repetição**: Treinar por X dias seguidos.
+   - **Meta de Repetição**: Defina uma meta CONCRETA de 5 a 7 dias seguidos de treino para este tema, explicando que a repetição é o que automatiza a musculatura da fala.
 
 DIRETRIZES DE IA-OPTIMIZATION:
 - Persona: Performance Coach. Use imperativos agressivos focados em EXECUÇÃO em INGLÊS.
