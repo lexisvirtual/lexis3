@@ -1,6 +1,6 @@
 ---
 title: "Como aprender inglês assistindo séries e filmes"
-date: "2026-02-22"
+date: "2026-02-21"
 category: "Dicas"
 description: "Aprenda inglês de forma divertida e eficaz com séries e filmes em inglês"
 keywords: "aprender inglês, séries em inglês, filmes em inglês"

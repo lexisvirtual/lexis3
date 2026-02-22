@@ -1,6 +1,6 @@
 ---
 title: "Overcoming English Language Anxiety: Tips and Tricks"
-date: "2026-02-22"
+date: "2026-02-08"
 category: "Vocabulário, Dicas"
 description: "Beth and Pippa discuss the common fear of speaking English and provide advice on how to overcome it. Learn how to improve your language skills and build confidence in just 6 minutes."
 keywords: "english language anxiety, speaking english, language skills, language learning"

@@ -1,6 +1,6 @@
 ---
 title: "Por que estudar inglês é importante: 7 benefícios de aprender inglês"
-date: "2026-02-22"
+date: "2026-02-06"
 category: "Dicas"
 description: "Aprenda inglês e abra portas de oportunidades em carreira e vida pessoal"
 keywords: "aprender inglês, benefícios do inglês, estudo de inglês"

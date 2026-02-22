@@ -1,6 +1,6 @@
 ---
 title: "Como falar sobre temas simples em inglês"
-date: "2026-02-22"
+date: "2026-02-19"
 category: "Dicas"
 description: "Aprenda a falar sobre assuntos cotidianos em inglês com facilidade"
 keywords: "ingles facil, conversação em inglês, vocabulário básico"

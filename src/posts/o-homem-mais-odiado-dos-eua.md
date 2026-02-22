@@ -1,6 +1,6 @@
 ---
 title: "O Homem Mais Odiado dos EUA"
-date: "2026-02-22"
+date: "2026-02-09"
 category: "Negócios, Política, Notícias"
 description: "Conheça a história de Martin Shkreli, o homem mais odiado dos EUA, e suas ações polêmicas no mercado médico e na música."
 keywords: "Martin Shkreli, homem mais odiado, preço médico, hip-hop"

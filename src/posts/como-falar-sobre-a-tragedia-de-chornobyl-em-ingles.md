@@ -1,6 +1,6 @@
 ---
 title: "Como falar sobre a Tragédia de Chornobyl em inglês"
-date: "2026-02-22"
+date: "2026-02-20"
 category: "Dicas"
 description: "Aprenda a discutir a história da Equipe de Suicídio de Chornobyl em inglês com confiança"
 keywords: "inglês, Chornobyl, história em inglês"

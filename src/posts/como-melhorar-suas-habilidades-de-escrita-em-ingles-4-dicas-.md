@@ -1,6 +1,6 @@
 ---
 title: "Como melhorar suas habilidades de escrita em inglês (4 dicas eficazes)"
-date: "2026-02-22"
+date: "2026-02-17"
 category: "Dicas"
 description: "Aprenda a escrever em inglês com confiança e clareza com essas 4 dicas simples e práticas."
 keywords: "escrever em inglês, habilidades de escrita, melhorar inglês"

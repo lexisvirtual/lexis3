@@ -1,6 +1,6 @@
 ---
 title: "Por que bilionários estão construindo bunkers em inglês"
-date: "2026-02-22"
+date: "2026-02-07"
 category: "Vocabulário"
 description: "Descubra por que bilionários estão preparando-se para o fim do mundo. Aprenda inglês com o BBC Learning English."
 keywords: "billionários, bunkers, inglês, aprendizado de inglês, fim do mundo"

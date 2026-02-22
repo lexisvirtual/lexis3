@@ -1,6 +1,6 @@
 ---
 title: "Como usar expressões idiomáticas para descrever a ilusão da riqueza em inglês"
-date: "2026-02-22"
+date: "2026-02-15"
 category: "Dicas"
 description: "Aprenda a falar sobre a diferença entre riqueza e felicidade em inglês com nossas dicas práticas."
 keywords: "anglês, expressões idiomáticas, riqueza, felicidade"

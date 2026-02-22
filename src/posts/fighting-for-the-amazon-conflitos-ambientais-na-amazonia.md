@@ -1,6 +1,6 @@
 ---
 title: "Fighting For The Amazon: Conflitos Ambientais na Amazônia"
-date: "2026-02-22"
+date: "2026-02-14"
 category: "Vocabulário, Dicas, Business"
 description: "Descubra como a exploração de recursos naturais afeta as tribos indígenas da Amazônia."
 keywords: "Amazônia, conflitos ambientais, exploração de recursos naturais"

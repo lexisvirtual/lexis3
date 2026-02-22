@@ -1,6 +1,6 @@
 ---
 title: "How to Learn English at Home Quickly and Effectively"
-date: "2026-02-22"
+date: "2026-02-12"
 category: "Language Learning, Dicas, Gramática"
 description: "Learn English by yourself at home with our step-by-step guide. Improve your English skills and become fluent."
 keywords: "learn english at home, self-study english, english language learning"

@@ -1,6 +1,6 @@
 ---
 title: "Como Fazer Ginástica Aquática em Inglês"
-date: "2026-02-22"
+date: "2026-02-18"
 category: "Vocabulário"
 description: "Aprenda a falar sobre ginástica aquática em inglês com dicas e exercícios práticos."
 keywords: "ginástica aquática, inglês, vocabulário, dicas"

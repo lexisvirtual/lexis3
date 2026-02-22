@@ -1,6 +1,6 @@
 ---
 title: "Indonésia: Grande Fossa em Crescimento - Notícias em Inglês"
-date: "2026-02-22"
+date: "2026-02-11"
 category: "Notícias em Inglês, Idiomas"
 description: "Uma grande fossa em Indonésia cresceu para cerca de três hectares, afetando agricultores locais. Veja imagens e vídeos de drones."
 keywords: "Indonésia, fossa, agricultura, notícias em inglês"

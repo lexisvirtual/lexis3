@@ -1,6 +1,6 @@
 ---
 title: "Indonésia: Um grande buraco na terra - Notícias em inglês"
-date: "2026-02-22"
+date: "2026-02-10"
 category: "Notícias em inglês, Idiomas"
 description: "Um grande buraco na Indonésia está crescendo, afetando a agricultura e causando preocupação com a segurança"
 keywords: "Indonésia, buraco na terra, agricultura, segurança"
