@@ -33,11 +33,8 @@ export async function rewriteArticles(env, maxPosts = 3) {
         continue;
       }
 
-      // ETAPA 2: Gerar metadados (título PT, descrição, categoria) — JSON pequeno = mais confiável
+      // ETAPA 3: Metadados (Título, Descrição, Categoria)
       const meta = await generateMetaPT(env, article);
-
-      // ETAPA 3: Buscar imagem (Híbrido) - PRIORIZA FONTE ORIGINAL
-      const imageUrl = await fetchImage(env, meta.imageQuery, meta.category, article.thumbnail);
 
       const post = {
         id: article.id,
@@ -47,7 +44,6 @@ export async function rewriteArticles(env, maxPosts = 3) {
         keywords: meta.keywords || '',
         content,
         slug: generateSlug(meta.title),
-        image: imageUrl,
         originalSource: article.link,
         originalTitle: article.title,
         rewrittenAt: new Date().toISOString(),

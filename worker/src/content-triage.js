@@ -54,9 +54,9 @@ export async function triageArticles(env, limit = 30) {
       continue;
     }
 
-    // 1. REQUISITO OBRIGATÓRIO: Ter imagem original da fonte
-    if (!article.thumbnail || !article.thumbnail.startsWith('http')) {
-      rejected.push({ title: article.title, reason: 'no_image' });
+    // 1. REQUISITO OBRIGATÓRIO (Removido: agora temos IA Arte como fallback)
+    if (!article.title) {
+      rejected.push({ title: 'sem-titulo', reason: 'no_title' });
       continue;
     }
 
@@ -123,14 +123,14 @@ export async function triageArticles(env, limit = 30) {
 function calculateScore(article) {
   let score = 0;
 
-  // 1. FONTE PREMIUM (40 pontos base)
-  // Artigos de fontes curadas já têm alta qualidade garantida
+  // 1. FONTE PREMIUM (50 pontos base)
+  // Artigos de fontes curadas já atingem o threshold de aprovação automaticamente
   const source = (article.source || article.sourceDomain || '').toLowerCase();
   const isPremiumSource = PREMIUM_SOURCES.some(s =>
     source.includes(s.toLowerCase())
   );
-  if (isPremiumSource) score += 40;
-  else score += 10; // Fonte desconhecida: pontuação mínima
+  if (isPremiumSource) score += 50;
+  else score += 10;
 
   // 2. RELEVÂNCIA (0-30 pontos)
   // Palavras-chave de inglês/aprendizado no título ou descrição
@@ -146,11 +146,12 @@ function calculateScore(article) {
     }
   }
 
-  // TRAVA DE SEGURANÇA 2: Proibir conteúdo para professores/coordenadores
-  const TEACHER_KEYWORDS = ['teacher', 'teaching', 'classroom management', 'leaders', 'school leaders', 'parents', 'lesson plan'];
-  for (const tk of TEACHER_KEYWORDS) {
+  // TRAVA DE SEGURANÇA 2: Proibir conteúdo focado EXCLUSIVAMENTE em gestão de sala de aula/professores
+  // Permitimos "teacher" se o foco for aprendizado, mas bloqueamos "classroom management", "coordinators", etc.
+  const STRICT_TEACHER_KEYWORDS = ['classroom management', 'lesson plan', 'school leaders', 'coordinators', 'teacher training', 'teaching staff'];
+  for (const tk of STRICT_TEACHER_KEYWORDS) {
     if (combinedText.includes(tk)) {
-      console.log(`[TRIAGE] 🚫 Rejeitando por foco institucional/professor: ${tk}`);
+      console.log(`[TRIAGE] 🚫 Rejeitando por foco puramente institucional/gestão: ${tk}`);
       return -100;
     }
   }

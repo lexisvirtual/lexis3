@@ -35,19 +35,11 @@ export async function publishPostsToGitHub(env, maxPosts = 3) {
         continue;
       }
 
-      // 2. Buscar e fazer upload da imagem (opcional - não bloqueia publicação)
-      let imagePath = '/img/posts/default.webp';
-      try {
-        imagePath = await uploadImage(env, post);
-      } catch (imgErr) {
-        console.warn(`[PUBLISH] Erro na imagem (usando default): ${imgErr.message}`);
-      }
-
-      // 3. Gerar markdown final
-      const markdown = buildMarkdown(post, imagePath);
+      // 2. Gerar markdown final
+      const markdown = buildMarkdown(post);
       const filename = `${post.slug}.md`;
 
-      // 4. Commit do post no GitHub
+      // 3. Commit do post no GitHub
       await commitFileToGitHub(
         env,
         `src/posts/${filename}`,
@@ -55,13 +47,12 @@ export async function publishPostsToGitHub(env, maxPosts = 3) {
         `feat(blog): ${post.title}`
       );
 
-      // 5. Registrar como publicado
+      // 4. Registrar como publicado
       const publishedRecord = {
         id: post.id,
         title: post.title,
         slug: post.slug,
         category: post.category,
-        imagePath,
         originalSource: post.originalSource,
         publishedAt: new Date().toISOString()
       };
@@ -71,7 +62,7 @@ export async function publishPostsToGitHub(env, maxPosts = 3) {
         JSON.stringify(publishedRecord)
       );
 
-      // 6. Registrar hash do título, link e imagem (deduplicação futura)
+      // 5. Registrar hash do título e link (deduplicação futura)
       await env.LEXIS_PUBLISHED_POSTS.put(
         `title:${simpleHash(post.title)}`,
         'true'
@@ -83,18 +74,6 @@ export async function publishPostsToGitHub(env, maxPosts = 3) {
           `link:${simpleHash(post.originalSource)}`,
           'true'
         );
-      }
-
-      // Registrar imagem como usada
-      if (post.image && !post.image.includes('default.webp')) {
-        const imgUrl = typeof post.image === 'string' ? post.image : (post.image.url || post.image.originalUrl);
-        if (imgUrl) {
-          await env.LEXIS_PUBLISHED_POSTS.put(
-            `img:${simpleHash(imgUrl)}`,
-            'true',
-            { expirationTtl: 31536000 } // Guardar por 1 ano
-          );
-        }
       }
 
       // 7. Remover da fila
@@ -118,52 +97,9 @@ export async function publishPostsToGitHub(env, maxPosts = 3) {
 }
 
 // ================================================
-// Upload de imagem para o GitHub (public/img/posts/)
-// ================================================
-async function uploadImage(env, post) {
-  // Tenta usar a URL da imagem já extraída pelo content-rewriter ou image-source-extractor
-  const imageUrl = post.image?.url || post.image?.originalUrl || (typeof post.image === 'string' ? post.image : null);
-
-  if (!imageUrl || imageUrl.includes('default.webp')) {
-    return '/img/posts/default.webp';
-  }
-
-  try {
-    // Baixar imagem via wsrv.nl (otimização automática)
-    const optimizedUrl = `https://wsrv.nl/?url=${encodeURIComponent(imageUrl)}&w=1200&output=webp&q=80`;
-    const response = await fetch(optimizedUrl, {
-      headers: { 'User-Agent': 'LexisPublisher/1.0' }
-    });
-
-    if (!response.ok) {
-      throw new Error(`Falha ao baixar imagem: HTTP ${response.status}`);
-    }
-
-    const buffer = await response.arrayBuffer();
-    const base64 = arrayBufferToBase64(buffer);
-    const filename = `${post.slug}.webp`;
-    const githubPath = `public/img/posts/${filename}`;
-
-    await commitFileToGitHub(
-      env,
-      githubPath,
-      base64,
-      `feat(img): Add image for "${post.title}"`
-    );
-
-    return `/img/posts/${filename}`;
-
-  } catch (error) {
-    console.warn(`[IMAGE] Usando URL externa (upload falhou): ${error.message}`);
-    // Fallback: usar URL direta da imagem (não ideal, mas funciona)
-    return imageUrl;
-  }
-}
-
-// ================================================
 // Geração do Markdown do post
 // ================================================
-function buildMarkdown(post, imagePath) {
+function buildMarkdown(post) {
   const title = escapeYaml(post.title || 'Sem Título');
   const description = escapeYaml(post.description || post.title || 'Aprenda inglês de forma prática e eficiente');
   const category = post.category || 'Dicas';
@@ -176,7 +112,6 @@ title: "${title}"
 date: "${date}"
 category: "${category}"
 description: "${description}"
-image: "${imagePath}"
 keywords: "${keywords}"
 author: "Lexis Academy"
 publisher: "Lexis English Academy"
@@ -184,6 +119,10 @@ mainEntityOfPage: "https://lexis.academy/blog/${post.slug}"
 ---
 
 ${content}
+
+---
+*Este conteúdo foi gerado por IA com base em fontes premium de ensino de inglês e revisado pela metodologia Lexis Academy.*
+*Fonte Original: [${post.originalTitle || 'Ver no site original'}](${post.originalSource})*
 `;
 }
 
