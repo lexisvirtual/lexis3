@@ -26,6 +26,19 @@ const RELEVANT_KEYWORDS = [
   'ted', 'talk', 'lecture', 'podcast', 'video'
 ];
 
+// Blacklist de temas chatos, irrelevantes ou "filler" (enchimento de linguiça)
+const IRRELEVANT_TOPICS = [
+  'diamond', 'insurance', 'billionaire', 'bunker', 'scuba', 'artistic swimming',
+  'luxury', 'jewel', 'celeb', 'gossip', 'wedding ring', 'engagement', 'insurance policy'
+];
+
+// Keywords de Alta Utilidade (Brasileiro em busca de performance)
+const HIGH_UTILITY_KEYWORDS = [
+  'business', 'meeting', 'interview', 'work', 'corporate', 'travel', 'airport',
+  'restaurant', 'shopping', 'negotiation', 'email', 'presentation', 'socializing',
+  'phrasal verbs', 'idioms', 'common mistakes', 'fluency', 'pronunciation tips'
+];
+
 // Blacklist de idiomas proibidos (Lexis é EXCLUSIVA para Inglês)
 const FORBIDDEN_LANGUAGES = [
   'alemão', 'german', 'deutsch', 'espanhol', 'spanish', 'español',
@@ -122,50 +135,55 @@ export async function triageArticles(env, limit = 30) {
 // ================================================
 function calculateScore(article) {
   let score = 0;
-
-  // 1. FONTE PREMIUM (50 pontos base)
-  // Artigos de fontes curadas já atingem o threshold de aprovação automaticamente
-  const source = (article.source || article.sourceDomain || '').toLowerCase();
-  const isPremiumSource = PREMIUM_SOURCES.some(s =>
-    source.includes(s.toLowerCase())
-  );
-  if (isPremiumSource) score += 50;
-  else score += 10;
-
-  // 2. RELEVÂNCIA (0-30 pontos)
-  // Palavras-chave de inglês/aprendizado no título ou descrição
   const titleLower = (article.title || '').toLowerCase();
   const descLower = (article.description || '').toLowerCase();
   const combinedText = titleLower + ' ' + descLower;
 
-  // TRAVA DE SEGURANÇA: Proibir outros idiomas
+  // 1. TRAVAS DE SEGURANÇA (Filtros Críticos)
+
+  // Idiomas Proibidos
   for (const forbidden of FORBIDDEN_LANGUAGES) {
-    if (combinedText.includes(forbidden)) {
-      console.log(`[TRIAGE] 🚫 Rejeitando por idioma proibido: ${forbidden}`);
-      return -500; // Garantia de rejeição imediata
+    if (combinedText.includes(forbidden)) return -500;
+  }
+
+  // Temas Irrelevantes/Filler (Seguros, Luxo, Fofoca)
+  for (const topic of IRRELEVANT_TOPICS) {
+    if (combinedText.includes(topic)) {
+      console.log(`[TRIAGE] 🚫 Penalizando tema irrelevante: ${topic}`);
+      score -= 50;
     }
   }
 
-  // TRAVA DE SEGURANÇA 2: Proibir conteúdo focado EXCLUSIVAMENTE em gestão de sala de aula/professores
-  // Permitimos "teacher" se o foco for aprendizado, mas bloqueamos "classroom management", "coordinators", etc.
+  // Conteúdo B2B/Gestão pura (para professores)
   const STRICT_TEACHER_KEYWORDS = ['classroom management', 'lesson plan', 'school leaders', 'coordinators', 'teacher training', 'teaching staff'];
   for (const tk of STRICT_TEACHER_KEYWORDS) {
-    if (combinedText.includes(tk)) {
-      console.log(`[TRIAGE] 🚫 Rejeitando por foco puramente institucional/gestão: ${tk}`);
-      return -100;
+    if (combinedText.includes(tk)) return -100;
+  }
+
+  // 2. PESOS POSITIVOS
+
+  // FONTE PREMIUM (40 pontos base)
+  const source = (article.source || article.sourceDomain || '').toLowerCase();
+  const isPremiumSource = PREMIUM_SOURCES.some(s => source.includes(s.toLowerCase()));
+  if (isPremiumSource) score += 40;
+
+  // RELEVÂNCIA DE ALTA UTILIDADE (Ex: Business, Travel, Job Interview)
+  for (const keyword of HIGH_UTILITY_KEYWORDS) {
+    if (combinedText.includes(keyword)) {
+      score += 20; // Bônus pesado para temas importantes
+      break;
     }
   }
 
-  let relevanceScore = 0;
+  // Keywords Gerais de Inglês
   let keywordsFound = 0;
   for (const keyword of RELEVANT_KEYWORDS) {
     if (combinedText.includes(keyword)) {
       keywordsFound++;
-      relevanceScore += 5;
-      if (relevanceScore >= 30) break;
+      score += 5;
+      if (score >= 100) break;
     }
   }
-  score += Math.min(relevanceScore, 30);
 
   // 3. QUALIDADE DO TÍTULO (0-15 pontos)
   if (article.title) {
