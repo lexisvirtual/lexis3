@@ -1,10 +1,10 @@
 {
   "concept": "Rhythmic Energy",
-  "movement_axis": "static",
-  "geometry_language": "diagonal",
-  "rhythm_profile": "asymmetrical",
+  "movement_axis": "vertical",
+  "geometry_language": "linear",
+  "rhythm_profile": "progressive",
   "atmosphere_type": "light_based",
-  "intensity": 0.02,
+  "intensity": 0.35,
   "mode": "seasonal",
   "event": "carnival"
 }

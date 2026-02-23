@@ -2,11 +2,11 @@
   "2026": {
     "carnival": {
       "concept": "Rhythmic Energy",
-      "movement_axis": "depth",
-      "geometry_language": "curved",
-      "rhythm_profile": "staggered",
+      "movement_axis": "vertical",
+      "geometry_language": "linear",
+      "rhythm_profile": "progressive",
       "atmosphere_type": "light_based",
-      "intensity": 0.2
+      "intensity": 0.35
     }
   }
 }
