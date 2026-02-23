@@ -35,6 +35,7 @@ const LabHome = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState('');
     const [scrollProgress, setScrollProgress] = useState(0);
+    const [parallaxY, setParallaxY] = useState(0);
 
     const openModal = (course = '') => { setSelectedCourse(course); setIsModalOpen(true); };
 
@@ -46,6 +47,7 @@ const LabHome = () => {
             const docHeight = document.body.scrollHeight - window.innerHeight;
             const progress = (scrollTop / docHeight) * 100;
             setScrollProgress(progress);
+            setParallaxY(scrollTop * 0.02);
         };
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
@@ -62,16 +64,15 @@ const LabHome = () => {
     return (
         <div className="flex flex-col w-full min-h-screen relative overflow-x-hidden ana-lab-system">
             <style>{`
-                /* ANA DESIGN SYSTEM - REFINEMENT LAYER (v2) */
+                /* ANA DESIGN SYSTEM - AUTHORITATIVE MOTION (v3) */
                 .ana-lab-system {
                     --premium-easing: cubic-bezier(0.22, 1, 0.36, 1);
                     --accent-gold: #fbd24c;
-                    --ana-intensity: 0.04;
                     --hero-reveal: 0.9s;
                     --section-reveal: 0.75s;
                 }
 
-                /* 1. Scroll Progress (Ferramenta, não elemento) */
+                /* 1. Scroll Progress (Ferramenta) */
                 .scroll-progress-bar {
                     position: fixed;
                     top: 0;
@@ -83,18 +84,22 @@ const LabHome = () => {
                     transition: width 0.1s linear;
                 }
 
-                /* 2. Fundo Assimétrico */
-                .ana-lab-system::before {
-                    content: "";
+                /* 2. Fundo Assimétrico com Micro-Parallax */
+                .bg-atmo {
                     position: fixed;
                     inset: 0;
                     pointer-events: none;
-                    background: radial-gradient(circle at 15% 15%, rgba(255,255,255,0.03), transparent 50%),
-                                radial-gradient(circle at 85% 85%, rgba(251, 210, 76, 0.015), transparent 50%);
                     z-index: 1;
+                    will-change: transform;
+                }
+                .glow-1 {
+                    background: radial-gradient(circle at 15% 15%, rgba(255,255,255,0.03), transparent 50%);
+                }
+                .glow-2 {
+                    background: radial-gradient(circle at 85% 85%, rgba(251, 210, 76, 0.015), transparent 50%);
                 }
 
-                /* 3. Noise Estático */
+                /* 3. Noise Estático Overlay */
                 .ana-lab-system::after {
                     content: "";
                     position: fixed;
@@ -105,7 +110,27 @@ const LabHome = () => {
                     z-index: 2;
                 }
 
-                /* 4. Movimento Refinado (Invisível aos olhos mas sentido) */
+                /* 4. Gradual Focus Shift (Hero) */
+                .hero-focus-shift {
+                    animation: focusShift 0.8s var(--premium-easing) forwards;
+                }
+                @keyframes focusShift {
+                    from { filter: blur(4px); opacity: 0; }
+                    to { filter: blur(0); opacity: 1; }
+                }
+
+                /* 5. Word-by-Word Authority Shift (H1) */
+                .word-stagger {
+                    display: inline-block;
+                    opacity: 0;
+                    transform: translateY(6px);
+                    animation: wordUp 0.6s var(--premium-easing) forwards;
+                }
+                @keyframes wordUp {
+                    to { opacity: 1; transform: translateY(0); }
+                }
+
+                /* 6. Revelação de Seção (Respiração) */
                 .reveal {
                     opacity: 0;
                     transform: translateY(20px);
@@ -117,79 +142,38 @@ const LabHome = () => {
                     transform: translateY(0);
                 }
 
-                /* Hero Stagger */
-                .hero-h1 { transition-delay: 0s; }
-                .hero-p { transition-delay: 120ms; }
-                .hero-cta { transition-delay: 220ms; }
-
-                /* 5. Underline com Easing Artesanal */
-                a, .ana-link {
-                    position: relative;
-                    text-decoration: none;
-                }
+                /* Underline Artesanal */
                 a::after {
                     content: "";
                     position: absolute;
-                    left: 0;
-                    bottom: -2px;
-                    width: 0;
-                    height: 1px;
+                    left: 0; bottom: -2px;
+                    width: 0; height: 1px;
                     background: currentColor;
-                    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Easing diferente da seção */
+                    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 }
-                a:hover::after {
-                    width: 100%;
-                }
+                a:hover::after { width: 100%; }
 
-                /* 6. Precisão de Clique (Professional Precision) */
-                button, .btn-ana {
-                    transition: transform 0.2s var(--premium-easing), 
-                                filter 0.2s ease;
-                }
-                button:hover {
-                    transform: translateY(-2px);
-                    filter: brightness(1.03);
-                }
-                button:active {
-                    transform: scale(0.985);
-                }
+                /* Precisão Profissional */
+                button:active { transform: scale(0.985); }
+                button { transition: transform 0.2s var(--premium-easing), filter 0.2s ease; }
+                button:hover { transform: translateY(-2px); filter: brightness(1.03); }
 
-                /* 7. Ritmo Vertical Assimétrico (Proporção 1.4x) */
+                /* Proporção 1.4x */
                 .section-alt:nth-child(odd) { padding: 160px 0; }
                 .section-alt:nth-child(even) { padding: 112px 0; }
-                @media (max-width: 768px) {
-                    .section-alt:nth-child(odd) { padding: 120px 0; }
-                    .section-alt:nth-child(even) { padding: 84px 0; }
-                }
+                .divider-v { width: 1px; height: 50px; background: rgba(255,255,255,0.08); margin: 0 auto; }
 
-                /* 8. Linhas Verticais Estruturais (Sugerir, não dividir) */
-                .divider-v {
-                    width: 1px;
-                    height: 50px;
-                    background: rgba(255,255,255,0.08); /* Opacidade 8% */
-                    margin: 0 auto;
-                }
-
-                /* 9. Tipografia: Hierarquia Contemporânea */
-                .ana-heading {
-                    letter-spacing: -0.015em;
-                    line-height: 1.05;
-                    transition: transform 0.3s var(--premium-easing);
-                }
-                @media (hover: hover) {
-                    .ana-heading:hover { transform: translateY(-2px); }
-                }
-                .ana-sub {
-                    letter-spacing: 0.12em;
-                    text-transform: uppercase;
-                    font-weight: 800;
-                    font-size: 0.65rem;
-                    opacity: 0.7;
-                }
+                .ana-heading { letter-spacing: -0.015em; line-height: 1.05; }
+                .ana-sub { letter-spacing: 0.12em; text-transform: uppercase; font-weight: 800; font-size: 0.65rem; opacity: 0.7; }
             `}</style>
 
             <div className="scroll-progress-bar" style={{ width: `${scrollProgress}%` }} />
+
+            {/* Background Layers com Parallax */}
+            <div className="bg-atmo glow-1" style={{ transform: `translateY(${parallaxY}px)` }} />
+            <div className="bg-atmo glow-2" style={{ transform: `translateY(${-parallaxY * 0.5}px)` }} />
             <div id="seasonal-layer"></div>
+
             <SEO
                 title="Laboratório Interno | Lexis Academy"
                 description="Ambiente de testes para novas interfaces e micro-interações da Lexis Academy."
@@ -198,17 +182,26 @@ const LabHome = () => {
             <LeadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} defaultCourse={selectedCourse} />
 
             {/* HERO SECTION */}
-            <header id="inicio" className="relative pt-60 pb-48 px-6 overflow-hidden bg-[#0f172a]">
+            <header id="inicio" className="relative pt-60 pb-48 px-6 overflow-hidden bg-[#0f172a] hero-focus-shift">
                 <div className="bg-mesh opacity-40"></div>
-                <div className="max-w-6xl mx-auto text-center relative z-10 reveal">
-                    <h1 className="hero-h1 text-4xl sm:text-5xl md:text-7xl lg:text-[5.8rem] font-extrabold mb-10 leading-[1.05] tracking-tight text-white ana-heading">
-                        Inglês é uma <span className="text-[#fbd24c]">habilidade.</span> <br />
-                        Treine como um atleta.
+                <div className="max-w-6xl mx-auto text-center relative z-10">
+                    <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-[5.8rem] font-extrabold mb-10 leading-[1.05] tracking-tight text-white ana-heading">
+                        {["Inglês", "é", "uma", "habilidade."].map((word, i) => (
+                            <span key={i} className="word-stagger" style={{ animationDelay: `${i * 60}ms` }}>
+                                {word === "habilidade." ? <span className="text-[#fbd24c]">{word}</span> : word}&nbsp;
+                            </span>
+                        ))}
+                        <br />
+                        {["Treine", "como", "um", "atleta."].map((word, i) => (
+                            <span key={i} className="word-stagger" style={{ animationDelay: `${(i + 4) * 60 + 100}ms` }}>
+                                {word}&nbsp;
+                            </span>
+                        ))}
                     </h1>
-                    <p className="hero-p text-[#94a3b8] text-lg md:text-2xl max-w-4xl mx-auto mb-16 leading-relaxed font-medium">
+                    <p className="text-[#94a3b8] text-lg md:text-2xl max-w-4xl mx-auto mb-16 leading-relaxed font-medium reveal" style={{ transitionDelay: '600ms' }}>
                         A Lexis English Academy transforma o aprendizado em automação cognitiva. Escolha seu caminho e alcance a fluência real em tempo recorde.
                     </p>
-                    <div className="hero-cta flex flex-col md:flex-row gap-6 justify-center reveal reveal-delay-2">
+                    <div className="flex flex-col md:flex-row gap-6 justify-center reveal" style={{ transitionDelay: '800ms' }}>
                         <Button primary onClick={() => openModal()}>Falar com um especialista</Button>
                         <Button onClick={() => document.getElementById('modalidades').scrollIntoView({ behavior: 'smooth' })}>Conhecer as modalidades</Button>
                     </div>
