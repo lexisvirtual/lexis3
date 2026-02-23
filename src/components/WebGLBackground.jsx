@@ -56,22 +56,22 @@ const WebGLBackground = ({ opacity = 1, parallax = 0 }) => {
                 else if (u_geometry == 3) n = noise(uv + t);
                 else n = smoothNoise(uv * 1.5 + t + motion);
 
-                // Nível 60: Base mais vibrante e profunda
-                vec3 color1 = vec3(0.05, 0.09, 0.16); // Deep Lexis Blue
-                vec3 color2 = vec3(0.01, 0.02, 0.04); // Foundation Black
+                // Nível 30: Base discreta e sóbria
+                vec3 color1 = vec3(0.04, 0.07, 0.13); // Deep Lexis Blue (mais escuro)
+                vec3 color2 = vec3(0.01, 0.01, 0.03); // Foundation Black
                 vec3 accent = vec3(1.0, 0.84, 0.35);  // Pure Gold Accent
                 
-                vec3 base = mix(color1, color2, n * 0.7);
+                vec3 base = mix(color1, color2, n * 0.8);
                 
-                // Pincelada Ana (v60): Glow mais amplo e intenso
-                float glow = pow(n, 2.2) * u_intensity * 2.5; 
-                base = mix(base, accent * 1.1, clamp(glow, 0.0, 1.0));
+                // Ana v30: Glow contido e sutil
+                float glow = pow(n, 3.5) * u_intensity * 1.2; 
+                base = mix(base, accent * 0.7, clamp(glow, 0.0, 0.6));
                 
-                // Add architectural texture (Micro-Noise)
-                float mNoise = noise(uv * 500.0) * 0.015;
+                // Micro-Noise reduzido
+                float mNoise = noise(uv * 500.0) * 0.006;
                 base += mNoise;
 
-                gl_FragColor = vec4(base, u_opacity * 0.75);
+                gl_FragColor = vec4(base, u_opacity * 0.4);
             }
         `;
 

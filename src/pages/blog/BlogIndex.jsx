@@ -36,10 +36,10 @@ const BlogIndex = () => {
                 }
                 @media (max-width: 768px) { canvas { display: none !important; } }
                 .scroll-progress-bar { position: fixed; top: 0; left: 0; height: 2px; background: var(--accent-gold); opacity: 0.7; z-index: 9999; transition: width 0.1s linear; }
-                .ana-design-system::after { content: ""; position: fixed; inset: 0; pointer-events: none; opacity: 0.012; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); z-index: 2; }
+                .ana-design-system::after { content: ""; position: fixed; inset: 0; pointer-events: none; opacity: 0.004; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); z-index: 2; }
                 .hero-focus-shift { animation: focusShift 1s var(--premium-easing) forwards; }
-                @keyframes focusShift { from { filter: blur(6px); opacity: 0; } to { filter: blur(0); opacity: 1; } }
-                .word-stagger { display: inline-block; opacity: 0; transform: translateY(8px); animation: wordUp 0.7s var(--premium-easing) forwards; }
+                @keyframes focusShift { from { filter: blur(2px); opacity: 0; } to { filter: blur(0); opacity: 1; } }
+                .word-stagger { display: inline-block; opacity: 0; transform: translateY(4px); animation: wordUp 0.7s var(--premium-easing) forwards; }
                 @keyframes wordUp { to { opacity: 1; transform: translateY(0); } }
                 .ana-heading { letter-spacing: -0.015em; line-height: 1.05; }
             `}</style>
@@ -109,3 +109,4 @@ const BlogIndex = () => {
 };
 
 export default BlogIndex;
+
