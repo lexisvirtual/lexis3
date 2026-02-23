@@ -40,7 +40,7 @@ const BlogIndex = () => {
                             )}
                             <div className="p-8">
                                 <div className="text-[#fbd24c] text-xs font-bold uppercase tracking-widest mb-4">
-                                    {post.date ? new Date(post.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '').toUpperCase() : 'ARTIGO'}
+                                    {post.date ? new Date(post.date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '').toUpperCase() : 'ARTIGO'}
                                 </div>
                                 <h2 className="text-2xl font-bold text-white mb-3 group-hover:text-[#fbd24c] transition-colors line-clamp-2">{post.title}</h2>
                                 <p className="text-slate-400 mb-6 line-clamp-3 text-sm leading-relaxed">{post.description}</p>

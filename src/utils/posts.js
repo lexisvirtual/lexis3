@@ -40,7 +40,7 @@ export function getPosts() {
     });
 
     // Sort by date desc
-    return posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+    return posts.sort((a, b) => new Date(b.date + 'T12:00:00') - new Date(a.date + 'T12:00:00'));
 }
 
 export function getPostBySlug(slug) {
