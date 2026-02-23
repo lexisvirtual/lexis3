@@ -2,7 +2,7 @@
 title: "The True Story of the Chornobyl Suicide Squad"
 date: "2026-02-23"
 category: "Dicas"
-description: "Post legado resgatado."
+description: "A emocionante história de coragem dos heróis de Chernobyl e como usar esse contexto épico para expandir seu inglês."
 keywords: "aprender inglês, praticar inglês, curso de inglês"
 author: "Lexis Academy"
 publisher: "Lexis English Academy"

@@ -2,7 +2,7 @@
 title: "BBC Learning English - 6 Minute English / Why are billionaires building bunkers?"
 date: "2026-02-23"
 category: "Dicas"
-description: "BBC Learning English - 6 Minute English / Why are billionaires building bunkers?"
+description: "Por que os super-ricos estão construindo abrigos apocalípticos? Pratique seu inglês com esse tema intrigante da BBC."
 keywords: "aprender inglês, praticar inglês, curso de inglês"
 author: "Lexis Academy"
 publisher: "Lexis English Academy"

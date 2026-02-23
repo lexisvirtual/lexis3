@@ -2,7 +2,7 @@
 title: "How to Learn English at Home"
 date: "2026-02-23"
 category: "Dicas"
-description: "Post legado resgatado."
+description: "Descubra estratégias práticas para dominar o inglês sem sair de casa, focando em rotina e consistência."
 keywords: "aprender inglês, praticar inglês, curso de inglês"
 author: "Lexis Academy"
 publisher: "Lexis English Academy"

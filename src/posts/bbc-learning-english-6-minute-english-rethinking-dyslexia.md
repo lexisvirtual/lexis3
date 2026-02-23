@@ -2,7 +2,7 @@
 title: "BBC Learning English - 6 Minute English / Rethinking dyslexia"
 date: "2026-02-23"
 category: "Dicas"
-description: "BBC Learning English - 6 Minute English / Rethinking dyslexia"
+description: "Entenda como a neuroplasticidade ajuda a superar a dislexia e turbine seu vocabulário acadêmico em inglês."
 keywords: "aprender inglês, praticar inglês, curso de inglês"
 author: "Lexis Academy"
 publisher: "Lexis English Academy"
