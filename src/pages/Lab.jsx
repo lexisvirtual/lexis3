@@ -34,20 +34,148 @@ const FAQItem = ({ question, answer, index }) => {
 const LabHome = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState('');
+    const [scrollProgress, setScrollProgress] = useState(0);
+
     const openModal = (course = '') => { setSelectedCourse(course); setIsModalOpen(true); };
 
     useRevealOnScroll();
 
+    React.useEffect(() => {
+        const handleScroll = () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.body.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            setScrollProgress(progress);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
     const faqs = [
         { q: "O método Lexis serve para quem é totalmente iniciante?", a: "Absolutamente. Nossa metodologia 'Start' foca na fonética e estruturas básicas justamente para construir uma base sólida e automatizada desde o primeiro dia, evitando vícios comuns de quem tenta aprender sozinho." },
         { q: "Qual a diferença entre a Imersão e o Maestria Online?", a: "A Imersão é um choque cultural e cognitivo de 14 dias presenciais em São Carlos-SP com 10h de prática diária. O Maestria Online adapta essa mesma neurociência para um formato digital de 8 semanas, ideal para quem precisa de flexibilidade." },
-        { q: "Realmente é possível atingir fluência em tão pouco tempo?", a: "Tratamos o inglês como uma habilidade motora e não como estudo acadêmico. Ao focar na automação cognitiva (falar sem pensar em traduzir), o tempo de resposta do cérebro diminui drasticamente, o que acelera a fluência real." },
+        { q: "Realmente é possível atingir fluência em tão pouco tempo?", a: "Tratamos o inglês como uma habilidade motora e não como estudo acadêmico. Ao focar na automação cognitiva (falar sem pensar em traduzir), o tempo de resposta do cérebro diminuui drasticamente, o que acelera a fluência real." },
         { q: "Como funciona o suporte para tirar dúvidas?", a: "Oferecemos mentoria individual semanal e suporte nativo via plataforma e WhatsApp. Como nosso foco é o treinamento procedural, você sempre terá um especialista acompanhando sua evolução fonética e estrutural." },
         { q: "Preciso de um nível mínimo de inglês para participar?", a: "Não. Temos programas que vão do zero absoluto ao nível executivo. Realizamos uma avaliação de perfil para direcionar você ao treinamento que trará o maior ROI para sua carreira." }
     ];
 
     return (
-        <div className="flex flex-col w-full min-h-screen">
+        <div className="flex flex-col w-full min-h-screen relative overflow-x-hidden ana-lab-system">
+            <style>{`
+                /* ANA DESIGN SYSTEM - TRAINING LAYER */
+                .ana-lab-system {
+                    --premium-easing: cubic-bezier(0.22, 1, 0.36, 1);
+                    --accent-gold: #fbd24c;
+                    --ana-intensity: 0.04;
+                }
+
+                /* 1. Scroll Progress Minimalista */
+                .scroll-progress-bar {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    height: 2px;
+                    background: var(--accent-gold);
+                    z-index: 9999;
+                    transition: width 0.1s ease-out;
+                }
+
+                /* 2. Fundo com Profundidade Sutil */
+                .ana-lab-system::before {
+                    content: "";
+                    position: fixed;
+                    inset: 0;
+                    pointer-events: none;
+                    background: radial-gradient(circle at 20% 10%, rgba(255,255,255,0.03), transparent 50%),
+                                radial-gradient(circle at 80% 90%, rgba(251, 210, 76, 0.02), transparent 50%);
+                    z-index: 1;
+                }
+
+                /* 3. Textura de Noise (Overlay) */
+                .ana-lab-system::after {
+                    content: "";
+                    position: fixed;
+                    inset: 0;
+                    pointer-events: none;
+                    opacity: 0.015;
+                    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3column%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+                    z-index: 2;
+                }
+
+                /* 4. Movimento e Reveal Premium */
+                .reveal {
+                    opacity: 0;
+                    transform: translateY(30px);
+                    transition: opacity 1.2s var(--premium-easing), 
+                                transform 1.2s var(--premium-easing);
+                }
+                .reveal.active {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+
+                /* 5. Underline Animado em Links */
+                a, .ana-link {
+                    position: relative;
+                    text-decoration: none;
+                    transition: color 0.3s ease;
+                }
+                a::after {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    bottom: -2px;
+                    width: 0;
+                    height: 1px;
+                    background: currentColor;
+                    transition: width 0.4s var(--premium-easing);
+                }
+                a:hover::after {
+                    width: 100%;
+                }
+
+                /* 6. Micro-feedback em Botões */
+                button, .btn-ana {
+                    transition: transform 0.3s var(--premium-easing), 
+                                box-shadow 0.4s var(--premium-easing),
+                                filter 0.3s ease;
+                }
+                button:hover {
+                    transform: translateY(-2px);
+                    filter: brightness(1.05);
+                }
+                button:active {
+                    transform: scale(0.97);
+                }
+
+                /* 7. Ritmo Vertical Assimétrico */
+                .section-alt:nth-child(odd) { padding: 140px 0; }
+                .section-alt:nth-child(even) { padding: 100px 0; }
+
+                /* 8. Linhas Verticais Minimalistas */
+                .divider-v {
+                    width: 1px;
+                    height: 60px;
+                    background: rgba(255,255,255,0.08);
+                    margin: 0 auto;
+                }
+
+                /* 9. Tipografia: Peso e Tracking */
+                .ana-heading {
+                    letter-spacing: -0.02em;
+                    line-height: 1.1;
+                }
+                .ana-sub {
+                    letter-spacing: 0.1em;
+                    text-transform: uppercase;
+                    font-weight: 800;
+                    font-size: 0.7rem;
+                    opacity: 0.8;
+                }
+            `}</style>
+
+            <div className="scroll-progress-bar" style={{ width: `${scrollProgress}%` }} />
+            <div id="seasonal-layer"></div>
             <SEO
                 title="Laboratório Interno | Lexis Academy"
                 description="Ambiente de testes para novas interfaces e micro-interações da Lexis Academy."
@@ -75,12 +203,13 @@ const LabHome = () => {
             </header>
 
             {/* SEÇÃO MÉTODO */}
-            <section id="metodo" className="py-32 px-6 bg-slate-50 text-[#0f172a] relative overflow-hidden scroll-mt-20">
+            <section id="metodo" className="section-alt py-32 px-6 bg-slate-50 text-[#0f172a] relative overflow-hidden scroll-mt-20">
                 <div className="max-w-6xl mx-auto relative z-10">
+                    <div className="divider-v mb-20"></div>
                     <div className="grid md:grid-cols-2 gap-20 items-center mb-32">
                         <div className="reveal-left">
-                            <span className="text-[#8c5414] font-extrabold tracking-[0.25em] uppercase text-[11px] mb-5 block underline decoration-[#fbd24c] decoration-4 underline-offset-8">A Filosofia Lexis</span>
-                            <h2 className="text-4xl md:text-5xl font-black mb-10 leading-tight tracking-tight">Idioma não se aprende, <br /><span className="text-[#8c5414] italic">se treina.</span></h2>
+                            <span className="ana-sub text-[#8c5414] mb-5 block underline decoration-[#fbd24c] decoration-4 underline-offset-8">A Filosofia Lexis</span>
+                            <h2 className="ana-heading text-4xl md:text-5xl font-black mb-10 leading-tight tracking-tight">Idioma não se aprende, <br /><span className="text-[#8c5414] italic">se treina.</span></h2>
                             <div className="space-y-6 text-slate-600 text-lg font-medium">
                                 <p>Saber regras gramaticais ou teorias linguísticas não faz ninguém falar inglês, assim como:</p>
                                 <ul className="space-y-4">
@@ -152,8 +281,9 @@ const LabHome = () => {
             </section>
 
             {/* CONTEÚDO (O CAMINHO DO DOMÍNIO) */}
-            <section id="conteudo" className="py-32 px-6 bg-[#0f172a] scroll-mt-20 relative overflow-hidden">
+            <section id="conteudo" className="section-alt py-32 px-6 bg-[#0f172a] scroll-mt-20 relative overflow-hidden">
                 <div className="max-w-7xl mx-auto relative z-10">
+                    <div className="divider-v mb-20 opacity-20"></div>
                     <SectionHeader
                         tag="O Caminho do Domínio"
                         title="O que você vai conquistar"
