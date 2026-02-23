@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import LeadModal from '../components/LeadModal';
 import { useRevealOnScroll, Button, SectionHeader } from '../components/shared';
+import WebGLBackground from '../components/WebGLBackground';
 
 const DoubtsSection = () => {
     const categories = [
@@ -42,7 +43,7 @@ const DoubtsSection = () => {
     const filteredFaq = faqData.filter(item => item.cat === activeCat);
 
     return (
-        <section id="duvidas" className="py-32 px-6 bg-slate-900 overflow-hidden">
+        <section id="duvidas" className="py-32 px-6 bg-slate-900 overflow-hidden relative z-10">
             <div className="max-w-4xl mx-auto">
                 <SectionHeader
                     tag="Atendimento"
@@ -95,8 +96,26 @@ const DoubtsSection = () => {
 
 const Imersao = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [scrollProgress, setScrollProgress] = useState(0);
+    const [heroOpacity, setHeroOpacity] = useState(1);
+    const [parallaxY, setParallaxY] = useState(0);
     const openModal = () => setIsModalOpen(true);
+
     useRevealOnScroll();
+
+    React.useEffect(() => {
+        const handleScroll = () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.body.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            setScrollProgress(progress);
+            setParallaxY(scrollTop * 0.02);
+            const fadeThreshold = window.innerHeight * 0.4;
+            setHeroOpacity(Math.max(0, 1 - (scrollTop / fadeThreshold)));
+        };
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     const dates2026 = [
         "02/02 a 14/02", "02/03 a 14/03", "06/04 a 18/04", "04/05 a 16/05",
@@ -105,7 +124,28 @@ const Imersao = () => {
     ];
 
     return (
-        <div className="bg-[#0f172a] text-white">
+        <div className="flex flex-col w-full min-h-screen relative overflow-x-hidden ana-design-system bg-[#0f172a]">
+            <style>{`
+                .ana-design-system {
+                    --premium-easing: cubic-bezier(0.22, 1, 0.36, 1);
+                    --accent-gold: #fbd24c;
+                    --section-reveal: 0.75s;
+                }
+                @media (max-width: 768px) { canvas { display: none !important; } }
+                .scroll-progress-bar { position: fixed; top: 0; left: 0; height: 2px; background: var(--accent-gold); opacity: 0.7; z-index: 9999; transition: width 0.1s linear; }
+                .ana-design-system::after { content: ""; position: fixed; inset: 0; pointer-events: none; opacity: 0.012; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); z-index: 2; }
+                .hero-focus-shift { animation: focusShift 1s var(--premium-easing) forwards; }
+                @keyframes focusShift { from { filter: blur(6px); opacity: 0; } to { filter: blur(0); opacity: 1; } }
+                .word-stagger { display: inline-block; opacity: 0; transform: translateY(8px); animation: wordUp 0.7s var(--premium-easing) forwards; }
+                @keyframes wordUp { to { opacity: 1; transform: translateY(0); } }
+                .reveal { opacity: 0; transform: translateY(20px); transition: opacity var(--section-reveal) var(--premium-easing), transform var(--section-reveal) var(--premium-easing); }
+                .reveal.active { opacity: 1; transform: translateY(0); }
+                .ana-heading { letter-spacing: -0.015em; line-height: 1.05; }
+            `}</style>
+
+            <div className="scroll-progress-bar" style={{ width: `${scrollProgress}%` }} />
+            <WebGLBackground opacity={heroOpacity} parallax={parallaxY} />
+
             <SEO
                 title="Imersão Presencial de Inglês em São Carlos | 14 Dias | Lexis Academy"
                 description="Imersão intensiva de 14 dias (120h) em São Carlos. Tratamos o inglês como habilidade, não como teoria. Alcance fluência funcional real em tempo recorde."
@@ -115,23 +155,25 @@ const Imersao = () => {
             <LeadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} defaultCourse="Imersão Presencial" />
 
             {/* HERO EXPERIENCE */}
-            <header className="relative pt-64 pb-48 px-6 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#820AD1]/40 via-transparent to-transparent z-0"></div>
-                <div className="bg-mesh opacity-20"></div>
-                <div className="max-w-6xl mx-auto text-center relative z-10 reveal">
-                    <div className="inline-flex items-center gap-2 bg-[#820AD1]/20 border border-[#820AD1]/30 backdrop-blur-xl px-4 py-2 rounded-full mb-10">
+            <header className="relative pt-64 pb-48 px-6 overflow-hidden hero-focus-shift">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#820AD1]/10 via-transparent to-transparent z-0"></div>
+                <div className="max-w-6xl mx-auto text-center relative z-10">
+                    <div className="inline-flex items-center gap-2 bg-[#820AD1]/20 border border-[#820AD1]/30 backdrop-blur-xl px-4 py-2 rounded-full mb-10 reveal">
                         <span className="w-2 h-2 rounded-full bg-[#fbd24c] animate-pulse"></span>
                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Vagas abertas para 2026</span>
                     </div>
-                    <h1 className="text-5xl md:text-8xl font-black mb-10 leading-[1] tracking-tighter">
-                        Imersão <br />
-                        <span className="text-[#fbd24c]">Presencial.</span>
+                    <h1 className="text-5xl md:text-8xl font-black mb-10 leading-[1] tracking-tighter ana-heading text-white">
+                        {["Imersão", "Presencial."].map((word, i) => (
+                            <span key={i} className="word-stagger" style={{ animationDelay: `${i * 100}ms` }}>
+                                {word === "Presencial." ? <span className="text-[#fbd24c]">{word}</span> : word}&nbsp;
+                            </span>
+                        ))}
                     </h1>
-                    <p className="text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto mb-16 font-medium leading-relaxed">
+                    <p className="text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto mb-16 font-medium leading-relaxed reveal" style={{ transitionDelay: '400ms' }}>
                         120 horas de choque cognitivo condensadas em 14 dias de prática intensiva.
                         Onde o inglês deixa de ser estudo e passa a ser sua ferramenta de trabalho.
                     </p>
-                    <div className="flex flex-col md:flex-row gap-6 justify-center">
+                    <div className="flex flex-col md:flex-row gap-6 justify-center reveal" style={{ transitionDelay: '600ms' }}>
                         <Button primary onClick={openModal}>Verificar Disponibilidade</Button>
                         <Button onClick={() => document.getElementById('metodo')?.scrollIntoView({ behavior: 'smooth' })}>Nossa Filosofia</Button>
                     </div>
@@ -139,12 +181,12 @@ const Imersao = () => {
             </header>
 
             {/* O CONCEITO - HABILIDADE VS CONHECIMENTO */}
-            <section id="metodo" className="py-32 px-6 bg-white text-[#0f172a] relative overflow-hidden">
+            <section id="metodo" className="py-32 px-6 bg-white text-[#0f172a] relative overflow-hidden z-10">
                 <div className="max-w-6xl mx-auto relative z-10">
                     <div className="grid lg:grid-cols-2 gap-20 items-center">
                         <div className="reveal-left">
                             <span className="text-[#820AD1] font-black uppercase tracking-widest text-xs mb-4 block">Metodologia Lexis</span>
-                            <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight tracking-tighter">Inglês não se aprende. <br /><span className="italic text-[#820AD1]">Se treina.</span></h2>
+                            <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight tracking-tighter ana-heading">Inglês não se aprende. <br /><span className="italic text-[#820AD1]">Se treina.</span></h2>
                             <p className="text-lg text-slate-600 mb-10 font-medium leading-relaxed">
                                 Idioma é uma habilidade cognitiva, como música ou esportes. Exige processamento em tempo real, tomada de decisão e resposta automática.
                                 Na imersão, focamos na sua <strong>Memória Procedural</strong> — o lugar onde a fluência real acontece.
@@ -167,7 +209,7 @@ const Imersao = () => {
                                     {[
                                         { t: "120 Horas Presenciais", d: "Equivalente a anos de cursos tradicionais em 14 dias." },
                                         { t: "10 Horas por Dia", d: "Segunda a sábado, das 8h às 19h. Imersão Total." },
-                                        { cat: "Business Focus", d: "Treino para reuniões, entrevistas e reposicionamento de carreira." }
+                                        { t: "Business Focus", d: "Treino para reuniões, entrevistas e reposicionamento de carreira." }
                                     ].map((item, i) => (
                                         <li key={i} className="flex gap-4">
                                             <span className="text-[#fbd24c] font-black text-xl">0{i + 1}</span>
@@ -185,7 +227,7 @@ const Imersao = () => {
             </section>
 
             {/* O CONTEÚDO - A JORNADA */}
-            <section className="py-32 px-6 bg-slate-50 text-[#0f172a]">
+            <section className="py-32 px-6 bg-slate-50 text-[#0f172a] relative z-10">
                 <div className="max-w-7xl mx-auto">
                     <SectionHeader
                         tag="Conteúdo Programático"
@@ -211,11 +253,11 @@ const Imersao = () => {
             </section>
 
             {/* FERRAMENTAS E TÉCNICAS */}
-            <section className="py-32 px-6 bg-[#0f172a] relative overflow-hidden">
+            <section className="py-32 px-6 bg-[#0f172a] relative overflow-hidden z-10">
                 <div className="max-w-6xl mx-auto relative z-10">
                     <div className="grid lg:grid-cols-2 gap-16 items-center">
                         <div className="reveal-left">
-                            <h2 className="text-4xl md:text-5xl font-black mb-10 leading-tight tracking-tighter">O Arsenal <br /><span className="text-[#fbd24c]">Tecnológico.</span></h2>
+                            <h2 className="text-4xl md:text-5xl font-black mb-10 leading-tight tracking-tighter ana-heading text-white">O Arsenal <br /><span className="text-[#fbd24c]">Tecnológico.</span></h2>
                             <p className="text-slate-400 text-lg font-medium mb-12">
                                 Utilizamos o que há de mais moderno em IA e neuroaprendizado para estender sua prática para além da sala de aula.
                             </p>
@@ -232,14 +274,14 @@ const Imersao = () => {
                                         </div>
                                         <div>
                                             <h4 className="font-bold text-white uppercase text-xs tracking-widest mb-1">{item.t}</h4>
-                                            <p className="text-white/40 text-[10px] font-medium">{item.desc || item.d}</p>
+                                            <p className="text-white/40 text-[10px] font-medium">{item.d}</p>
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         </div>
                         <div className="bg-gradient-to-br from-[#820AD1]/20 to-transparent p-12 rounded-[4rem] border border-white/5 reveal">
-                            <h3 className="text-2xl font-black mb-8 border-l-4 border-white pl-6">Técnicas Ativas</h3>
+                            <h3 className="text-2xl font-black mb-8 border-l-4 border-white pl-6 text-white">Técnicas Ativas</h3>
                             <div className="flex flex-wrap gap-3">
                                 {["Prática Deliberada", "Instrução por Pares", "Gamificação", "Grupos Operativos", "Learning by Doing"].map(tag => (
                                     <span key={tag} className="bg-white/5 border border-white/10 px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest text-white/60">
@@ -256,7 +298,7 @@ const Imersao = () => {
             <DoubtsSection />
 
             {/* CALENDÁRIO 2026 */}
-            <section className="py-32 px-6 bg-white text-[#0f172a] relative overflow-hidden">
+            <section className="py-32 px-6 bg-white text-[#0f172a] relative overflow-hidden z-10">
                 <div className="max-w-5xl mx-auto text-center relative z-10">
                     <SectionHeader
                         tag="Agendamento"
@@ -266,7 +308,7 @@ const Imersao = () => {
 
                     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-20">
                         {dates2026.map((date, i) => (
-                            <div key={i} className="bg-slate-50 border-2 border-slate-100 p-6 rounded-3xl hover:border-[#820AD1] hover:bg-[#820AD1]/5 transition-all text-center reveal reveal-delay-2">
+                            <div key={i} className="bg-slate-50 border-2 border-slate-100 p-6 rounded-3xl hover:border-[#820AD1] hover:bg-[#820AD1]/5 transition-all text-center reveal">
                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Turma {i + 1}</p>
                                 <p className="font-black text-sm text-[#0f172a]">{date.split(' ')[0]}<br /><span className="text-[#820AD1]">{date.split(' ')[2]}</span></p>
                             </div>
@@ -275,7 +317,7 @@ const Imersao = () => {
 
                     <div className="bg-[#820AD1] rounded-[3.5rem] p-12 text-white relative overflow-hidden group reveal">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-20 -mt-20 blur-3xl group-hover:bg-white/10 transition-colors"></div>
-                        <h3 className="text-3xl md:text-5xl font-black mb-6 tracking-tighter">Garanta sua <br /><span className="text-[#fbd24c]">Garantia Vitalícia.</span></h3>
+                        <h3 className="text-3xl md:text-5xl font-black mb-6 tracking-tighter ana-heading">Garanta sua <br /><span className="text-[#fbd24c]">Garantia Vitalícia.</span></h3>
                         <p className="text-white/70 max-w-2xl mx-auto mb-10 font-medium">Ao se matricular, você ganha o direito de refazer a imersão quantas vezes desejar, sem custos extras, para sempre. Sem riscos, apenas evolução.</p>
                         <Button primary onClick={openModal}>Falar com um Consultor Agora</Button>
                     </div>
