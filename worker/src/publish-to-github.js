@@ -79,8 +79,12 @@ export async function publishPostsToGitHub(env, maxPosts = 3) {
       // 7. Remover da fila
       await env.LEXIS_REWRITTEN_POSTS.delete(key.name);
 
+      // 8. Incrementar contador de posts totais
+      const currentTotal = parseInt(await env.LEXIS_PUBLISHED_POSTS.get('system:totalPosts') || '0');
+      await env.LEXIS_PUBLISHED_POSTS.put('system:totalPosts', String(currentTotal + 1));
+
       publishedPosts.push(publishedRecord);
-      console.log(`[PUBLISH] ✅ Publicado: ${post.title}`);
+      console.log(`[PUBLISH] ✅ Publicado: ${post.title} (Total: ${currentTotal + 1})`);
 
     } catch (error) {
       console.error(`[PUBLISH] ❌ Erro ao publicar "${post.title}": ${error.message}`);
@@ -103,7 +107,7 @@ function buildMarkdown(post) {
   const title = escapeYaml(post.title || 'Sem Título');
   const description = escapeYaml(post.description || post.title || 'Aprenda inglês de forma prática e eficiente');
   const category = post.category || 'Dicas';
-  const date = new Date().toISOString().split('T')[0];
+  const date = post.date || new Date().toISOString().split('T')[0];
   const content = post.content || '';
   const keywords = post.keywords || 'aprender inglês, praticar inglês, curso de inglês';
 
