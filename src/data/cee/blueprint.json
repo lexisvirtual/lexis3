@@ -1,0 +1,72 @@
+{
+    "name": "Creative Evolution Engine (CEE)",
+    "version": "1.0.0",
+    "description": "Sistema de gestão de identidade temporal para Lexis Academy.",
+    "concept_map": {
+        "christmas": "Light Transition",
+        "carnival": "Rhythmic Energy",
+        "black_friday": "Contrast & Compression",
+        "valentine": "Connection Field",
+        "independence": "Structural Axis",
+        "thanksgiving": "Organic Texture",
+        "new_year": "Emergence"
+    },
+    "dimensions": {
+        "movement_axis": [
+            "vertical",
+            "horizontal",
+            "radial",
+            "depth",
+            "static"
+        ],
+        "geometry_language": [
+            "linear",
+            "curved",
+            "diagonal",
+            "mesh",
+            "noise",
+            "layered"
+        ],
+        "rhythm_profile": [
+            "slow",
+            "progressive",
+            "staggered",
+            "asymmetrical",
+            "pulse"
+        ],
+        "atmosphere_type": [
+            "light_based",
+            "depth_based",
+            "texture_based",
+            "contrast_based"
+        ],
+        "intensity_band": [
+            0.02,
+            0.03,
+            0.04,
+            0.05,
+            0.06
+        ]
+    },
+    "rules": {
+        "min_dimension_changes": 2,
+        "max_similarity_score": 0.6,
+        "trienal_cycle": {
+            "2025-2027": "light_based",
+            "2028-2030": "depth_based",
+            "2031-2033": "texture_based"
+        },
+        "blacklist": {
+            "no_consecutive_particles": true,
+            "no_same_axis_3yrs": true,
+            "no_same_geometry_2yrs": true
+        }
+    },
+    "similarity_weights": {
+        "movement_axis": 0.25,
+        "geometry_language": 0.25,
+        "rhythm_profile": 0.20,
+        "atmosphere_type": 0.20,
+        "intensity": 0.10
+    }
+}

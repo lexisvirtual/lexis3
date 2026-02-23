@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import activeTheme from '../data/cee/active-theme.json';
 import SEO from '../components/SEO';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -51,6 +52,9 @@ const WebGLBackground = ({ opacity = 1, parallax = 0 }) => {
             uniform float u_parallax;
             uniform vec2 u_resolution;
             uniform float u_opacity;
+            uniform float u_intensity;
+            uniform int u_geometry;
+            uniform int u_axis;
 
             float noise(vec2 p) {
                 return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
@@ -70,20 +74,27 @@ const WebGLBackground = ({ opacity = 1, parallax = 0 }) => {
             void main() {
                 vec2 uv = gl_FragCoord.xy / u_resolution.xy;
                 float t = u_time * 0.1;
-                float p = u_parallax * 0.005; // Micro-displacement
+                float p = u_parallax * 0.005;
                 
-                // Dimensões institucionais (Mesh Gradient)
-                float n = smoothNoise(uv * 2.0 + t + p);
-                float n2 = smoothNoise(uv * 1.5 - t * 0.6 - p * 0.5);
-                
+                vec2 motion = vec2(0.0);
+                if (u_axis == 1) motion.y = t;
+                else if (u_axis == 2) motion.x = t;
+                else if (u_axis == 3) motion = uv * p;
+
+                float n = 0.0;
+                if (u_geometry == 1) n = smoothNoise(vec2(uv.x, t)); 
+                else if (u_geometry == 2) n = smoothNoise(vec2(uv.x + uv.y + t));
+                else if (u_geometry == 3) n = noise(uv + t);
+                else n = smoothNoise(uv * 2.1 + t + motion);
+
                 vec3 color1 = vec3(0.058, 0.09, 0.164); // #0f172a
-                vec3 color2 = vec3(0.03, 0.05, 0.1);    // Dark Field
+                vec3 color2 = vec3(0.03, 0.05, 0.1);
                 vec3 accent = vec3(0.984, 0.824, 0.298); // #fbd24c
                 
                 vec3 base = mix(color1, color2, n);
-                base = mix(base, accent, clamp(n2 * 0.02, 0.0, 1.0));
+                base = mix(base, accent, clamp(n * u_intensity, 0.0, 1.0));
                 
-                gl_FragColor = vec4(base, u_opacity * 0.4); // Sutil opacidade global
+                gl_FragColor = vec4(base, u_opacity * 0.4);
             }
         `;
 
@@ -109,29 +120,40 @@ const WebGLBackground = ({ opacity = 1, parallax = 0 }) => {
         gl.enableVertexAttribArray(posAttr);
         gl.vertexAttribPointer(posAttr, 2, gl.FLOAT, false, 0, 0);
 
-        const timeLoc = gl.getUniformLocation(program, 'u_time');
-        const paraLoc = gl.getUniformLocation(program, 'u_parallax');
-        const resLoc = gl.getUniformLocation(program, 'u_resolution');
-        const opacLoc = gl.getUniformLocation(program, 'u_opacity');
+        const u = {
+            time: gl.getUniformLocation(program, 'u_time'),
+            para: gl.getUniformLocation(program, 'u_parallax'),
+            res: gl.getUniformLocation(program, 'u_resolution'),
+            opac: gl.getUniformLocation(program, 'u_opacity'),
+            intens: gl.getUniformLocation(program, 'u_intensity'),
+            geom: gl.getUniformLocation(program, 'u_geometry'),
+            axis: gl.getUniformLocation(program, 'u_axis')
+        };
 
+        const geomMap = { mesh: 0, linear: 1, diagonal: 2, noise: 3 };
+        const axisMap = { static: 0, vertical: 1, horizontal: 2, depth: 3 };
+
+        const isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         let lastFrame = 0;
         const render = (time) => {
-            if (time - lastFrame < 33) {
-                requestAnimationFrame(render);
-                return;
-            }
+            if (isReduced && lastFrame > 0) return; // Stop if reduced motion and first frame done
+            if (time - lastFrame < 33) { requestAnimationFrame(render); return; }
             lastFrame = time;
 
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             gl.viewport(0, 0, canvas.width, canvas.height);
 
-            gl.uniform1f(timeLoc, time * 0.001);
-            gl.uniform1f(paraLoc, parallax);
-            gl.uniform2f(resLoc, canvas.width, canvas.height);
-            gl.uniform1f(opacLoc, opacity);
+            gl.uniform1f(u.time, isReduced ? 0.0 : time * 0.001);
+            gl.uniform1f(u.para, isReduced ? 0.0 : parallax);
+            gl.uniform2f(u.res, canvas.width, canvas.height);
+            gl.uniform1f(u.opac, opacity);
+            gl.uniform1f(u.intens, activeTheme.intensity || 0.02);
+            gl.uniform1i(u.geom, geomMap[activeTheme.geometry_language] || 0);
+            gl.uniform1i(u.axis, axisMap[activeTheme.movement_axis] || 0);
+
             gl.drawArrays(gl.TRIANGLES, 0, 6);
-            requestAnimationFrame(render);
+            if (!isReduced) requestAnimationFrame(render);
         };
         requestAnimationFrame(render);
     }, [opacity, parallax]);
@@ -178,6 +200,16 @@ const LabHome = () => {
 
     return (
         <div className="flex flex-col w-full min-h-screen relative overflow-x-hidden ana-lab-system">
+            {/* CEE Status Indicator (Dev Only) */}
+            <div className="fixed bottom-4 right-4 z-[9999] bg-black/60 backdrop-blur-md border border-white/10 px-3 py-2 rounded-lg text-[10px] font-mono text-[#94a3b8] flex flex-col gap-1 shadow-2xl pointer-events-none opacity-40 hover:opacity-100 transition-opacity">
+                <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <span className="text-white font-bold uppercase tracking-widest">CEE Active</span>
+                </div>
+                <div>Concept: <span className="text-[#fbd24c]">{activeTheme.concept || 'Standard'}</span></div>
+                <div>Year: <span className="text-white">2026</span></div>
+                <div className="opacity-60 text-[8px]">DNA: {activeTheme.geometry_language} / {activeTheme.movement_axis}</div>
+            </div>
             <style>{`
                 /* 1. Atmo WebGL Field (v10/10) */
                 .ana-lab-system {
