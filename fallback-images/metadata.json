@@ -1,0 +1,69 @@
+{
+  "timestamp": "2026-02-20T13:20:00.966Z",
+  "totalImages": 10,
+  "images": [
+    {
+      "id": "fallback-01",
+      "url": "/fallback-images/fallback-01.jpg",
+      "format": "jpg",
+      "source": "https://pixabay.com/photos/architecture-hanseatic-city-8589487/"
+    },
+    {
+      "id": "fallback-02",
+      "url": "/fallback-images/fallback-02.jpg",
+      "format": "jpg",
+      "source": "https://pixabay.com/photos/seattle-downtown-landmark-8027337/"
+    },
+    {
+      "id": "fallback-03",
+      "url": "/fallback-images/fallback-03.jpg",
+      "format": "jpg",
+      "source": "https://pixabay.com/photos/hamburg-building-architecture-city-8573427/"
+    },
+    {
+      "id": "fallback-04",
+      "url": "/fallback-images/fallback-04.jpg",
+      "format": "jpg",
+      "source": "https://pixabay.com/photos/hamburg-speicherstadt-building-7854198/"
+    },
+    {
+      "id": "fallback-05",
+      "url": "/fallback-images/fallback-05.jpg",
+      "format": "jpg",
+      "source": "https://pixabay.com/photos/berlin-germany-city-architecture-8429780/"
+    },
+    {
+      "id": "fallback-06",
+      "url": "/fallback-images/fallback-06.jpg",
+      "format": "jpg",
+      "source": "https://pixabay.com/photos/brussels-belgium-city-europe-7826514/"
+    },
+    {
+      "id": "fallback-07",
+      "url": "/fallback-images/fallback-07.jpg",
+      "format": "jpg",
+      "source": "https://pixabay.com/photos/vistula-meadows-vistula-river-7553908/"
+    },
+    {
+      "id": "fallback-08",
+      "url": "/fallback-images/fallback-08.jpg",
+      "format": "jpg",
+      "source": "https://pixabay.com/photos/berlin-television-tower-landmark-7781669/"
+    },
+    {
+      "id": "fallback-09",
+      "url": "/fallback-images/fallback-09.jpg",
+      "format": "jpg",
+      "source": "https://pixabay.com/photos/luis-i-bridge-deck-arch-bridge-porto-8201941/"
+    },
+    {
+      "id": "fallback-10",
+      "url": "/fallback-images/fallback-10.jpg",
+      "format": "jpg",
+      "source": "https://pixabay.com/photos/monument-park-clouds-arches-8172623/"
+    }
+  ],
+  "query": "paisagem urbana",
+  "order": "latest",
+  "system": "single-query with popularity score"
+}
