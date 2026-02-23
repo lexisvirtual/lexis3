@@ -62,63 +62,70 @@ const LabHome = () => {
     return (
         <div className="flex flex-col w-full min-h-screen relative overflow-x-hidden ana-lab-system">
             <style>{`
-                /* ANA DESIGN SYSTEM - TRAINING LAYER */
+                /* ANA DESIGN SYSTEM - REFINEMENT LAYER (v2) */
                 .ana-lab-system {
                     --premium-easing: cubic-bezier(0.22, 1, 0.36, 1);
                     --accent-gold: #fbd24c;
                     --ana-intensity: 0.04;
+                    --hero-reveal: 0.9s;
+                    --section-reveal: 0.75s;
                 }
 
-                /* 1. Scroll Progress Minimalista */
+                /* 1. Scroll Progress (Ferramenta, não elemento) */
                 .scroll-progress-bar {
                     position: fixed;
                     top: 0;
                     left: 0;
                     height: 2px;
                     background: var(--accent-gold);
+                    opacity: 0.7;
                     z-index: 9999;
-                    transition: width 0.1s ease-out;
+                    transition: width 0.1s linear;
                 }
 
-                /* 2. Fundo com Profundidade Sutil */
+                /* 2. Fundo Assimétrico */
                 .ana-lab-system::before {
                     content: "";
                     position: fixed;
                     inset: 0;
                     pointer-events: none;
-                    background: radial-gradient(circle at 20% 10%, rgba(255,255,255,0.03), transparent 50%),
-                                radial-gradient(circle at 80% 90%, rgba(251, 210, 76, 0.02), transparent 50%);
+                    background: radial-gradient(circle at 15% 15%, rgba(255,255,255,0.03), transparent 50%),
+                                radial-gradient(circle at 85% 85%, rgba(251, 210, 76, 0.015), transparent 50%);
                     z-index: 1;
                 }
 
-                /* 3. Textura de Noise (Overlay) */
+                /* 3. Noise Estático */
                 .ana-lab-system::after {
                     content: "";
                     position: fixed;
                     inset: 0;
                     pointer-events: none;
-                    opacity: 0.015;
-                    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3column%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+                    opacity: 0.012;
+                    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
                     z-index: 2;
                 }
 
-                /* 4. Movimento e Reveal Premium */
+                /* 4. Movimento Refinado (Invisível aos olhos mas sentido) */
                 .reveal {
                     opacity: 0;
-                    transform: translateY(30px);
-                    transition: opacity 1.2s var(--premium-easing), 
-                                transform 1.2s var(--premium-easing);
+                    transform: translateY(20px);
+                    transition: opacity var(--section-reveal) var(--premium-easing), 
+                                transform var(--section-reveal) var(--premium-easing);
                 }
                 .reveal.active {
                     opacity: 1;
                     transform: translateY(0);
                 }
 
-                /* 5. Underline Animado em Links */
+                /* Hero Stagger */
+                .hero-h1 { transition-delay: 0s; }
+                .hero-p { transition-delay: 120ms; }
+                .hero-cta { transition-delay: 220ms; }
+
+                /* 5. Underline com Easing Artesanal */
                 a, .ana-link {
                     position: relative;
                     text-decoration: none;
-                    transition: color 0.3s ease;
                 }
                 a::after {
                     content: "";
@@ -128,49 +135,56 @@ const LabHome = () => {
                     width: 0;
                     height: 1px;
                     background: currentColor;
-                    transition: width 0.4s var(--premium-easing);
+                    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Easing diferente da seção */
                 }
                 a:hover::after {
                     width: 100%;
                 }
 
-                /* 6. Micro-feedback em Botões */
+                /* 6. Precisão de Clique (Professional Precision) */
                 button, .btn-ana {
-                    transition: transform 0.3s var(--premium-easing), 
-                                box-shadow 0.4s var(--premium-easing),
-                                filter 0.3s ease;
+                    transition: transform 0.2s var(--premium-easing), 
+                                filter 0.2s ease;
                 }
                 button:hover {
                     transform: translateY(-2px);
-                    filter: brightness(1.05);
+                    filter: brightness(1.03);
                 }
                 button:active {
-                    transform: scale(0.97);
+                    transform: scale(0.985);
                 }
 
-                /* 7. Ritmo Vertical Assimétrico */
-                .section-alt:nth-child(odd) { padding: 140px 0; }
-                .section-alt:nth-child(even) { padding: 100px 0; }
+                /* 7. Ritmo Vertical Assimétrico (Proporção 1.4x) */
+                .section-alt:nth-child(odd) { padding: 160px 0; }
+                .section-alt:nth-child(even) { padding: 112px 0; }
+                @media (max-width: 768px) {
+                    .section-alt:nth-child(odd) { padding: 120px 0; }
+                    .section-alt:nth-child(even) { padding: 84px 0; }
+                }
 
-                /* 8. Linhas Verticais Minimalistas */
+                /* 8. Linhas Verticais Estruturais (Sugerir, não dividir) */
                 .divider-v {
                     width: 1px;
-                    height: 60px;
-                    background: rgba(255,255,255,0.08);
+                    height: 50px;
+                    background: rgba(255,255,255,0.08); /* Opacidade 8% */
                     margin: 0 auto;
                 }
 
-                /* 9. Tipografia: Peso e Tracking */
+                /* 9. Tipografia: Hierarquia Contemporânea */
                 .ana-heading {
-                    letter-spacing: -0.02em;
-                    line-height: 1.1;
+                    letter-spacing: -0.015em;
+                    line-height: 1.05;
+                    transition: transform 0.3s var(--premium-easing);
+                }
+                @media (hover: hover) {
+                    .ana-heading:hover { transform: translateY(-2px); }
                 }
                 .ana-sub {
-                    letter-spacing: 0.1em;
+                    letter-spacing: 0.12em;
                     text-transform: uppercase;
                     font-weight: 800;
-                    font-size: 0.7rem;
-                    opacity: 0.8;
+                    font-size: 0.65rem;
+                    opacity: 0.7;
                 }
             `}</style>
 
@@ -187,14 +201,14 @@ const LabHome = () => {
             <header id="inicio" className="relative pt-60 pb-48 px-6 overflow-hidden bg-[#0f172a]">
                 <div className="bg-mesh opacity-40"></div>
                 <div className="max-w-6xl mx-auto text-center relative z-10 reveal">
-                    <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-[5.8rem] font-extrabold mb-10 leading-[1.05] tracking-tight text-white">
+                    <h1 className="hero-h1 text-4xl sm:text-5xl md:text-7xl lg:text-[5.8rem] font-extrabold mb-10 leading-[1.05] tracking-tight text-white ana-heading">
                         Inglês é uma <span className="text-[#fbd24c]">habilidade.</span> <br />
                         Treine como um atleta.
                     </h1>
-                    <p className="text-[#94a3b8] text-lg md:text-2xl max-w-4xl mx-auto mb-16 leading-relaxed font-medium">
+                    <p className="hero-p text-[#94a3b8] text-lg md:text-2xl max-w-4xl mx-auto mb-16 leading-relaxed font-medium">
                         A Lexis English Academy transforma o aprendizado em automação cognitiva. Escolha seu caminho e alcance a fluência real em tempo recorde.
                     </p>
-                    <div className="flex flex-col md:flex-row gap-6 justify-center reveal reveal-delay-2">
+                    <div className="hero-cta flex flex-col md:flex-row gap-6 justify-center reveal reveal-delay-2">
                         <Button primary onClick={() => openModal()}>Falar com um especialista</Button>
                         <Button onClick={() => document.getElementById('modalidades').scrollIntoView({ behavior: 'smooth' })}>Conhecer as modalidades</Button>
                     </div>
@@ -434,7 +448,7 @@ const LabHome = () => {
             </section>
 
             <Footer />
-        </div>
+        </div >
     );
 };
 
