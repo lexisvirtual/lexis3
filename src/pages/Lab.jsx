@@ -73,8 +73,8 @@ const WebGLBackground = ({ opacity = 1, parallax = 0 }) => {
 
             void main() {
                 vec2 uv = gl_FragCoord.xy / u_resolution.xy;
-                float t = u_time * 0.1;
-                float p = u_parallax * 0.005;
+                float t = u_time * 0.12; // Slightly faster for more life
+                float p = u_parallax * 0.008;
                 
                 vec2 motion = vec2(0.0);
                 if (u_axis == 1) motion.y = t;
@@ -85,16 +85,19 @@ const WebGLBackground = ({ opacity = 1, parallax = 0 }) => {
                 if (u_geometry == 1) n = smoothNoise(vec2(uv.x, t)); 
                 else if (u_geometry == 2) n = smoothNoise(vec2(uv.x + uv.y + t));
                 else if (u_geometry == 3) n = noise(uv + t);
-                else n = smoothNoise(uv * 2.1 + t + motion);
+                else n = smoothNoise(uv * 1.8 + t + motion); // More zoomed in
 
-                vec3 color1 = vec3(0.058, 0.09, 0.164); // #0f172a
-                vec3 color2 = vec3(0.03, 0.05, 0.1);
+                vec3 color1 = vec3(0.04, 0.07, 0.12); // Deep Institutional Blue
+                vec3 color2 = vec3(0.02, 0.03, 0.06); // Darker Base
                 vec3 accent = vec3(0.984, 0.824, 0.298); // #fbd24c
                 
                 vec3 base = mix(color1, color2, n);
-                base = mix(base, accent, clamp(n * u_intensity, 0.0, 1.0));
                 
-                gl_FragColor = vec4(base, u_opacity * 0.4);
+                // Pincelada Ana: Non-linear glow (Concentrated Authority Light)
+                float glow = pow(n, 3.0) * u_intensity * 1.5;
+                base = mix(base, accent, clamp(glow, 0.0, 1.0));
+                
+                gl_FragColor = vec4(base, u_opacity * 0.6); // Slightly more opaque
             }
         `;
 
