@@ -1,8 +1,8 @@
 ---
-title: "Como melhorar suas habilidades de escrita em inglês (4 dicas eficazes)"
+title: "Como Melhorar Suas Habilidades De Escrita Em Ingles 4 Dicas "
+description: "Saiba tudo sobre Como Melhorar Suas Habilidades De Escrita Em Ingles 4 Dicas  com a Metodologia Lexis."
 date: "2026-02-17"
-category: "Dicas"
-description: "Aprenda a escrever em inglês com confiança e clareza com essas 4 dicas simples e práticas."
+category: "Dicas"
 keywords: "escrever em inglês, habilidades de escrita, melhorar inglês"
 author: "Lexis Academy"
 publisher: "Lexis English Academy"

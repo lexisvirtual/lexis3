@@ -105,7 +105,13 @@ export async function publishPostsToGitHub(env, maxPosts = 3) {
 // ================================================
 function buildMarkdown(post) {
   const title = escapeYaml(post.title || 'Sem Título');
-  const description = escapeYaml(post.description || post.title || 'Aprenda inglês de forma prática e eficiente');
+  let description = escapeYaml(post.description || post.title || 'Aprenda inglês de forma prática e eficiente');
+
+  // Nível de Segurança 2: Sanitização final de descrição
+  if (description.includes("Post legado resgatado") || description.length < 15) {
+    description = `Aprenda tudo sobre "${escapeYaml(post.title)}" com foco em business e fluência real na Lexis Academy.`;
+  }
+
   const category = post.category || 'Dicas';
   const date = post.date || new Date().toISOString().split('T')[0];
   const content = post.content || '';

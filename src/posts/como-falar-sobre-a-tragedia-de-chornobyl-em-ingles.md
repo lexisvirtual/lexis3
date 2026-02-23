@@ -1,8 +1,8 @@
 ---
-title: "Como falar sobre a Tragédia de Chornobyl em inglês"
+title: "Como Falar Sobre A Tragedia De Chornobyl Em Ingles"
+description: "Saiba tudo sobre Como Falar Sobre A Tragedia De Chornobyl Em Ingles com a Metodologia Lexis."
 date: "2026-02-20"
-category: "Dicas"
-description: "Aprenda a discutir a história da Equipe de Suicídio de Chornobyl em inglês com confiança"
+category: "Dicas"
 keywords: "inglês, Chornobyl, história em inglês"
 author: "Lexis Academy"
 publisher: "Lexis English Academy"

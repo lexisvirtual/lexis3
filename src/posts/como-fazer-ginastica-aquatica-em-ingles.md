@@ -1,8 +1,8 @@
 ---
-title: "Como Fazer Ginástica Aquática em Inglês"
+title: "Como Fazer Ginastica Aquatica Em Ingles"
+description: "Saiba tudo sobre Como Fazer Ginastica Aquatica Em Ingles com a Metodologia Lexis."
 date: "2026-02-18"
-category: "Vocabulário"
-description: "Aprenda a falar sobre ginástica aquática em inglês com dicas e exercícios práticos."
+category: "Vocabulário"
 keywords: "ginástica aquática, inglês, vocabulário, dicas"
 author: "Lexis Academy"
 publisher: "Lexis English Academy"

@@ -1,8 +1,8 @@
 ---
-title: "The True Story of the Chornobyl Suicide Squad"
+title: "The True Story Of The Chornobyl Suicide Squad"
+description: "Saiba tudo sobre The True Story Of The Chornobyl Suicide Squad com a Metodologia Lexis."
 date: "2026-02-23"
-category: "Dicas"
-description: "A emocionante história de coragem dos heróis de Chernobyl e como usar esse contexto épico para expandir seu inglês."
+category: "Dicas"
 keywords: "aprender inglês, praticar inglês, curso de inglês"
 author: "Lexis Academy"
 publisher: "Lexis English Academy"

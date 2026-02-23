@@ -1,9 +1,9 @@
 ---
 title: "Fighting For The Amazon"
+description: "Saiba tudo sobre Fighting For The Amazon com a Metodologia Lexis."
 date: "2026-02-23"
-category: "Dicas"
-description: "Post legado resgatado."
-keywords: "aprender inglês, praticar inglês, curso de inglês"
+category: "Dicas"
+keywords: "inglês para conservação, vocabulário amazônia, aprender inglês online, lexis academy"
 author: "Lexis Academy"
 publisher: "Lexis English Academy"
 mainEntityOfPage: "https://lexis.academy/blog/fighting-for-the-amazon"

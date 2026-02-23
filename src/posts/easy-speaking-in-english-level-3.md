@@ -1,8 +1,8 @@
 ---
-title: "Easy speaking in English – level 3"
+title: "Easy Speaking In English Level 3"
+description: "Saiba tudo sobre Easy Speaking In English Level 3 com a Metodologia Lexis."
 date: "2026-02-23"
-category: "Dicas"
-description: "21-02-2026 12:00 Hello students, We have a website for you. Its name is www.speakinlevels.com. You can use filters to search for people at your level, by country, or by gender (female or male) and speak with them. You can also easily write to people via a form and you will be informed about new people who are ready to talk with... The post Easy speaking in English – level 3 appeared first on English news and easy articles for students of English."
+category: "Dicas"
 keywords: "aprender inglês, praticar inglês, curso de inglês"
 author: "Lexis Academy"
 publisher: "Lexis English Academy"

@@ -1,8 +1,8 @@
 ---
-title: "Indonésia: Um grande buraco na terra - Notícias em inglês"
+title: "Indonesia Um Grande Buraco Na Terra Noticias Em Ingles"
+description: "Saiba tudo sobre Indonesia Um Grande Buraco Na Terra Noticias Em Ingles com a Metodologia Lexis."
 date: "2026-02-10"
-category: "Notícias em inglês, Idiomas"
-description: "Um grande buraco na Indonésia está crescendo, afetando a agricultura e causando preocupação com a segurança"
+category: "Notícias em inglês, Idiomas"
 keywords: "Indonésia, buraco na terra, agricultura, segurança"
 author: "Lexis Academy"
 publisher: "Lexis English Academy"

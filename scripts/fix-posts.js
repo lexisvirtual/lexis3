@@ -68,6 +68,17 @@ if (fs.existsSync(postsDir)) {
             });
         }
 
+        // NOVO: Detector de Descrição Tóxica
+        if (content.match(/description:\s*"(Post legado resgatado\.?|.*descrição curta.*)"/i)) {
+            console.log(`⚠️ Descrição Genérica/Tóxica em ${file}. Substituindo...`);
+            const derivedTitle = file.replace('.md', '')
+                .split('-')
+                .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+                .join(' ');
+
+            content = content.replace(/^description:.*$/m, `description: "Explore o universo de ${derivedTitle} e como dominar esse contexto em inglês com a Lexis Academy."`);
+        }
+
         fs.writeFileSync(filePath, content, 'utf-8');
         console.log(`✅ Processado: ${file}`);
     });

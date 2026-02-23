@@ -1,8 +1,8 @@
 ---
-title: "Easy speaking in English – level 2"
+title: "Easy Speaking In English Level 2"
+description: "Saiba tudo sobre Easy Speaking In English Level 2 com a Metodologia Lexis."
 date: "2026-02-23"
-category: "Dicas"
-description: "21-02-2026 12:00 Hello students, We have a website for you. Its name is www.speakinlevels.com. You can use filters to search for people at your level and speak with them. You can also search for people by country or gender (men or women). You can also use a form to write to people, and you will be informed when people are ready... The post Easy speaking in English – level 2 appeared first on English news and easy articles for students of English."
+category: "Dicas"
 keywords: "aprender inglês, praticar inglês, curso de inglês"
 author: "Lexis Academy"
 publisher: "Lexis English Academy"

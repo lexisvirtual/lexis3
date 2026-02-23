@@ -1,8 +1,8 @@
 ---
-title: "The Millionaire Mirage: All That Glitters Is Not Gold"
+title: "The Millionaire Mirage All That Glitters Is Not Gold"
+description: "Saiba tudo sobre The Millionaire Mirage All That Glitters Is Not Gold com a Metodologia Lexis."
 date: "2026-02-23"
-category: "Dicas"
-description: "When something seems too good to be true, it probably isn’t true at all. The story of Karl Rabeder who was once a millionaire, is one of those stories. He had a nice house, fancy cars and he stayed in expensive, five star hotels. But one day, he decided to give it all up. Well, at least that’s what he claimed to do. The post The Millionaire Mirage: All That Glitters Is Not Gold appeared first on Deep English."
+category: "Dicas"
 keywords: "aprender inglês, praticar inglês, curso de inglês"
 author: "Lexis Academy"
 publisher: "Lexis English Academy"

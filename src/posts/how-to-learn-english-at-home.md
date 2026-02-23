@@ -1,8 +1,8 @@
 ---
-title: "How to Learn English at Home"
+title: "How To Learn English At Home"
+description: "Saiba tudo sobre How To Learn English At Home com a Metodologia Lexis."
 date: "2026-02-23"
-category: "Dicas"
-description: "Descubra estratégias práticas para dominar o inglês sem sair de casa, focando em rotina e consistência."
+category: "Dicas"
 keywords: "aprender inglês, praticar inglês, curso de inglês"
 author: "Lexis Academy"
 publisher: "Lexis English Academy"

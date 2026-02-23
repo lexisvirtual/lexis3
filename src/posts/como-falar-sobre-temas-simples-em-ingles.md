@@ -1,8 +1,8 @@
 ---
-title: "Como falar sobre temas simples em inglês"
+title: "Como Falar Sobre Temas Simples Em Ingles"
+description: "Saiba tudo sobre Como Falar Sobre Temas Simples Em Ingles com a Metodologia Lexis."
 date: "2026-02-19"
-category: "Dicas"
-description: "Aprenda a falar sobre assuntos cotidianos em inglês com facilidade"
+category: "Dicas"
 keywords: "ingles facil, conversação em inglês, vocabulário básico"
 author: "Lexis Academy"
 publisher: "Lexis English Academy"

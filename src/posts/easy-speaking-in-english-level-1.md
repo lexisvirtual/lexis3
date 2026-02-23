@@ -1,8 +1,8 @@
 ---
-title: "Easy speaking in English – level 1"
+title: "Easy Speaking In English Level 1"
+description: "Saiba tudo sobre Easy Speaking In English Level 1 com a Metodologia Lexis."
 date: "2026-02-23"
-category: "Dicas"
-description: "21-02-2026 12:00 Hello students, There is a website for you. It is www.speakinlevels.com. It is for students of English. It is for speaking. You can find people at your level of English. You can find people from different countries. You can choose to talk to men or women. Are you afraid of new people? Don’t worry! With Speak in Levels, you... The post Easy speaking in English – level 1 appeared first on English news and easy articles for students of English."
+category: "Dicas"
 keywords: "aprender inglês, praticar inglês, curso de inglês"
 author: "Lexis Academy"
 publisher: "Lexis English Academy"

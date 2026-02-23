@@ -37,9 +37,15 @@ ESTRUTURA: # Título, ## Vocabulary, ## Key Structures, ## Dialogues, ## 3F Trai
       // Extrair Descrição Magnética se existir
       let dynamicDescription = article.description || article.title;
       const descMatch = content.match(/\[\[DESCRIPTION\]\]:\s*(.*)/i);
+
       if (descMatch) {
         dynamicDescription = descMatch[1].trim();
         content = content.replace(/\[\[DESCRIPTION\]\]:.*/i, '').trim();
+      }
+
+      // NOVO: Detector de Descrição Tóxica (Legacy Fail)
+      if (dynamicDescription.includes("Post legado resgatado") || dynamicDescription.length < 10) {
+        dynamicDescription = `Descubra os segredos de "${article.title}" e como dominar esse contexto em inglês com a Metodologia Lexis.`;
       }
 
       // Normalizar data (usar pubDate original se existir, senão hoje no fuso de Brasília)

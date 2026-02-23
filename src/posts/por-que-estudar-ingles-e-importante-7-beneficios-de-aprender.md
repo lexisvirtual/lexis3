@@ -1,8 +1,8 @@
 ---
-title: "Por que estudar inglês é importante: 7 benefícios de aprender inglês"
+title: "Por Que Estudar Ingles E Importante 7 Beneficios De Aprender"
+description: "Saiba tudo sobre Por Que Estudar Ingles E Importante 7 Beneficios De Aprender com a Metodologia Lexis."
 date: "2026-02-06"
-category: "Dicas"
-description: "Aprenda inglês e abra portas de oportunidades em carreira e vida pessoal"
+category: "Dicas"
 keywords: "aprender inglês, benefícios do inglês, estudo de inglês"
 author: "Lexis Academy"
 publisher: "Lexis English Academy"
