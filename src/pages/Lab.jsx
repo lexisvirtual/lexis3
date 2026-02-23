@@ -35,7 +35,7 @@ const LabHome = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState('');
     const [scrollProgress, setScrollProgress] = useState(0);
-    const [parallaxY, setParallaxY] = useState(0);
+    const [heroOpacity, setHeroOpacity] = useState(1);
 
     const openModal = (course = '') => { setSelectedCourse(course); setIsModalOpen(true); };
 
@@ -46,10 +46,16 @@ const LabHome = () => {
             const scrollTop = window.scrollY;
             const docHeight = document.body.scrollHeight - window.innerHeight;
             const progress = (scrollTop / docHeight) * 100;
+
             setScrollProgress(progress);
             setParallaxY(scrollTop * 0.02);
+
+            // Cinematic Hero Fade (40% viewport threshold)
+            const fadeThreshold = window.innerHeight * 0.4;
+            const opacity = Math.max(0, 1 - (scrollTop / fadeThreshold));
+            setHeroOpacity(opacity);
         };
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
@@ -64,15 +70,50 @@ const LabHome = () => {
     return (
         <div className="flex flex-col w-full min-h-screen relative overflow-x-hidden ana-lab-system">
             <style>{`
-                /* ANA DESIGN SYSTEM - AUTHORITATIVE MOTION (v3) */
+                /* ANA DESIGN SYSTEM - ATMOSPHERIC FIELD (v4) */
                 .ana-lab-system {
                     --premium-easing: cubic-bezier(0.22, 1, 0.36, 1);
                     --accent-gold: #fbd24c;
-                    --hero-reveal: 0.9s;
                     --section-reveal: 0.75s;
                 }
 
-                /* 1. Scroll Progress (Ferramenta) */
+                /* 1. Atmo Light Field (WebGL-lite) */
+                .atmo-field {
+                    position: fixed;
+                    inset: 0;
+                    pointer-events: none;
+                    z-index: 1;
+                    overflow: hidden;
+                    background: #0f172a;
+                }
+                .atmo-blob {
+                    position: absolute;
+                    width: 100vw;
+                    height: 100vh;
+                    filter: blur(80px);
+                    opacity: 0.15;
+                    mix-blend-mode: plus-lighter;
+                    animation: atmoBreathing 15s ease-in-out infinite alternate;
+                }
+                .atmo-blob-1 {
+                    background: radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.2), transparent 50%);
+                    animation-duration: 20s;
+                }
+                .atmo-blob-2 {
+                    background: radial-gradient(circle at 80% 80%, rgba(251, 210, 76, 0.1), transparent 50%);
+                    animation-duration: 15s;
+                    animation-delay: -2s;
+                }
+                @keyframes atmoBreathing {
+                    0% { transform: translate(-5%, -5%) scale(1); }
+                    100% { transform: translate(5%, 5%) scale(1.1); }
+                }
+
+                @media (max-width: 768px) {
+                    .atmo-blob { display: none; } /* Performance Shield */
+                }
+
+                /* 2. Scroll Progress (Ferramenta) */
                 .scroll-progress-bar {
                     position: fixed;
                     top: 0;
@@ -82,21 +123,6 @@ const LabHome = () => {
                     opacity: 0.7;
                     z-index: 9999;
                     transition: width 0.1s linear;
-                }
-
-                /* 2. Fundo Assimétrico com Micro-Parallax */
-                .bg-atmo {
-                    position: fixed;
-                    inset: 0;
-                    pointer-events: none;
-                    z-index: 1;
-                    will-change: transform;
-                }
-                .glow-1 {
-                    background: radial-gradient(circle at 15% 15%, rgba(255,255,255,0.03), transparent 50%);
-                }
-                .glow-2 {
-                    background: radial-gradient(circle at 85% 85%, rgba(251, 210, 76, 0.015), transparent 50%);
                 }
 
                 /* 3. Noise Estático Overlay */
@@ -112,10 +138,10 @@ const LabHome = () => {
 
                 /* 4. Gradual Focus Shift (Hero) */
                 .hero-focus-shift {
-                    animation: focusShift 0.8s var(--premium-easing) forwards;
+                    animation: focusShift 1s var(--premium-easing) forwards;
                 }
                 @keyframes focusShift {
-                    from { filter: blur(4px); opacity: 0; }
+                    from { filter: blur(6px); opacity: 0; }
                     to { filter: blur(0); opacity: 1; }
                 }
 
@@ -123,8 +149,8 @@ const LabHome = () => {
                 .word-stagger {
                     display: inline-block;
                     opacity: 0;
-                    transform: translateY(6px);
-                    animation: wordUp 0.6s var(--premium-easing) forwards;
+                    transform: translateY(8px);
+                    animation: wordUp 0.7s var(--premium-easing) forwards;
                 }
                 @keyframes wordUp {
                     to { opacity: 1; transform: translateY(0); }
@@ -142,7 +168,7 @@ const LabHome = () => {
                     transform: translateY(0);
                 }
 
-                /* Underline Artesanal */
+                /* UI Elements Refined */
                 a::after {
                     content: "";
                     position: absolute;
@@ -152,16 +178,13 @@ const LabHome = () => {
                     transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 }
                 a:hover::after { width: 100%; }
-
-                /* Precisão Profissional */
                 button:active { transform: scale(0.985); }
                 button { transition: transform 0.2s var(--premium-easing), filter 0.2s ease; }
                 button:hover { transform: translateY(-2px); filter: brightness(1.03); }
 
-                /* Proporção 1.4x */
                 .section-alt:nth-child(odd) { padding: 160px 0; }
                 .section-alt:nth-child(even) { padding: 112px 0; }
-                .divider-v { width: 1px; height: 50px; background: rgba(255,255,255,0.08); margin: 0 auto; }
+                .divider-v { width: 1px; height: 50px; background: rgba(255,255,255,0.08); margin: 60px auto; }
 
                 .ana-heading { letter-spacing: -0.015em; line-height: 1.05; }
                 .ana-sub { letter-spacing: 0.12em; text-transform: uppercase; font-weight: 800; font-size: 0.65rem; opacity: 0.7; }
@@ -169,9 +192,12 @@ const LabHome = () => {
 
             <div className="scroll-progress-bar" style={{ width: `${scrollProgress}%` }} />
 
-            {/* Background Layers com Parallax */}
-            <div className="bg-atmo glow-1" style={{ transform: `translateY(${parallaxY}px)` }} />
-            <div className="bg-atmo glow-2" style={{ transform: `translateY(${-parallaxY * 0.5}px)` }} />
+            {/* Atmosfera Cinematográfica (Cinematic Field) */}
+            <div className="atmo-field" style={{ opacity: heroOpacity }}>
+                <div className="atmo-blob atmo-blob-1" style={{ transform: `translateY(${parallaxY}px)` }} />
+                <div className="atmo-blob atmo-blob-2" style={{ transform: `translateY(${-parallaxY * 0.5}px)` }} />
+            </div>
+
             <div id="seasonal-layer"></div>
 
             <SEO
