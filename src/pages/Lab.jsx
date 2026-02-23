@@ -208,16 +208,6 @@ const LabHome = () => {
 
     return (
         <div className="flex flex-col w-full min-h-screen relative overflow-x-hidden ana-lab-system">
-            {/* CEE Status Indicator (Dev Only) */}
-            <div className="fixed bottom-4 right-4 z-[9999] bg-black/60 backdrop-blur-md border border-white/10 px-3 py-2 rounded-lg text-[10px] font-mono text-[#94a3b8] flex flex-col gap-1 shadow-2xl pointer-events-none opacity-40 hover:opacity-100 transition-opacity">
-                <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                    <span className="text-white font-bold uppercase tracking-widest">CEE Active</span>
-                </div>
-                <div>Concept: <span className="text-[#fbd24c]">{activeTheme.concept || 'Standard'}</span></div>
-                <div>Year: <span className="text-white">2026</span></div>
-                <div className="opacity-60 text-[8px]">DNA: {activeTheme.geometry_language} / {activeTheme.movement_axis}</div>
-            </div>
             <style>{`
                 /* 1. Atmo WebGL Field (v10/10) */
                 .ana-lab-system {
