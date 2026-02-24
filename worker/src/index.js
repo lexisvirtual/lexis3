@@ -121,23 +121,24 @@ const getStatus = async (env) => {
         env.LEXIS_PUBLISHED_POSTS.get('system:qualityIndex'),
     ]);
 
-    let busyInfo = null;
-    try { busyInfo = busyRaw ? JSON.parse(busyRaw) : null; } catch (_) { busyInfo = busyRaw ? { owner: 'unknown' } : null; }
+    let busy = null;
+    try { busy = busyRaw ? JSON.parse(busyRaw) : null; } catch (_) { busy = { owner: 'unknown' }; }
 
-    let qualityIndex = null;
-    try { qualityIndex = qualityIndexRaw ? JSON.parse(qualityIndexRaw) : null; } catch (_) { qualityIndex = null; }
+    let qIndex = null;
+    try { qIndex = qualityIndexRaw ? JSON.parse(qualityIndexRaw) : null; } catch (_) { qIndex = null; }
 
     const lastAuditTs = lastAuditRaw ? parseInt(lastAuditRaw) : null;
+    const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
 
     return {
-        v: '7.20',
+        v: '7.21',
         engine: 'Upgrade Engine Alpha',
         lock: {
             is_busy: !!busyRaw,
-            owner: busyInfo?.owner || null,
-            expires: busyInfo?.expires ? new Date(busyInfo.expires).toLocaleTimeString('pt-BR') : null,
+            owner: busy?.owner || null,
+            expires: busy?.expires ? new Date(busy.expires).toLocaleTimeString('pt-BR') : null,
         },
-        last_log: statusLog,
+        lastLog: statusLog || "Nenhum log disponível",
         queues: {
             triaged: triaged.keys.length,
             rewritten: rewritten.keys.length,
@@ -145,27 +146,20 @@ const getStatus = async (env) => {
         audit: {
             cursor: cursor || 'reset',
             last_run: lastAuditTs ? new Date(lastAuditTs).toLocaleString('pt-BR') : 'nunca',
-            last_run_ts: lastAuditTs,
         },
         blog: {
             total_posts: parseInt(totalPostsRaw || '0'),
-            quality_ema: qualityIndex?.index || null,
-            target_threshold: qualityIndex?.threshold || 75,
-            status: qualityIndex?.status === 'active' ? 'Elite Evolution' : 'Data Collection',
-            samples: qualityIndex?.samples || 0,
-            posts_below_threshold: parseInt(belowRaw || '0'),
+            quality_ema: qIndex?.index || 0,
+            target_threshold: qIndex?.threshold || 75,
+            status: qIndex?.status === 'active' ? 'Elite Evolution' : 'Data Collection',
         },
-        recent_published: published.keys.map(k => k.name.replace('published:', '')),
         leo: {
-            day: Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24)),
-            target: (() => {
-                const day = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
-                try { return getLeoTarget(day); } catch (e) { return null; }
-            })(),
+            day: dayOfYear,
+            target: getLeoTarget(dayOfYear),
             plan_phase: new Date().getMonth() <= 1 ? "Fase 1: Fundação & Informação" :
                 new Date().getMonth() === 2 ? "Fase 2: Comparativo" :
                     new Date().getMonth() === 3 ? "Fase 3: Autoridade/Neuro" : "Fase 4+: Conversão/Local",
-            reasoning: "Protocolo v1.1: Priorizando Expansão Semântica e Consolidação de Clusters Informativos."
+            reasoning: "Protocolo v1.1: Foco em Expansão Semântica e Consolidação de Clusters."
         }
     };
 };

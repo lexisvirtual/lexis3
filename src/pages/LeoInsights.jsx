@@ -173,24 +173,20 @@ const LeoInsights = () => {
                         </h2>
                         <div className="font-mono text-sm text-green-500/80 space-y-3 h-48 overflow-y-auto custom-scrollbar">
                             <p className="flex gap-4">
-                                <span className="text-slate-600">[06:00]</span>
-                                <span>Cron Job: Verificando fila de publicações...</span>
+                                <span className="text-slate-600">[{new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}]</span>
+                                <span className="text-white font-bold">{data?.lastLog || 'Aguardando próximo log...'}</span>
                             </p>
-                            <p className="flex gap-4">
-                                <span className="text-slate-600">[06:01]</span>
-                                <span className="text-white">Leo: Nenhuma pauta manual. Ativando Fallback Estratégico.</span>
+                            <p className="flex gap-4 opacity-50">
+                                <span className="text-slate-600">[INFO]</span>
+                                <span>Leo: Sistema operando sob Protocolo SEO v1.1.</span>
                             </p>
-                            <p className="flex gap-4">
-                                <span className="text-slate-600">[06:03]</span>
-                                <span>Rodando Auditoria Roger... Score 94!</span>
-                            </p>
-                            <p className="flex gap-4">
-                                <span className="text-slate-600">[06:05]</span>
-                                <span className="text-[#fbd24c]">✅ Publicando Ativo de Elite sobre "{data?.leo?.target?.topic}"</span>
+                            <p className="flex gap-4 opacity-50">
+                                <span className="text-slate-600">[INFO]</span>
+                                <span>Memory: Score de Prioridade recalculado para {data?.blog?.total_posts} ativos.</span>
                             </p>
                             <p className="flex gap-4 animate-pulse">
-                                <span className="text-slate-600">[{new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}]</span>
-                                <span>Leo: Monitorando SERP para termos de Imersão Intensiva...</span>
+                                <span className="text-slate-600">[SCAN]</span>
+                                <span className="text-[#fbd24c]">Monitorando SERP para: {data?.leo?.target?.topic}</span>
                             </p>
                         </div>
                         <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#0a101f] to-transparent pointer-events-none"></div>
