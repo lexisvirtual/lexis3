@@ -87,4 +87,11 @@ A: Sim, é necessário ter experiência em natação para se tornar um nadador d
 **A:** Probably several hours a day. **Flexibility** is key too.  
 **B:** Absolutely, it’s a beautiful blend of sport and art.
 
-## SEO DATA
+
+
+
+
+
+
+
+```
