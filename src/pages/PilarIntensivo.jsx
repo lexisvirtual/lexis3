@@ -1,4 +1,3 @@
-```jsx
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Navbar from '../components/Navbar';
@@ -48,14 +47,6 @@ const PilarIntensivo = () => {
                             "@type": "Answer",
                             "text": "Na Lexis Academy, nosso curso intensivo de elite dura 14 dias, com 10 horas diárias de prática deliberada, totalizando 120 horas de treinamento."
                         }
-                    },
-                    {
-                        "@type": "Question",
-                        "name": "Por que escolher o Inglês Intensivo?",
-                        "acceptedAnswer": {
-                            "@type": "Answer",
-                            "text": "Tempo é dinheiro. Estudar por 3 anos para chegar a um nível intermediário é um desperdício de potencial. Na Lexis, aplicamos o princípio da intensidade cognitiva: Foco Total, Ambiente Controlado e Feedback Instantâneo."
-                        }
                     }
                 ]
             }
@@ -86,21 +77,20 @@ const PilarIntensivo = () => {
 
             <main className="relative z-10 pt-40 pb-32 px-6">
                 <div className="max-w-4xl mx-auto pillar-content">
-                    <SectionHeader>
-                        <h1 className="text-5xl md:text-7xl font-black text-white mb-8 tracking-tighter">Curso de Inglês <span className="text-[#fbd24c]">Intensivo</span> no Brasil</h1>
-                    </SectionHeader>
+                    <h1 className="text-5xl md:text-7xl font-black text-white mb-8 tracking-tighter">Curso de Inglês <span className="text-[#fbd24c]">Intensivo</span> no Brasil</h1>
 
                     <section>
                         <h2>O que esperar de um curso intensivo de elite?</h2>
                         <div className="direct-answer">
                             <h3>Resposta Direta</h3>
-                            <p>Um curso de inglês intensivo de elite deve oferecer uma carga horária condensada (mínimo 120h) em um curto espaço de tempo, focando em habilidades motoras e processamento em tempo real, eliminando a dependência do pensamento gramatical lento.</p>
+                            <p>Um curso de inglês intensivo de elite deve oferecer uma carga horária condensada (mínimo 120h) in a short period, focando em habilidades motoras e processamento em tempo real, eliminando a dependência do pensamento gramatical lento.</p>
                         </div>
                         <p>Diferente de cursos tradicionais, o intensivo Lexis é desenhado para profissionais que não têm tempo a perder. Usamos o método 3F para garantir que cada hora de estudo seja convertida em fluência ativa.</p>
                     </section>
 
                     <section className="mt-20">
                         <h2>Por que escolher o Inglês Intensivo?</h2>
+                        <p>Tempo é dinheiro. Estudar por 3 anos para chegar a um nível intermediário é um desperdício de potencial. Na Lexis, aplicamos o princípio da intensidade cognitiva:</p>
                         <ul className="list-disc pl-6 text-slate-400 space-y-4">
                             <li><strong>Foco Total:</strong> Sem interrupções semanais.</li>
                             <li><strong>Ambiente Controlado:</strong> Simulações de mundo real.</li>
@@ -115,4 +105,3 @@ const PilarIntensivo = () => {
 };
 
 export default PilarIntensivo;
-```
