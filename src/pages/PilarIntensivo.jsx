@@ -1,9 +1,10 @@
+```jsx
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import LeadModal from '../components/LeadModal';
-import { useRevealOnScroll, Button, SectionHeader } from '../components/shared';
+import { useRevealOnScroll, SectionHeader } from '../components/shared';
 import WebGLBackground from '../components/WebGLBackground';
 
 const PilarIntensivo = () => {
@@ -47,6 +48,14 @@ const PilarIntensivo = () => {
                             "@type": "Answer",
                             "text": "Na Lexis Academy, nosso curso intensivo de elite dura 14 dias, com 10 horas diárias de prática deliberada, totalizando 120 horas de treinamento."
                         }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Por que escolher o Inglês Intensivo?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Tempo é dinheiro. Estudar por 3 anos para chegar a um nível intermediário é um desperdício de potencial. Na Lexis, aplicamos o princípio da intensidade cognitiva: Foco Total, Ambiente Controlado e Feedback Instantâneo."
+                        }
                     }
                 ]
             }
@@ -77,7 +86,9 @@ const PilarIntensivo = () => {
 
             <main className="relative z-10 pt-40 pb-32 px-6">
                 <div className="max-w-4xl mx-auto pillar-content">
-                    <h1 className="text-5xl md:text-7xl font-black text-white mb-8 tracking-tighter">Curso de Inglês <span className="text-[#fbd24c]">Intensivo</span> no Brasil</h1>
+                    <SectionHeader>
+                        <h1 className="text-5xl md:text-7xl font-black text-white mb-8 tracking-tighter">Curso de Inglês <span className="text-[#fbd24c]">Intensivo</span> no Brasil</h1>
+                    </SectionHeader>
 
                     <section>
                         <h2>O que esperar de um curso intensivo de elite?</h2>
@@ -90,7 +101,6 @@ const PilarIntensivo = () => {
 
                     <section className="mt-20">
                         <h2>Por que escolher o Inglês Intensivo?</h2>
-                        <p>Tempo é dinheiro. Estudar por 3 anos para chegar a um nível intermediário é um desperdício de potencial. Na Lexis, aplicamos o princípio da intensidade cognitiva:</p>
                         <ul className="list-disc pl-6 text-slate-400 space-y-4">
                             <li><strong>Foco Total:</strong> Sem interrupções semanais.</li>
                             <li><strong>Ambiente Controlado:</strong> Simulações de mundo real.</li>
@@ -105,3 +115,4 @@ const PilarIntensivo = () => {
 };
 
 export default PilarIntensivo;
+```
