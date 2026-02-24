@@ -24,6 +24,7 @@ const Footer = () => {
                     <a href="https://www.youtube.com/lexisvirtual" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">YouTube</a>
                     <a href="https://g.page/LexisEA/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Maps</a>
                     <a href="https://g.co/kgs/aCZixEw" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Google</a>
+                    <a href="/leo-insights" className="hover:text-[#fbd24c] transition-colors border border-white/10 px-3 py-1 rounded-full text-[10px]">Leo Insights</a>
                     <a href="/rss.xml" target="_blank" rel="noopener noreferrer" className="hover:text-[#f97316] transition-colors" title="Assinar RSS Feed">RSS</a>
                 </div>
             </div>

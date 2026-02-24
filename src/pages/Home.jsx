@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import activeTheme from '../data/cee/active-theme.json';
+import { getActivePalette } from '../utils/themePalettes';
 import SEO from '../components/SEO';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -36,6 +37,7 @@ import WebGLBackground from '../components/WebGLBackground';
 
 const Home = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const currentPalette = getActivePalette(activeTheme.event);
     const [selectedCourse, setSelectedCourse] = useState('');
     const [scrollProgress, setScrollProgress] = useState(0);
     const [heroOpacity, setHeroOpacity] = useState(1);
@@ -77,7 +79,7 @@ const Home = () => {
                 /* 1. Atmo WebGL Field (v10/10) */
                 .ana-design-system {
                     --premium-easing: cubic-bezier(0.22, 1, 0.36, 1);
-                    --accent-gold: #fbd24c;
+                    --accent-gold: ${currentPalette.hexAcc};
                     --section-reveal: 0.75s;
                 }
 
@@ -91,7 +93,7 @@ const Home = () => {
                     top: 0;
                     left: 0;
                     height: 2px;
-                    background: var(--accent-gold);
+                    background: ${currentPalette.hexAcc};
                     opacity: 0.7;
                     z-index: 9999;
                     transition: width 0.1s linear;
@@ -160,6 +162,12 @@ const Home = () => {
 
                 .ana-heading { letter-spacing: -0.015em; line-height: 1.05; }
                 .ana-sub { letter-spacing: 0.12em; text-transform: uppercase; font-weight: 800; font-size: 0.65rem; opacity: 0.7; }
+                
+                /* Override global de cores Ana */
+                .text-\\[\\#fbd24c\\] { color: ${currentPalette.hexAcc} !important; }
+                .bg-\\[\\#fbd24c\\] { background-color: ${currentPalette.hexAcc} !important; }
+                .border-\\[\\#fbd24c\\] { border-color: ${currentPalette.hexAcc} !important; }
+                .decoration-\\[\\#fbd24c\\] { text-decoration-color: ${currentPalette.hexAcc} !important; }
             `}</style>
 
             <div className="scroll-progress-bar" style={{ width: `${scrollProgress}%` }} />

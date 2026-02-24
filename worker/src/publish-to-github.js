@@ -115,7 +115,28 @@ function buildMarkdown(post) {
   const category = post.category || 'Dicas';
   const date = post.date || new Date().toISOString().split('T')[0];
   const content = post.content || '';
-  const keywords = post.keywords || 'aprender inglês, praticar inglês, curso de inglês';
+  const keywords = post.keywords || 'aprender inglês, praticar inglês, curso de inglês, inglês por imersão, inglês intensivo';
+
+  const aiSnippet = post.seo?.ai_snippet || '';
+  const aiContext = post.seo?.ai_context || '';
+  const slug = post.slug || '';
+
+  // Leo: JSON-LD for AI Search & Google
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": title,
+    "description": description,
+    "datePublished": date,
+    "author": { "@type": "Organization", "name": "Lexis Academy" },
+    "publisher": { "@type": "Organization", "name": "Lexis English Academy" },
+    "mainEntityOfPage": { "@type": "WebPage", "@id": `https://lexis.academy/blog/${slug}` },
+    "abstract": aiSnippet,
+    "mentions": [
+      { "@type": "Thing", "name": "Inglês por Imersão" },
+      { "@type": "Thing", "name": "Intercâmbio sem sair do Brasil" }
+    ]
+  };
 
   return `---
 title: "${title}"
@@ -125,14 +146,21 @@ description: "${description}"
 keywords: "${keywords}"
 author: "Lexis Academy"
 publisher: "Lexis English Academy"
-mainEntityOfPage: "https://lexis.academy/blog/${post.slug}"
+mainEntityOfPage: "https://lexis.academy/blog/${slug}"
+ai_snippet: "${escapeYaml(aiSnippet)}"
+ai_context: "${escapeYaml(aiContext)}"
+lexis_version: "${post.lexis_version || '2.5-leo'}"
 ---
+
+<script type="application/ld+json">
+${JSON.stringify(jsonLd, null, 2)}
+</script>
 
 ${content}
 
 ---
 *Este conteúdo foi gerado por IA com base em fontes premium de ensino de inglês e revisado pela metodologia Lexis Academy.*
-*Fonte Original: [${post.originalTitle || 'Ver no site original'}](${post.originalSource})*
+${post.originalSource ? `*Fonte Original: [${post.originalTitle || 'Ver no site original'}](${post.originalSource})*` : ''}
 `;
 }
 

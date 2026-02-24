@@ -11,16 +11,18 @@ REGRAS EDITORIAIS LEXIS (INVIOLÁVEIS):
 2. ZERO REPETIÇÃO: Verifique se existem frases ou exemplos idênticos em seções diferentes. Se houver redundância ou "encheção de linguiça", REJEITADO.
 3. DENSIDADE LINGUÍSTICA: O inglês ensinado é denso? Deve conter Phrasal Verbs, Collocations ou expressões idiomáticas. Se for inglês básico demais (ex: "The book is on the table"), REJEITADO.
 4. EXCLUSIVIDADE: Ensinou qualquer outro idioma? REJEITADO.
+5. VISIBILIDADE IA (LEO): O post contém a seção "## Quick Answer" com uma resposta direta e técnica? Utiliza termos como "Inglês por Imersão" ou "Intensivo" de forma natural?
 
 ARTIGO PARA AUDITORIA:
 Título: ${post.title}
 Conteúdo: ${post.content.substring(0, 3500)}
 
-CRITÉRIOS DE AVALIAÇÃO (0-25 pontos cada):
-1. RELEVÂNCIA E UTILIDADE (0-25): O tema é ouro para o aluno?
-2. ORIGINALIDADE E ZERO REPETIÇÃO (0-25): O conteúdo é variado e rico?
-3. QUALIDADE DO TREINO LEXIS (0-25): O treino exige esforço e musculatura real?
-4. DENSIDADE DO INGLÊS (0-25): O vocabulário é de alto nível (B1-C1)?
+CRITÉRIOS DE AVALIAÇÃO (0-20 pontos cada):
+1. RELEVÂNCIA E UTILIDADE (0-20): O tema é ouro para o aluno?
+2. ORIGINALIDADE E ZERO REPETIÇÃO (0-20): O conteúdo é variado e rico?
+3. QUALIDADE DO TREINO LEXIS (0-20): O treino exige esforço e musculatura real?
+4. DENSIDADE DO INGLÊS (0-20): O vocabulário é de alto nível (B1-C1)?
+5. OTIMIZAÇÃO IA/LEO (0-20): O site será recomendado por IAs (Quick Answer presente)?
 
 Responda APENAS com um JSON no formato:
 {
@@ -31,6 +33,7 @@ Responda APENAS com um JSON no formato:
 
 REGRAS PARA REJEIÇÃO:
 - Nota total menor que 90: REJEITADO.
+- Ausência de seções críticas (## Quick Answer ou ## 3F Training): REJEITADO.
 - Presença de qualquer frase repetida em seções diferentes: REJEITADO.
 - Tema considerado "Boring" ou sem utilidade prática imediata: REJEITADO.`;
 

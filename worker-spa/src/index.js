@@ -21,13 +21,14 @@ const ORIGIN = 'https://lexisvirtual.github.io/lexis3';
 // Rotas SPA conhecidas (páginas do React Router)
 const SPA_ROUTES = [
     '/imersao',
-    '/maestria', 
+    '/maestria',
     '/the-way',
     '/blog',
     '/metodo',
     '/depoimentos',
     '/consultor',
-    '/contato'
+    '/contato',
+    '/leo-insights'
 ];
 
 // Extensões de arquivos estáticos
@@ -83,7 +84,7 @@ export default {
 
         // 7. Qualquer outra rota -> Tentar buscar do origin primeiro
         const originResponse = await fetchFromOrigin(pathname, request);
-        
+
         // Se o origin retornar 404, servir o index.html (pode ser uma rota SPA não listada)
         if (originResponse.status === 404) {
             return serveSPAIndex(request);
@@ -104,7 +105,7 @@ function isStaticFile(pathname) {
  * Verifica se o pathname é uma rota SPA conhecida
  */
 function isSPARoute(pathname) {
-    return SPA_ROUTES.some(route => 
+    return SPA_ROUTES.some(route =>
         pathname === route || pathname === route + '/'
     );
 }
@@ -114,7 +115,7 @@ function isSPARoute(pathname) {
  */
 async function fetchFromOrigin(pathname, originalRequest) {
     const originUrl = ORIGIN + pathname;
-    
+
     const response = await fetch(originUrl, {
         method: originalRequest.method,
         headers: {
@@ -126,7 +127,7 @@ async function fetchFromOrigin(pathname, originalRequest) {
 
     // Clonar a resposta para poder modificar headers
     const newResponse = new Response(response.body, response);
-    
+
     // Adicionar headers de cache apropriados
     if (response.ok) {
         // Cache de 1 hora para arquivos estáticos
@@ -144,7 +145,7 @@ async function fetchFromOrigin(pathname, originalRequest) {
  */
 async function serveSPAIndex(originalRequest) {
     const originUrl = ORIGIN + '/index.html';
-    
+
     const response = await fetch(originUrl, {
         method: 'GET',
         headers: {

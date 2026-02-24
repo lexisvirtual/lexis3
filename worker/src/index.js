@@ -15,6 +15,7 @@ import { triageArticles } from './content-triage.js';
 import { rewriteArticles } from './content-rewriter.js';
 import { publishPostsToGitHub } from './publish-to-github.js';
 import { performGreatPurge } from './retroactive-audit.js';
+import { getLeoTarget } from './leo-strategy.js';
 
 // ================================================
 // Helpers
@@ -155,6 +156,17 @@ const getStatus = async (env) => {
             posts_below_threshold: parseInt(belowRaw || '0'),
         },
         recent_published: published.keys.map(k => k.name.replace('published:', '')),
+        leo: {
+            day: Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24)),
+            target: (() => {
+                const day = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+                try { return getLeoTarget(day); } catch (e) { return null; }
+            })(),
+            plan_phase: new Date().getMonth() <= 1 ? "Fase 1: Fundação & Informação" :
+                new Date().getMonth() === 2 ? "Fase 2: Comparativo" :
+                    new Date().getMonth() === 3 ? "Fase 3: Autoridade/Neuro" : "Fase 4+: Conversão/Local",
+            reasoning: "Protocolo v1.1: Priorizando Expansão Semântica e Consolidação de Clusters Informativos."
+        }
     };
 };
 
@@ -164,6 +176,17 @@ const getStatus = async (env) => {
 export default {
     async fetch(request, env, ctx) {
         const url = new URL(request.url);
+
+        // --- Handle CORS Preflight ---
+        if (request.method === 'OPTIONS') {
+            return new Response(null, {
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                    'Access-Control-Allow-Headers': 'Content-Type',
+                }
+            });
+        }
 
         // --- /auto-publish ---
         if (url.pathname === '/auto-publish') {
@@ -259,6 +282,11 @@ export default {
 function jsonResponse(data, status = 200) {
     return new Response(JSON.stringify(data, null, 2), {
         status,
-        headers: { 'Content-Type': 'application/json' }
+        headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type'
+        }
     });
 }

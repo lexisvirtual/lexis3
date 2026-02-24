@@ -1,8 +1,10 @@
 import React from 'react';
 import activeTheme from '../data/cee/active-theme.json';
+import { getActivePalette } from '../utils/themePalettes';
 
 const WebGLBackground = ({ opacity = 1, parallax = 0 }) => {
     const canvasRef = React.useRef(null);
+    const currentPalette = getActivePalette(activeTheme.event);
 
     React.useEffect(() => {
         const canvas = canvasRef.current;
@@ -24,6 +26,9 @@ const WebGLBackground = ({ opacity = 1, parallax = 0 }) => {
             uniform float u_intensity;
             uniform int u_geometry;
             uniform int u_axis;
+            uniform vec3 u_color1;
+            uniform vec3 u_color2;
+            uniform vec3 u_accent;
 
             float noise(vec2 p) {
                 return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
@@ -56,18 +61,11 @@ const WebGLBackground = ({ opacity = 1, parallax = 0 }) => {
                 else if (u_geometry == 3) n = noise(uv + t);
                 else n = smoothNoise(uv * 1.5 + t + motion);
 
-                // Nível 30: Base discreta e sóbria
-                vec3 color1 = vec3(0.04, 0.07, 0.13); // Deep Lexis Blue (mais escuro)
-                vec3 color2 = vec3(0.01, 0.01, 0.03); // Foundation Black
-                vec3 accent = vec3(1.0, 0.84, 0.35);  // Pure Gold Accent
+                vec3 base = mix(u_color1, u_color2, n * 0.8);
                 
-                vec3 base = mix(color1, color2, n * 0.8);
-                
-                // Ana v30: Glow contido e sutil
                 float glow = pow(n, 3.5) * u_intensity * 1.2; 
-                base = mix(base, accent * 0.7, clamp(glow, 0.0, 0.6));
+                base = mix(base, u_accent, clamp(glow, 0.0, 0.6));
                 
-                // Micro-Noise reduzido
                 float mNoise = noise(uv * 500.0) * 0.006;
                 base += mNoise;
 
@@ -104,7 +102,10 @@ const WebGLBackground = ({ opacity = 1, parallax = 0 }) => {
             opac: gl.getUniformLocation(program, 'u_opacity'),
             intens: gl.getUniformLocation(program, 'u_intensity'),
             geom: gl.getUniformLocation(program, 'u_geometry'),
-            axis: gl.getUniformLocation(program, 'u_axis')
+            axis: gl.getUniformLocation(program, 'u_axis'),
+            c1: gl.getUniformLocation(program, 'u_color1'),
+            c2: gl.getUniformLocation(program, 'u_color2'),
+            acc: gl.getUniformLocation(program, 'u_accent')
         };
 
         const geomMap = { mesh: 0, linear: 1, diagonal: 2, noise: 3 };
@@ -129,11 +130,16 @@ const WebGLBackground = ({ opacity = 1, parallax = 0 }) => {
             gl.uniform1i(u.geom, geomMap[activeTheme.geometry_language] || 0);
             gl.uniform1i(u.axis, axisMap[activeTheme.movement_axis] || 0);
 
+            // Pass colors from current palette
+            gl.uniform3fv(u.c1, currentPalette.c1);
+            gl.uniform3fv(u.c2, currentPalette.c2);
+            gl.uniform3fv(u.acc, currentPalette.acc);
+
             gl.drawArrays(gl.TRIANGLES, 0, 6);
             if (!isReduced) requestAnimationFrame(render);
         };
         requestAnimationFrame(render);
-    }, [opacity, parallax]);
+    }, [opacity, parallax, currentPalette]);
 
     return <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />;
 };

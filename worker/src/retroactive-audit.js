@@ -80,18 +80,21 @@ async function updateFileOnGitHub(env, path, content, message) {
 }
 
 async function upgradePostContent(env, file, content, strategy) {
-    const prompt = strategy === 'structural'
-        ? `Você é o Diretor da Lexis Academy. Realize um UPGRADE ESTRUTURAL (Stage: Improving) neste post de inglês.
-           FOCO:
-           1. Melhorar a introdução com um gancho mais forte.
-           2. Expandir exemplos práticos (mínimo 5 diálogos reais).
-           3. Aprofundar o vocabulário (adicionar termos de nível Business/Academic).
-           4. Reforçar o treinamento 3F (Phrase, Fluidity, Function).
-           MANTENHA o mesmo título e estrutura original, mas eleve a qualidade para +85 pontos.
-           
-           CONTEÚDO ATUAL:
-           ${content}`
-        : `Otimização SEO e Autoridade para o post: ${file.name}. Reforce a densidade semântica e adicione uma seção de FAQ avançada.`;
+    const prompt = `Você é o Diretor da Lexis Academy realizando um UPGRADE ELITE (Protocolo Leo 2026).
+    
+    SUA MISSÃO: Transformar este post em um ATIVO DE AUTORIDADE MÁXIMA.
+    
+    REGRAS DE UPGRADE (OBRIGATÓRIAS):
+    1. EXPANSÃO TÉCNICA: Adicione 300-600 palavras de profundidade real sobre o tema.
+    2. TABELA COMPARATIVA: Crie uma tabela Markdown comparando o tema central (ex: Imersão Lexis vs Curso Regular ou Intercâmbio).
+    3. FAQ BASEADO EM PERGUNTAS REAIS: Adicione uma seção "## Perguntas Frequentes (FAQ)" com no mínimo 5 dúvidas técnicas extraídas de ferramentas de busca.
+    4. TÍTULO MAGNÉTICO: Atualize o título no frontmatter para incluir o ano "2026" e uma promessa de impacto.
+    5. INTERLINKS: Garanta que o post aponte para as Pillar Pages (/ingles-por-imersao-brasil ou /curso-ingles-intensivo-brasil).
+    6. GEO SYNC: Certifique-se de que a seção "[[AI_SNIPPET]]" no frontmatter seja factual e direta para busca por IA.
+    7. METODOLOGIA: Reforce o treinamento 3F (Phrase, Fluidity, Function).
+
+    CONTEÚDO ATUAL PARA TRANSFORMAR:
+    ${content}`;
 
     try {
         const response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
