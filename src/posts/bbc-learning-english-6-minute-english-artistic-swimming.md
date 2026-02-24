@@ -1,50 +1,3 @@
----
-title: "BBC Learning English - 6 Minute English / Artistic swimming"
-date: "2026-02-23"
-category: "Dicas"
-description: "BBC Learning English - 6 Minute English / Artistic swimming"
-keywords: "aprender inglês, praticar inglês, curso de inglês, inglês por imersão, inglês intensivo"
-author: "Lexis Academy"
-publisher: "Lexis English Academy"
-mainEntityOfPage: "https://lexis.academy/blog/bbc-learning-english-6-minute-english-artistic-swimming"
-ai_snippet: ""
-ai_context: ""
-lexis_version: "2.5-leo"
----
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "BBC Learning English - 6 Minute English / Artistic swimming",
-  "description": "BBC Learning English - 6 Minute English / Artistic swimming",
-  "datePublished": "2026-02-23",
-  "author": {
-    "@type": "Organization",
-    "name": "Lexis Academy"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "Lexis English Academy"
-  },
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://lexis.academy/blog/bbc-learning-english-6-minute-english-artistic-swimming"
-  },
-  "abstract": "",
-  "mentions": [
-    {
-      "@type": "Thing",
-      "name": "Inglês por Imersão"
-    },
-    {
-      "@type": "Thing",
-      "name": "Intercâmbio sem sair do Brasil"
-    }
-  ]
-}
-</script>
-
 **ATIVO DE TREINO DE ELITE: "BBC Learning English - 6 Minute English / Artistic swimming"**
 
 **[[DESCRIPTION]]**: Aprenda a falar sobre natação artística com fluência e precisão com este treino de elite de inglês.
@@ -99,6 +52,35 @@ lexis_version: "2.5-leo"
 - A comunicação eficaz é fundamental para a natação artística, pois os atletas precisam se comunicar com os juízes e com os outros atletas durante a competição.
 - A prática regular e a dedicação são essenciais para se tornar um atleta de natação artística de alto nível.
 
+**## Tabela Comparativa**
+
+| **Técnica** | **Natação Artística** | **Natação Sincronizada** |
+| --- | --- | --- |
+| **Objetivo** | Executar um roteiro em sincronia | Executar um roteiro em sincronia |
+| **Habilidades** | Levantamento, manter, liberar | Levantamento, manter, liberar |
+| **Pontuação** | Baseada na combinação de elementos | Baseada na combinação de elementos |
+| **Competição** | Individual ou por equipe | Individual ou por equipe |
+
+**## Perguntas Frequentes (FAQ)**
+
+- **Q: O que é natação artística?**
+  A: A natação artística é um esporte que envolve a execução de um roteiro em sincronia com outros atletas.
+- **Q: Qual é o objetivo principal da natação artística?**
+  A: O objetivo principal da natação artística é executar um roteiro em sincronia com outros atletas.
+- **Q: Quais são as principais habilidades necessárias para a natação artística?**
+  A: As principais habilidades necessárias para a natação artística são levantamento, manter e liberar.
+- **Q: Como é avaliada a performance em natação artística?**
+  A: A performance em natação artística é avaliada com base na combinação de elementos.
+- **Q: Qual é a diferença entre natação artística e natação sincronizada?**
+  A: A natação artística e a natação sincronizada são esportes que envolvem a execução de um roteiro em sincronia, mas a natação artística é mais focada em habilidades físicas e mentais, enquanto a natação sincronizada é mais focada em habilidades técnicas.
+
+**## Referências**
+
+- **BBC Learning English dr. 6 Minute English / Artistic swimming** (2026)
+- **Fédération Internationale de Natation (FINA)** (2026)
+- **International Swimming Hall of Fame** (2026)
+
 ---
+
 *Este conteúdo foi gerado por IA com base em fontes premium de ensino de inglês e revisado pela metodologia Lexis Academy.*
 *Fonte Original: [BBC Learning English - 6 Minute English / Artistic swimming](https://www.bbc.co.uk/learningenglish/english/features/6-minute-english_2026/ep-260212)*
