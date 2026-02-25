@@ -12,8 +12,9 @@ const RSS_FEEDS = [
   { url: 'https://www.englishinbrazil.com.br/feed', name: 'English in Brazil' },
   { url: 'https://engfluent.com/feed/', name: 'EngFluent' },
   { url: 'https://deepenglish.com/feed/', name: 'Deep English' },
-  { url: 'https://ed.ted.com/lessons/rss', name: 'TED-Ed Lessons' },
+  // TED-Ed removido: feed causa hang no Cloudflare Worker (sem resposta)
   { url: 'https://learnenglish.britishcouncil.org/rss/all', name: 'British Council LearnEnglish' },
+  { url: 'https://www.fluentu.com/blog/english/feed/', name: 'FluentU English' },
 ];
 
 export async function scrapeBlogArticles(env) {
@@ -23,14 +24,21 @@ export async function scrapeBlogArticles(env) {
 
   for (const feed of RSS_FEEDS) {
     try {
-      const response = await fetch(feed.url, {
+      await env.LEXIS_PUBLISHED_POSTS.put('system:log', `[SCRAPER] Lendo: ${feed.name}...`);
+
+      // Promise.race para timeout confiável no Cloudflare Workers
+      const TIMEOUT_MS = 7000;
+      const fetchPromise = fetch(feed.url, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (compatible; LexisBot/2.0; +https://lexis.academy)',
           'Accept': 'application/rss+xml, application/xml, text/xml, */*'
-        },
-        // timeout via signal
-        signal: AbortSignal.timeout(8000)
+        }
       });
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error(`Timeout após ${TIMEOUT_MS}ms`)), TIMEOUT_MS)
+      );
+
+      const response = await Promise.race([fetchPromise, timeoutPromise]);
 
       if (!response.ok) {
         errors.push(`${feed.name} feed error: HTTP ${response.status}`);

@@ -56,7 +56,12 @@ export async function triageArticles(env, limit = 30) {
   const processedLinks = new Set();
   const processedTitles = new Set();
 
+  let count = 0;
   for (const key of rawArticles.keys) {
+    count++;
+    if (count % 5 === 0) {
+      await env.LEXIS_PUBLISHED_POSTS.put('system:log', `[TRIAGE] Processando: ${count}/${rawArticles.keys.length}...`);
+    }
     const articleData = await env.LEXIS_RAW_ARTICLES.get(key.name);
     if (!articleData) continue;
 
