@@ -174,7 +174,7 @@ ESTRUTURA:
 ## Vocabulary High-Level
 ## Key Structures for Business
 ## Real-Life Dialogues
-## 3F Training Engine
+## 3F Training
 ## AI Summary para Recomendação` }],
         max_tokens: 2000,
         temperature: 0.2 // Mais constante para Fallback
