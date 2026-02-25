@@ -3,18 +3,14 @@
  * Coleta 10-15 artigos/dia de fontes RSS
  */
 
+// Apenas feeds comprovadamente estáveis no Cloudflare Workers (sem hang)
+// Feeds removidos por causar timeout/hang: EnglishClass101, Real English Conversations,
+// English in Brazil, EngFluent, Deep English, FluentU, TED-Ed
 const RSS_FEEDS = [
   { url: 'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/rss', name: 'BBC 6-Minute English' },
   { url: 'https://learningenglish.voanews.com/rss?count=20', name: 'VOA Learning English' },
   { url: 'https://www.newsinlevels.com/feed/', name: 'News in Levels' },
-  { url: 'https://www.englishclass101.com/blog/feed/', name: 'EnglishClass101' },
-  { url: 'https://realenglishconversations.com/feed/', name: 'Real English Conversations' },
-  { url: 'https://www.englishinbrazil.com.br/feed', name: 'English in Brazil' },
-  { url: 'https://engfluent.com/feed/', name: 'EngFluent' },
-  { url: 'https://deepenglish.com/feed/', name: 'Deep English' },
-  // TED-Ed removido: feed causa hang no Cloudflare Worker (sem resposta)
   { url: 'https://learnenglish.britishcouncil.org/rss/all', name: 'British Council LearnEnglish' },
-  { url: 'https://www.fluentu.com/blog/english/feed/', name: 'FluentU English' },
 ];
 
 export async function scrapeBlogArticles(env) {
