@@ -1,7 +1,4 @@
-/**
- * Módulo de Auditoria de Conteúdo (AI-as-a-Judge)
- * Objetivo: Garantir precisão técnica, metodologia Lexis e naturalidade linguística.
- */
+import { callOpenAI } from './multi-model.js';
 
 export async function auditPost(env, post) {
     const auditPrompt = `Você é o Auditor de Elite da Lexis Academy. Sua função é garantir que o conteúdo seja ÚTIL, PROFISSIONAL e de ALTA PERFORMANCE.
@@ -32,19 +29,26 @@ Responda APENAS com um JSON no formato:
 }
 
 REGRAS PARA REJEIÇÃO:
-- Nota total menor que 90: REJEITADO.
+- Nota total menor que 70: REJEITADO.
 - Ausência de seções críticas (## Quick Answer ou ## 3F Training): REJEITADO.
 - Presença de qualquer frase repetida em seções diferentes: REJEITADO.
 - Tema considerado "Boring" ou sem utilidade prática imediata: REJEITADO.`;
 
     try {
-        const response = await env.AI.run('@cf/meta/llama-3.1-70b-instruct', {
-            messages: [{ role: 'user', content: auditPrompt }],
-            max_tokens: 512,
-            temperature: 0.1 // Máximo rigor determinístico
-        });
+        let resultText;
+        if (env.OPENAI_API_KEY) {
+            console.log(`[AUDITOR] 🔎 Usando GPT-4o para Auditoria de Elite: ${post.title}`);
+            resultText = await callOpenAI(env, auditPrompt, "Você é o Auditor Chefe da Lexis Academy.");
+        } else {
+            const response = await env.AI.run('@cf/meta/llama-3.1-70b-instruct', {
+                messages: [{ role: 'user', content: auditPrompt }],
+                max_tokens: 512,
+                temperature: 0.1 // Máximo rigor determinístico
+            });
+            resultText = response.response || response;
+        }
 
-        const resultText = (response.response || '').trim();
+        resultText = (resultText || '').trim();
         const jsonStart = resultText.indexOf('{');
         const jsonEnd = resultText.lastIndexOf('}');
 
@@ -57,6 +61,6 @@ REGRAS PARA REJEIÇÃO:
         return { score: 0, verdict: 'REJEITADO', reason: 'Falha no parser da auditoria' };
     } catch (e) {
         console.error('[AUDITOR] Erro na auditoria:', e.message);
-        return { score: 100, verdict: 'APROVADO', reason: 'Erro no auditor, permitindo por fallback de segurança' };
+        return { score: 50, verdict: 'REJEITADO', reason: 'Erro na conexão com auditor' };
     }
 }

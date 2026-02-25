@@ -152,10 +152,6 @@ ai_context: "${escapeYaml(aiContext)}"
 lexis_version: "${post.lexis_version || '2.5-leo'}"
 ---
 
-<script type="application/ld+json">
-${JSON.stringify(jsonLd, null, 2)}
-</script>
-
 ${content}
 
 ---

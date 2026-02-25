@@ -1,6 +1,7 @@
 name = "lexis-publisher"
 main = "src/index.js"
 compatibility_date = "2024-03-20"
+compatibility_flags = ["nodejs_compat"]
 
 
 # Vamos usar variáveis de ambiente para o Token do GitHub (segurança primeiro!)

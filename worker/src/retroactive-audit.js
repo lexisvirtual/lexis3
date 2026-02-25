@@ -8,6 +8,7 @@
  */
 
 import { auditPost } from './content-auditor.js';
+import { cleanJSX, cleanFullContent, extractTag, superviseJSX, callGemini, callOpenAI } from './multi-model.js';
 
 const log = async (env, msg) =>
     env.LEXIS_PUBLISHED_POSTS.put('system:log', `[${new Date().toLocaleTimeString('pt-BR')}] ${msg}`);
@@ -50,7 +51,7 @@ async function deleteFileFromGitHub(env, path, slug, link, message) {
     }
 }
 
-async function updateFileOnGitHub(env, path, content, message) {
+export async function updateFileOnGitHub(env, path, content, message) {
     const token = env.GITHUB_TOKEN;
     const apiUrl = `https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/${path}`;
 
@@ -58,53 +59,93 @@ async function updateFileOnGitHub(env, path, content, message) {
         const getRes = await fetch(`${apiUrl}?ref=${env.GITHUB_BRANCH || 'main'}`, {
             headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'LexisQA/1.0' }
         });
-        if (!getRes.ok) return false;
+
+        if (!getRes.ok) {
+            const err = await getRes.text();
+            await log(env, `❌ GitHub GET Fail: ${getRes.status} for ${path}`);
+            return false;
+        }
+
         const fileData = await getRes.json();
+        const base64Content = btoa(Array.from(new TextEncoder().encode(content), b => String.fromCharCode(b)).join(''));
 
         const putRes = await fetch(apiUrl, {
             method: 'PUT',
             headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json', 'User-Agent': 'LexisQA/1.0' },
             body: JSON.stringify({
                 message,
-                content: btoa(unescape(encodeURIComponent(content))),
+                content: base64Content,
                 sha: fileData.sha,
                 branch: env.GITHUB_BRANCH || 'main'
             })
         });
 
-        return putRes.ok;
+        if (!putRes.ok) {
+            const err = await putRes.text();
+            await log(env, `❌ GitHub PUT Fail: ${putRes.status} - ${err.substring(0, 100)}`);
+            return false;
+        }
+
+        return true;
     } catch (e) {
         console.error(`[AUDIT-UPDATE] Erro: ${e.message}`);
+        await log(env, `❌ updateFileOnGitHub Error: ${e.message}`);
         return false;
     }
 }
 
-async function upgradePostContent(env, file, content, strategy) {
-    const prompt = `Você é o Diretor da Lexis Academy realizando um UPGRADE ELITE (Protocolo Leo 2026).
+export async function upgradePostContent(env, file, content, strategy) {
+    const prompt = `Você é o Diretor Editorial da Lexis Academy. Realize um UPGRADE ELITE (Protocolo Leo 2026).
+
+    TEMA: "${file.name}".
+    OBJETIVO: Transformar este post em um ATIVO DE TREINAMENTO PURO (Workshop de Autoridade).
     
-    SUA MISSÃO: Transformar este post em um ATIVO DE AUTORIDADE MÁXIMA.
-    
-    REGRAS DE UPGRADE (OBRIGATÓRIAS):
-    1. EXPANSÃO TÉCNICA: Adicione 300-600 palavras de profundidade real sobre o tema.
-    2. TABELA COMPARATIVA: Crie uma tabela Markdown comparando o tema central (ex: Imersão Lexis vs Curso Regular ou Intercâmbio).
-    3. FAQ BASEADO EM PERGUNTAS REAIS: Adicione uma seção "## Perguntas Frequentes (FAQ)" com no mínimo 5 dúvidas técnicas extraídas de ferramentas de busca.
-    4. TÍTULO MAGNÉTICO: Atualize o título no frontmatter para incluir o ano "2026" e uma promessa de impacto.
-    5. INTERLINKS: Garanta que o post aponte para as Pillar Pages (/ingles-por-imersao-brasil ou /curso-ingles-intensivo-brasil).
-    6. GEO SYNC: Certifique-se de que a seção "[[AI_SNIPPET]]" no frontmatter seja factual e direta para busca por IA.
-    7. METODOLOGIA: Reforce o treinamento 3F (Phrase, Fluidity, Function).
+    ESTRATÉGIA LEXIS (30/70): 
+    - 30% Português (Mentoria, Neurociência, Instruções Táticas).
+    - 70% Inglês (Músculo, Exemplos, Diálogos de Alta Pressão, Exercícios).
+
+    ESTRUTURA OBRIGATÓRIA (NÃO PULE NENHUMA):
+    1. ANATOMIA DA FLUÊNCIA (EXPANSÃO): 400-600 palavras em Português explicando o ROI (Retorno sobre Investimento) cognitivo de dominar este tema.
+    2. TABELA DE PERFORMANCE: Markdown (EN/PT) comparando amador vs elite.
+    3. ESCADA DE TREINAMENTO: 
+       - ### Nível 1 (Vocabulary/Structures): 10 termos + 5 estruturas complexas (100% EN).
+       - ### Nível 2 (Desafio de Fluidez): Instrução em PT, exercício em EN.
+       - ### Nível 3 (Cenário de Alta Pressão): Diálogo de 10 linhas 100% EN em contexto Business/Internacional.
+    4. FAQ DE MENTORIA: 5 dúvidas de executivos respondidas com autoridade (PT).
+    5. SEO DATA: [[DESCRIPTION]], [[AI_SNIPPET]], [[AI_CONTEXT]].
+
+    REGRAS DE FORMATO:
+    - Retorne O ARQUIVO COMPLETO (Frontmatter + Markdown).
+    - Frontmatter: Adicione "2026" ao título.
+    - Comece diretamente com ---. Sem explicações.
 
     CONTEÚDO ATUAL PARA TRANSFORMAR:
     ${content}`;
 
     try {
+        // PRIORIDADE 1: OpenAI (Elite Excellence)
+        if (env.OPENAI_API_KEY) {
+            console.log(`[UPGRADE] 👑 Usando GPT - 4o para Upgrade de Elite: ${file.name} `);
+            return await callOpenAI(env, prompt, "Você é o Diretor Editorial da Lexis Academy.");
+        }
+
+        // PRIORIDADE 2: Gemini (Technical Depth)
+        if (env.GEMINI_API_KEY) {
+            console.log(`[UPGRADE] 🚀 Usando Gemini para Upgrade: ${file.name} `);
+            return await callGemini(env, prompt);
+        }
+
+        // PRIORIDADE 3: Llama-3 (CF Native Fallback)
+        console.log(`[UPGRADE] 🛰️ Usando Llama - 3 - 8b para Upgrade: ${file.name} `);
         const response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
             messages: [{ role: 'user', content: prompt }],
-            max_tokens: 2000,
-            temperature: 0.3
+            max_tokens: 3500,
+            temperature: 0.2
         });
         return response.response || response;
     } catch (e) {
-        throw new Error(`AI Upgrade Fail: ${e.message}`);
+        console.error(`[UPGRADE] ❌ Erro Crítico: ${e.message} `);
+        throw new Error(`AI Upgrade Fail: ${e.message} `);
     }
 }
 
@@ -313,5 +354,118 @@ async function recalculateQualityIndex(env) {
         console.log(`[EMA] Quality Index: ${Math.round(newEMA)} | Threshold Dinâmico: ${Math.max(75, Math.round(newEMA - 5))}`);
     } catch (e) {
         console.error(`[EMA] Erro: ${e.message}`);
+    }
+}
+
+// ================================================
+// Processador de Comandos do Leo
+// ================================================
+export async function executeLeoCommand(env, command) {
+    if (!command || !command.url) return { success: false, error: "Comando inválido" };
+
+    const slug = command.url.replace(/^\/|\/$/g, '').split('/').pop();
+
+    // Mapeamento inteligente: Blog (.md) ou Pillar Page (.jsx)
+    const pillarMapping = {
+        'curso-ingles-intensivo-brasil': 'src/pages/PilarIntensivo.jsx',
+        'ingles-por-imersao-brasil': 'src/pages/PilarImersao.jsx',
+        'intercambio-sem-sair-do-brasil': 'src/pages/PilarIntercambio.jsx',
+        'ingles-para-negocios-online': 'src/pages/PilarNegocios.jsx'
+    };
+
+    let filePath = pillarMapping[slug] || `src/posts/${slug}.md`;
+    const isJSX = filePath.endsWith('.jsx');
+
+    await log(env, `⚙️ Executando Comando Leo: ${command.action} para ${slug} (${isJSX ? 'Pillar' : 'Blog'})`);
+
+    try {
+        // 1. Buscar conteúdo atual
+        const token = env.GITHUB_TOKEN;
+        const res = await fetch(
+            `https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/${filePath}?ref=${env.GITHUB_BRANCH || 'main'}`,
+            { headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'LexisQA/1.0' } }
+        );
+
+        if (!res.ok) throw new Error(`Arquivo não encontrado no GitHub: ${filePath}`);
+        const fileData = await res.json();
+        const content = decodeURIComponent(escape(atob(fileData.content)));
+
+        // 2. Aplicar Upgrade
+        let upgradedContent;
+        if (isJSX) {
+            const jsxPrompt = `Você é um Engenheiro Sênior de React. Sua missão é atualizar este arquivo JSX mantendo TODA a estrutura funcional (imports, constantes, hooks, classes de Tailwind).
+            ADICIONE seções de SEO (FAQ robusto em JSON-LD e Tabela Comparativa em Tailwind) dentro do componente, preferencialmente antes do Footer.
+            EXPANDA o texto dos parágrafos existentes para aumentar a autoridade semântica.
+            RETORNE o JSX completo.`;
+
+            await log(env, `🧪 [LLAMA] Gerando upgrade semântico para ${slug}...`);
+            const llamaRes = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+                messages: [{ role: 'user', content: jsxPrompt + "\n\nARQUIVO ATUAL:\n" + content }],
+                max_tokens: 3000,
+                temperature: 0.2
+            });
+            const rawUpgrade = llamaRes.response || llamaRes;
+
+            await log(env, `🧠 [GPT-4o] Assumindo Supervisão de Elite para ${slug}...`);
+            upgradedContent = await superviseJSX(env, content, rawUpgrade);
+
+            // Validação final de segurança pós-supervisão
+            if (!upgradedContent.includes('import') || !upgradedContent.includes('export default')) {
+                throw new Error("Supervisão falhou em retornar um arquivo JSX válido.");
+            }
+        } else {
+            upgradedContent = await upgradePostContent(env, { name: slug }, content, 'elite');
+
+            // Extrair novos metadados gerados durante o upgrade
+            const newSnippet = extractTag('AI_SNIPPET', upgradedContent);
+            const newContext = extractTag('AI_CONTEXT', upgradedContent);
+            const newDesc = extractTag('DESCRIPTION', upgradedContent);
+
+            // RECOVERY & SEO INJECTION: Garantir frontmatter e injetar SEO
+            if (upgradedContent.startsWith('---')) {
+                const secondDashes = upgradedContent.indexOf('---', 3);
+                if (secondDashes !== -1) {
+                    let fm = upgradedContent.substring(0, secondDashes);
+                    if (newSnippet && !fm.includes('ai_snippet:')) fm += `ai_snippet: "${newSnippet.replace(/"/g, "'")}"\n`;
+                    if (newContext && !fm.includes('ai_context:')) fm += `ai_context: "${newContext.replace(/"/g, "'")}"\n`;
+                    if (newDesc && !fm.includes('description:')) fm += `description: "${newDesc.replace(/"/g, "'")}"\n`;
+                    upgradedContent = fm + upgradedContent.substring(secondDashes);
+                }
+            } else {
+                const originalFrontmatterMatch = content.match(/^---[\s\S]*?---/);
+                if (originalFrontmatterMatch) {
+                    await log(env, `🚑 [RECOVERY] Restaurando frontmatter original para ${slug}`);
+                    upgradedContent = originalFrontmatterMatch[0] + "\n\n" + upgradedContent;
+                }
+            }
+
+            // Limpar o conteúdo (remover chatter e tags expostas)
+            upgradedContent = cleanFullContent(upgradedContent);
+        }
+
+        // 3. Salvar de volta
+        await log(env, `💾 [GITHUB] Salvando ativo de elite: ${filePath}`);
+        const success = await updateFileOnGitHub(env, filePath, upgradedContent, `feat(leo): elite upgrade from SEO Hub [Priority: ${command.priority}]`);
+
+        if (success) {
+            await log(env, `💎 Upgrade Elite CONCLUÍDO para ${slug}`);
+            await env.LEXIS_PUBLISHED_POSTS.put(`leo_done:${slug}`, 'true', { expirationTtl: 60 * 60 * 24 * 30 });
+
+            // Notificar Planilha para marcar como DONE
+            try {
+                await log(env, `📡 [HUB] Enviando feedback de conclusão...`);
+                const sheetUrl = env.GOOGLE_SHEETS_COMMAND_URL || "https://script.google.com/macros/s/AKfycbz-96tMxLYXAP2TrMpZFcAur8Ge8qauTSlxflpqa258CJUOGwWeuK_esiI3rnGR4yo/exec";
+                await fetch(`${sheetUrl}?action=markDone&url=${encodeURIComponent(command.url)}`, { method: 'GET', redirect: 'follow' });
+            } catch (sheetErr) {
+                console.error("[SHEET-FEEDBACK] Erro ao marcar como done:", sheetErr.message);
+            }
+
+            return { success: true };
+        } else {
+            throw new Error("Falha ao salvar no GitHub");
+        }
+    } catch (e) {
+        await log(env, `❌ Erro no comando Leo: ${e.message}`);
+        return { success: false, error: e.message };
     }
 }
