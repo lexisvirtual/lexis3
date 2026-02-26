@@ -25,7 +25,7 @@ Responda APENAS com um JSON puro no formato:
 {
   "score": 0-100,
   "verdict": "APROVADO" ou "REJEITADO",
-  "reason": "Explicação curta e ácida do motivo da aprovação ou rejeição"
+  "reason": "Explicação curta e ácida. IMPORTANTE: Se houver falha, especifique exatamente qual seção (Vocabulário, Treino, etc) está fraca ou repetitiva."
 }
 
 REGRAS PARA REJEIÇÃO IMEDIATA:
