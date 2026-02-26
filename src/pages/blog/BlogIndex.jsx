@@ -63,6 +63,11 @@ const BlogIndex = () => {
                             </span>
                         ))}
                     </h1>
+                    <div className="flex justify-center gap-4 mb-6">
+                        <Link to="/blog/pauta" className="text-[10px] font-black uppercase tracking-[0.2em] text-[#fbd24c]/40 hover:text-[#fbd24c] transition-all">
+                            Admin Pauta
+                        </Link>
+                    </div>
                     <p className="text-xl text-slate-400 max-w-2xl mx-auto font-medium transition-all duration-700 delay-300 opacity-0 entrance-ready" style={{ animation: 'wordUp 0.8s var(--premium-easing) forwards 0.4s' }}>
                         Estratégias de guerra para quem não tem tempo a perder com métodos tradicionais.
                     </p>

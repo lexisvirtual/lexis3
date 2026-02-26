@@ -10,6 +10,7 @@ import Maestria from './pages/Maestria';
 import TheWay from './pages/TheWay';
 import BlogIndex from './pages/blog/BlogIndex';
 import BlogPost from './pages/blog/BlogPost';
+import BlogPauta from './pages/blog/BlogPauta';
 import LeoInsights from './pages/LeoInsights';
 
 const App = () => {
@@ -25,6 +26,7 @@ const App = () => {
                     <Route path="/maestria" element={<Maestria />} />
                     <Route path="/the-way" element={<TheWay />} />
                     <Route path="/blog" element={<BlogIndex />} />
+                    <Route path="/blog/pauta" element={<BlogPauta />} />
                     <Route path="/blog/:slug" element={<BlogPost />} />
                     <Route path="/leo-insights" element={<LeoInsights />} />
                 </Routes>
