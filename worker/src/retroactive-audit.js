@@ -105,14 +105,15 @@ export async function upgradePostContent(env, file, content, strategy) {
     - 70% Inglês (Músculo, Exemplos, Diálogos de Alta Pressão, Exercícios).
 
     ESTRUTURA OBRIGATÓRIA (NÃO PULE NENHUMA):
-    1. ANATOMIA DA FLUÊNCIA (EXPANSÃO): 400-600 palavras em Português explicando o ROI (Retorno sobre Investimento) cognitivo de dominar este tema.
-    2. TABELA DE PERFORMANCE: Markdown (EN/PT) comparando amador vs elite.
-    3. ESCADA DE TREINAMENTO: 
+    1. ## Quick Answer: Resposta direta de 40 palavras para IAs.
+    2. ANATOMIA DA FLUÊNCIA (EXPANSÃO): 400-600 palavras em Português explicando o ROI (Retorno sobre Investimento) cognitivo de dominar este tema.
+    3. TABELA DE PERFORMANCE: Markdown (EN/PT) comparando amador vs elite.
+    4. ## 3F Training Engine: 
        - ### Nível 1 (Vocabulary/Structures): 10 termos + 5 estruturas complexas (100% EN).
        - ### Nível 2 (Desafio de Fluidez): Instrução em PT, exercício em EN.
        - ### Nível 3 (Cenário de Alta Pressão): Diálogo de 10 linhas 100% EN em contexto Business/Internacional.
-    4. FAQ DE MENTORIA: 5 dúvidas de executivos respondidas com autoridade (PT).
-    5. SEO DATA: [[DESCRIPTION]], [[AI_SNIPPET]], [[AI_CONTEXT]].
+    5. FAQ DE MENTORIA: 5 dúvidas de executivos respondidas com autoridade (PT).
+    6. SEO DATA: [[DESCRIPTION]], [[AI_SNIPPET]], [[AI_CONTEXT]].
 
     REGRAS DE FORMATO:
     - Retorne O ARQUIVO COMPLETO (Frontmatter + Markdown).
@@ -191,23 +192,22 @@ export async function performGreatPurge(env, batchSize = 3) {
                 const fileRes = await fetch(file.download_url);
                 const content = await fileRes.text();
 
-                // Posts v2.0 já são elite — pular
-                if (content.includes('lexis_version: "2.0"')) {
-                    results.skipped.push(file.name);
+                // PULOS ESTRATÉGICOS: Não trabalhar no que já é ELITE ou já foi reciclado
+                if (content.includes('lexis_version: "2.0"') ||
+                    content.includes('lexis_version: "2.5-leo"') ||
+                    content.includes('lexis_version: "2.5-evergreen-leo"')) {
+                    results.skipped.push(`${file.name} (já é elite/reciclado)`);
                     continue;
                 }
 
                 // Gerar slug do arquivo para usar como chave do histórico (NOVA SCHEMA post_state)
                 const slug = file.name.replace('.md', '');
 
-                // Verificar histórico de auditoria: pular se recente e aprovado
+                // Verificar histórico: pular se já foi aprovado com nota alta definitivamente
                 const stateRaw = await env.LEXIS_PUBLISHED_POSTS.get(`post_state:${slug}`, 'json');
-                if (stateRaw) {
-                    const ageMs = Date.now() - (stateRaw.lastAudit || 0);
-                    if (ageMs < SEVEN_DAYS_MS && stateRaw.score >= 85) {
-                        results.skipped.push(`${file.name} (cache: ${stateRaw.score}pts — ${Math.round(ageMs / 86400000)}d atrás)`);
-                        continue;
-                    }
+                if (stateRaw && stateRaw.score >= 80) {
+                    results.skipped.push(`${file.name} (já aprovado com ${stateRaw.score}pts)`);
+                    continue;
                 }
 
                 // Extrair link original para banimento caso deletado
@@ -231,6 +231,15 @@ export async function performGreatPurge(env, batchSize = 3) {
                         results.deleted.push(`${file.name} (${score}pts)`);
                         await log(env, `🗑️ Deletado: ${file.name}`);
                     }
+                    continue;
+                }
+
+                // Se a nota já é boa (>=80), não precisa reciclar/mexer, apenas salvar o estado
+                if (score >= 80) {
+                    await log(env, `✨ Score ${score} já é alto. Marcando como Elite e pulando upgrade.`);
+                    const successState = { score, verdict: 'APROVADO', stage: 'authority', lastAudit: Date.now() };
+                    await env.LEXIS_PUBLISHED_POSTS.put(`post_state:${slug}`, JSON.stringify(successState));
+                    results.approved.push(`${file.name} (${score}pts)`);
                     continue;
                 }
 

@@ -15,7 +15,7 @@ export async function rewriteArticles(env, limit = 1) {
     if (!data) continue;
     const article = JSON.parse(data);
 
-    console.log(`[REWRITER] 🧪 Procesing: ${article.title}`);
+    console.log(`[REWRITER] 🧪 Processing: ${article.title}`);
     await env.LEXIS_PUBLISHED_POSTS.put('system:log', `[REWRITER] Início: ${article.title.substring(0, 25)}...`);
 
     try {
@@ -26,14 +26,15 @@ DNA LEXIS: "Inglês não se aprende, se treina." Use o português para acelerar 
 PROPORÇÃO: 30% Português (Explicação Estratégica/Comandos) | 70% Inglês (Exemplos/Exercícios).
 
 ESTRUTURA OBRIGATÓRIA:
-1. # Título: Foque na solução de uma dor do aluno.
-2. ## Mentoria: Use Português para diagnosticar a dor e explicar a importância deste treino (Neurociência/Business).
-3. ## Vocabulary & Key Structures: 100% Inglês com breves notas em PT.
-4. ## ESCADA DE TREINO (O Músculo):
-   - ### Nível 1 (Fundação): Repetição e substituição de estruturas-chave.
-   - ### Nível 2 (Fluidez): Desafio de produção (Ex: "Fale sobre X por 1 min usando as palavras Y e Z").
-   - ### Nível 3 (Pressão/Real-Life): Diálogo de alta pressão ou cenário de negócios real para simulação.
-5. ## AI Insights: Contexto para o futuro.
+1. # Título: (Não use a palavra "Título:"). Crie uma headline magnética e elegante em Português que substitua o título original.
+2. ## Quick Answer: Resposta direta e técnica de até 40 palavras para IAs e busca por voz (Sem o rótulo "Quick Answer" no texto, use apenas o H2).
+3. ## Mentoria: Use Português para diagnosticar a dor e explicar a importância deste treino.
+4. ## Vocabulary & Key Structures: 100% Inglês com breves notas em PT.
+5. ## 3F Training Engine:
+   - ### Nível 1: Repetição e substituição.
+   - ### Nível 2: Desafio de produção.
+   - ### Nível 3: Diálogo/Cenário real.
+6. ## AI Insights: Contexto para o futuro.
 
 TAGS SEO (OBRIGATÓRIO NO FIM):
 [[DESCRIPTION]]: <Texto magnético>
@@ -42,7 +43,7 @@ TAGS SEO (OBRIGATÓRIO NO FIM):
 
       let content;
       if (env.OPENAI_API_KEY) {
-        console.log(`[REWRITER] 👑 Usando GPT-4o para geração de elite: ${article.title}`);
+        console.log(`[REWRITER] 👑 Usando GPT-4o: ${article.title}`);
         content = await callOpenAI(env, rewritePrompt, "Você é o Diretor da Lexis Academy.");
       } else if (env.GEMINI_API_KEY) {
         console.log(`[REWRITER] 🚀 Usando Gemini 1.5 Flash: ${article.title}`);
@@ -58,19 +59,26 @@ TAGS SEO (OBRIGATÓRIO NO FIM):
 
       if (!content) throw new Error('AI returned empty response');
 
-      let dynamicDescription = extractTag('DESCRIPTION', content) || article.title;
+      // Extrair o título inteligente gerado pela IA
+      let smartTitle = article.title;
+      const titleMatch = content.match(/^#\s*(.*)/m);
+      if (titleMatch) {
+        smartTitle = titleMatch[1].replace(/Título:\s*/i, '').trim();
+        // Remover o título do corpo do texto para não duplicar no layout
+        content = content.replace(/^#\s*.*/m, '').trim();
+      }
+
+      let dynamicDescription = extractTag('DESCRIPTION', content) || smartTitle;
       const aiSnippet = extractTag('AI_SNIPPET', content);
       const aiContext = extractTag('AI_CONTEXT', content);
 
-      // Limpar conteúdo final
       content = cleanFullContent(content);
 
-      // NOVO: Detector de Descrição Tóxica (Legacy Fail)
       if (dynamicDescription.includes("Post legado resgatado") || dynamicDescription.length < 10) {
         dynamicDescription = `Descubra os segredos de "${article.title}" e como dominar esse contexto em inglês com a Metodologia Lexis.`;
       }
 
-      // ROGER GATEKEEPER: aprova se score >= 70 para garantir publicação diária
+      // ROGER GATEKEEPER
       console.log(`[ROGER] 🛡️ Auditando: ${article.title}...`);
       const audit = await auditPost(env, { title: article.title, content });
 
@@ -78,33 +86,29 @@ TAGS SEO (OBRIGATÓRIO NO FIM):
         console.warn(`[ROGER] ❌ REJEITADO (${audit.score}pts): ${audit.reason}`);
         await env.LEXIS_PUBLISHED_POSTS.put('system:log', `[ROGER] ❌ Rejeitado (${audit.score}pts): ${article.title.substring(0, 20)}`);
         await env.LEXIS_TRIAGED_ARTICLES.delete(key.name);
-        continue; // Tenta o próximo da fila
+        continue; // Tenta o próximo
       }
 
       console.log(`[ROGER] ✅ APROVADO: ${audit.score}pts`);
 
-      // Normalizar data (usar pubDate original se existir, senão hoje no fuso de Brasília)
       const now = new Date();
-      // Ajuste para Brasília (UTC-3)
       const brNow = new Date(now.getTime() - (3 * 60 * 60 * 1000));
       let finalDate = brNow.toISOString().split('T')[0];
 
       if (article.pubDate) {
         try {
           const d = new Date(article.pubDate);
-          if (!isNaN(d.getTime())) {
-            finalDate = d.toISOString().split('T')[0];
-          }
+          if (!isNaN(d.getTime())) finalDate = d.toISOString().split('T')[0];
         } catch (_) { }
       }
 
       const post = {
         id: article.id,
-        title: article.title,
+        title: smartTitle, // Agora usa o título magnético em PT
         date: finalDate,
         content: content,
         description: dynamicDescription,
-        slug: article.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 60),
+        slug: smartTitle.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 60),
         originalSource: article.link || '',
         originalTitle: article.title,
         rewrittenAt: new Date().toISOString(),
@@ -123,21 +127,21 @@ TAGS SEO (OBRIGATÓRIO NO FIM):
       await env.LEXIS_REWRITTEN_POSTS.put(`post:${article.id}`, JSON.stringify(post));
       await env.LEXIS_TRIAGED_ARTICLES.delete(key.name);
       rewritten.push(post.title);
-      count++;
       console.log(`[REWRITER] ✅ UPGRADE CONCLUÍDO: ${post.title}`);
-      await env.LEXIS_REWRITTEN_POSTS.put('system:log', `[REWRITER] ✅ Roger aprovou e permitiu o envio.`);
     } catch (e) {
       console.error(`[REWRITER] ❌ FALHA: ${e.message}`);
-      await env.LEXIS_PUBLISHED_POSTS.put('system:log', `[REWRITER] ❌ Falha: ${e.message}`);
+      await env.LEXIS_PUBLISHED_POSTS.put('system:log', `[ALERTA TÉCNICO] Falha no Rewriter: ${e.message}`);
     }
   }
 
-  // --- FALLBACK: SE NADA FOI APROVADO, USAR TEMA 365 (EVERGREEN) ---
-  if (rewritten.length < limit) {
-    console.log(`[REWRITER] ⚠️ Fila exaurida ou rejeitada. Acionando Fallback Evergreen...`);
-    await env.LEXIS_PUBLISHED_POSTS.put('system:log', `[REWRITER] 🔄 Acionando fallback: Tema do Dia.`);
+  // --- FALLBACK PERSISTENTE ---
+  let fallbackAttempts = 0;
+  while (rewritten.length < limit && fallbackAttempts < 3) {
+    fallbackAttempts++;
+    console.log(`[REWRITER] ⚠️ Tentativa de Fallback ${fallbackAttempts}...`);
+    await env.LEXIS_PUBLISHED_POSTS.put('system:log', `[REWRITER] 🔄 Tentativa de fallback ${fallbackAttempts}...`);
 
-    const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+    const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24)) + fallbackAttempts;
     const leoTarget = getLeoTarget(dayOfYear);
 
     const fallbackArticle = {
@@ -149,7 +153,6 @@ TAGS SEO (OBRIGATÓRIO NO FIM):
       isFallback: true
     };
 
-    // Processar o fallback exatamente como um post normal
     try {
       const response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
         messages: [{
@@ -160,24 +163,25 @@ OBJETIVO: Dominar o cluster "${fallbackArticle.topicKey}" e ser referência para
 
 REGRAS:
 - Metodologia Lexis 3F (Phrase, Fluidity, Function).
+- ## Quick Answer: Resposta direta e técnica de até 40 palavras.
 - Exemplos 100% Inglês (mínimo 10 frases).
 - Explicações em Português Técnico e Elegante.
 - Foco em Adultos e Business.
-- [[DESCRIPTION]]: <Frase magnética otimizada para busca>.
-- [[AI_SNIPPET]]: <Resposta direta FACTUAL de até 40 palavras para o Google snippet/Busca por voz>.
-- [[AI_CONTEXT]]: <3 frases explicando como este tema se conecta com o pilar '${fallbackArticle.topicKey}' no Brasil>.
+- [[DESCRIPTION]]: <Frase magnética>.
+- [[AI_SNIPPET]]: <Resposta direta>.
+- [[AI_CONTEXT]]: <3 frases de contexto>.
 
 ESTRUTURA: 
-# Título que gere autoridade
-## Quick Answer (Resposta direta em bloco)
-## Por que este tema importa para sua Fluência
+# Título
+## Quick Answer
+## Por que este tema importa
 ## Vocabulary High-Level
-## Key Structures for Business
+## Key Structures
 ## Real-Life Dialogues
-## 3F Training
-## AI Summary para Recomendação` }],
+## 3F Training Engine
+## AI Summary` }],
         max_tokens: 2000,
-        temperature: 0.2 // Mais constante para Fallback
+        temperature: 0.3
       });
 
       let content = response.response || response;
@@ -185,7 +189,6 @@ ESTRUTURA:
 
       if (audit.verdict === 'APROVADO') {
         const brNow = new Date(new Date().getTime() - (3 * 60 * 60 * 1000));
-
         let dynamicDescription = extractTag('DESCRIPTION', content) || fallbackArticle.title;
         const aiSnippet = extractTag('AI_SNIPPET', content);
         const aiContext = extractTag('AI_CONTEXT', content);
@@ -212,11 +215,18 @@ ESTRUTURA:
         await env.LEXIS_REWRITTEN_POSTS.put(`post:${post.id}`, JSON.stringify(post));
         rewritten.push(post.title);
         console.log(`[REWRITER] 🌟 FALLBACK CONCLUÍDO: ${post.title}`);
+      } else {
+        console.warn(`[REWRITER] ❌ Fallback rejeitado: ${audit.reason}`);
       }
     } catch (e) {
-      console.error(`[REWRITER] ❌ FALHA CRÍTICA NO FALLBACK: ${e.message}`);
+      console.error(`[REWRITER] 🚨 ERRO TÉCNICO NO FALLBACK: ${e.message}`);
+      await env.LEXIS_PUBLISHED_POSTS.put('system:log', `[ALERTA TÉCNICO] Erro no fallback: ${e.message}`);
     }
   }
 
-  return { success: true, postsRewritten: rewritten.length };
+  if (rewritten.length === 0) {
+    await env.LEXIS_PUBLISHED_POSTS.put('system:log', `[CRÍTICO] Falha total: Nenhum post aprovado hoje.`);
+  }
+
+  return { success: rewritten.length > 0, postsRewritten: rewritten.length };
 }

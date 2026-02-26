@@ -30,7 +30,7 @@ Responda APENAS com um JSON no formato:
 
 REGRAS PARA REJEIÇÃO:
 - Nota total menor que 70: REJEITADO.
-- Ausência de seções críticas (## Quick Answer ou ## 3F Training): REJEITADO.
+- Ausência de seções críticas (## Quick Answer e ## 3F Training Engine): REJEITADO. (Aceite variações como "3F Training", "Treino 3F" ou "Training Engine").
 - Presença de qualquer frase repetida em seções diferentes: REJEITADO.
 - Tema considerado "Boring" ou sem utilidade prática imediata: REJEITADO.`;
 

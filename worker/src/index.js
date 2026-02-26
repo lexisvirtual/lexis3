@@ -88,33 +88,32 @@ async function runPublishPipeline(env, limit = 1) {
         await triageArticles(env);
     }
 
-    // Verificar novamente após scraping
-    const triagedAfter = await env.LEXIS_TRIAGED_ARTICLES.list({ prefix: 'triaged:', limit: 1 });
-    if (triagedAfter.keys.length === 0) {
-        // Fila AINDA vazia = sistema ocioso → micro-auditoria de 1 post
-        await log(env, "Sem conteúdo novo. Rodando micro-auditoria de ociosidade (1 post)...");
-        await performGreatPurge(env, 1);
-        return;
-    }
-
-    await log(env, "Fabricando ativo de elite (8b)...");
+    await log(env, "Iniciando produção de conteúdo (Elite Engine)...");
     const res = await rewriteArticles(env, limit);
 
     if (res.postsRewritten > 0) {
-        await log(env, `${res.postsRewritten} post(s) prontos. Publicando no GitHub...`);
-        await publishPostsToGitHub(env, limit);
-        await log(env, "✅ Publicação concluída.");
+        await log(env, `✅ ${res.postsRewritten} post(s) aprovados pelo Auditor. Enviando ao GitHub...`);
+        const publishRes = await publishPostsToGitHub(env, limit);
+        if (publishRes.success) {
+            await log(env, "🚀 Publicação concluída com sucesso.");
+        } else {
+            await log(env, `[🚨 ALERTA TÉCNICO] Falha no envio ao GitHub: ${publishRes.errors?.[0]?.error || 'Erro desconhecido'}`);
+        }
     } else {
-        await log(env, "⚠️ Nenhum artigo qualificado após reescrita.");
+        await log(env, "⚠️ Nenhum post novo foi aprovado pelo Auditor Roger hoje (Fila Exaurida/Baixa Qualidade).");
     }
+
+    // LEO RECYCLING QUOTA: Independente de posts novos, reciclar 5 existentes
+    await log(env, "🔄 Iniciando cota diária Leo: Reciclando 5 posts antigos...");
+    await performGreatPurge(env, 5);
 }
 
 // ================================================
 // Auditoria Semanal de Domingo
 // ================================================
 async function runSundayAudit(env) {
-    await log(env, "🛡️ Auditoria Semanal de Domingo iniciada (lote de 2 posts).");
-    const result = await performGreatPurge(env, 2);
+    await log(env, "🛡️ Auditoria Semanal de Domingo iniciada (lote de 5 posts).");
+    const result = await performGreatPurge(env, 5);
     await log(env, `🛡️ Auditoria concluída: ${result.approved?.length || 0} aprovados, ${result.deleted?.length || 0} removidos. Próximo cursor: ${result.nextCursor || 'reset'}.`);
     return result;
 }
