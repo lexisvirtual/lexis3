@@ -40,12 +40,17 @@ export async function publishPostsToGitHub(env, maxPosts = 3) {
       const filename = `${post.slug}.md`;
 
       // 3. Commit do post no GitHub
-      await commitFileToGitHub(
+      const githubRes = await commitFileToGitHub(
         env,
         `src/posts/${filename}`,
         stringToBase64(markdown),
         `feat(blog): ${post.title}`
       );
+      console.log(`[PUBLISH] GitHub Response: ${JSON.stringify(githubRes).substring(0, 100)}...`);
+
+      // 3.5 Remover IMEDIATAMENTE da fila (Evitar duplicatas em caso de timeout posterior)
+      await env.LEXIS_REWRITTEN_POSTS.delete(key.name);
+      console.log(`[PUBLISH] Remoção precoce da fila (${key.name}) confirmada.`);
 
       // 4. Registrar como publicado
       const publishedRecord = {
@@ -76,10 +81,7 @@ export async function publishPostsToGitHub(env, maxPosts = 3) {
         );
       }
 
-      // 7. Remover da fila
-      await env.LEXIS_REWRITTEN_POSTS.delete(key.name);
-
-      // 8. Incrementar contador de posts totais
+      // 6. Incrementar contador de posts totais
       const currentTotal = parseInt(await env.LEXIS_PUBLISHED_POSTS.get('system:totalPosts') || '0');
       await env.LEXIS_PUBLISHED_POSTS.put('system:totalPosts', String(currentTotal + 1));
 
@@ -90,6 +92,11 @@ export async function publishPostsToGitHub(env, maxPosts = 3) {
       console.error(`[PUBLISH] ❌ Erro ao publicar "${post.title}": ${error.message}`);
       errors.push({ post: post.title, error: error.message });
     }
+  }
+
+  // 9. Disparar Build no GitHub Actions (para atualizar o site estático)
+  if (publishedPosts.length > 0) {
+    await triggerGithubBuild(env);
   }
 
   return {
@@ -113,7 +120,8 @@ function buildMarkdown(post) {
   }
 
   const category = post.category || 'Dicas';
-  const date = post.date || new Date().toISOString().split('T')[0];
+  // Garante data da postagem real (Hoje) e não a data de quando foi triado
+  const date = new Date().toISOString().split('T')[0];
   const content = post.content || '';
   const keywords = post.keywords || 'aprender inglês, praticar inglês, curso de inglês, inglês por imersão, inglês intensivo';
 
@@ -150,7 +158,7 @@ mainEntityOfPage: "https://lexis.academy/blog/${slug}"
 ai_snippet: "${escapeYaml(aiSnippet)}"
 ai_context: "${escapeYaml(aiContext)}"
 lexis_version: "${post.lexis_version || '2.5-leo'}"
----
+${post.upgrade_mandatory ? 'upgrade_mandatory: true\n' : ''}---
 
 ${content}
 
@@ -211,6 +219,46 @@ async function commitFileToGitHub(env, path, contentBase64, message) {
   }
 
   return await res.json();
+}
+
+// ================================================
+// GitHub API - Trigger Build (Workflow Dispatch)
+// ================================================
+async function triggerGithubBuild(env) {
+  const owner = env.GITHUB_OWNER;
+  const repo = env.GITHUB_REPO;
+  const token = env.GITHUB_TOKEN;
+  const workflowFile = 'deploy.yml'; // Deve bater com o .github/workflows/deploy.yml
+
+  console.log(`[BUILD] 🚀 Verificando gatilho de build para ${workflowFile}...`);
+
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflowFile}/dispatches`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `token ${token}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'User-Agent': 'LexisPublisher/1.0',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ref: env.GITHUB_BRANCH || 'main' })
+      }
+    );
+
+    if (res.status === 204) {
+      console.log(`[BUILD] ✅ Build disparado com sucesso no GitHub Actions.`);
+      return true;
+    } else {
+      const err = await res.text();
+      console.error(`[BUILD] ⚠️ Erro ao disparar build: ${res.status} ${err}`);
+      return false;
+    }
+  } catch (e) {
+    console.error(`[BUILD] ❌ Erro fatal no trigger: ${e.message}`);
+    return false;
+  }
 }
 
 // ================================================

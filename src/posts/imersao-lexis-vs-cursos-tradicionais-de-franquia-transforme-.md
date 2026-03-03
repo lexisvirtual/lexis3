@@ -66,9 +66,7 @@ Evite traduzir mentalmente antes de falar. Isso atrasa sua resposta e reduz a fl
 - **Como posso melhorar minha fluência rapidamente?** Foque em treinar com cenários reais e feedback imediato.
 - **Por que não devo traduzir mentalmente?** Isso cria um atraso na resposta e prejudica a fluência natural.
 
-[[ROGER_HELP]]: Could you specify which sections need more phrasal verbs and elite expressions?
-
-
 ---
 *Este conteúdo foi gerado por IA com base em fontes premium de ensino de inglês e revisado pela metodologia Lexis Academy.*
+
 

@@ -94,26 +94,41 @@ export async function updateFileOnGitHub(env, path, content, message) {
     }
 }
 
-export async function upgradePostContent(env, file, content, strategy) {
-    const prompt = `Você é o Diretor Editorial da Lexis Academy. Realize um UPGRADE ELITE (Protocolo Leo 2026).
+export async function upgradePostContent(env, file, content, strategy, rogerNotes = null) {
+    // Carregar lições acumuladas do sistema
+    const learnedDirectives = await env.LEXIS_PUBLISHED_POSTS.get('system:directives') || "";
+
+    const rogerFeedbackSection = rogerNotes
+        ? `\n\n🚨 ANOTAÇÕES DO AUDITOR ROGER (O QUE PRECISA SER CORRIGIDO):\n"${rogerNotes}"\n\nMISSÃO: NÃO JOGUE O BEBÊ FORA. Mantenha o que está bom e corrija CIRURGICAMENTE os pontos acima.`
+        : "";
+
+    const directivesSection = learnedDirectives
+        ? `\n\n🚨 DIRETRIZES ACUMULADAS (Lições que o Leo já aprendeu com erros anteriores):\n${learnedDirectives}`
+        : "";
+
+    const prompt = `Você é o Diretor Editorial da Lexis Academy. Realize um UPGRADE ELITE (Protocolo Leo 2026 - Versão 10/10).
 
     TEMA: "${file.name}".
-    OBJETIVO: Transformar este post em um ATIVO DE TREINAMENTO PURO (Workshop de Autoridade).
+    OBJETIVO: Transformar este post em um WORKSHOP DE TREINO (10/10) para alunos INTERMEDIÁRIOS (B1-B2).${directivesSection}${rogerFeedbackSection}
     
     ESTRATÉGIA LEXIS (30/70): 
     - 30% Português (Mentoria, Neurociência, Instruções Táticas).
     - 70% Inglês (Músculo, Exemplos, Diálogos de Alta Pressão, Exercícios).
 
-    ESTRUTURA OBRIGATÓRIA (NÃO PULE NENHUMA):
-    1. ## Quick Answer: Resposta direta de 40 palavras para IAs.
-    2. ANATOMIA DA FLUÊNCIA (EXPANSÃO): 400-600 palavras em Português explicando o ROI (Retorno sobre Investimento) cognitivo de dominar este tema.
-    3. TABELA DE PERFORMANCE: Markdown (EN/PT) comparando amador vs elite.
-    4. ## 3F Training Engine: 
-       - ### Nível 1 (Vocabulary/Structures): 10 termos + 5 estruturas complexas (100% EN).
-       - ### Nível 2 (Desafio de Fluidez): Instrução em PT, exercício em EN.
-       - ### Nível 3 (Cenário de Alta Pressão): Diálogo de 10 linhas 100% EN em contexto Business/Internacional.
-    5. FAQ DE MENTORIA: 5 dúvidas de executivos respondidas com autoridade (PT).
-    6. SEO DATA: [[DESCRIPTION]], [[AI_SNIPPET]], [[AI_CONTEXT]].
+    ESTRUTURA OBRIGATÓRIA (TÍTULOS EM PORTUGUÊS):
+    1. # [Headline de Autoridade em PT]
+    2. ## Resposta Rápida (Quick Answer): 40-60 palavras em PT.
+    3. ## Anatomia da Fluência: ROI Cognitivo + Mentoria.
+    4. ## Tabela de Performance: AMADOR vs ELITE em contextos reais.
+    5. ## ⚡ O Treino Lexis: (Core tático do post)
+      - Aquecimento (Brain-Mapping em PT/EN)
+      - Nível 1 (Chunks & Vocabulary C1)
+      - Nível 2 (Cenário Real / Diálogo de Alta Pressão)
+      - Nível 3 (Missão Final / Roleplay)
+    6. ## Erros Comuns: Erros fatais que impedem a senioridade.
+    7. ## Plano de Treino 7 Dias (Drill): Roteiro prático para a semana.
+    8. ## FAQ de Mentoria: Metodologia Lexis aplicada.
+    10. SEO DATA: [[DESCRIPTION]], [[AI_SNIPPET]], [[AI_CONTEXT]], [[QUERY_INTENT]].
 
     REGRAS DE FORMATO:
     - Retorne O ARQUIVO COMPLETO (Frontmatter + Markdown).
@@ -153,7 +168,7 @@ export async function upgradePostContent(env, file, content, strategy) {
 // ================================================
 // Auditoria Principal (Great Purge)
 // ================================================
-export async function performGreatPurge(env, batchSize = 3) {
+export async function performGreatPurge(env, batchSize = 5) {
     const token = env.GITHUB_TOKEN;
     if (!token) return { success: false, error: 'GITHUB_TOKEN ausente' };
 
@@ -192,20 +207,21 @@ export async function performGreatPurge(env, batchSize = 3) {
                 const fileRes = await fetch(file.download_url);
                 const content = await fileRes.text();
 
-                // PULOS ESTRATÉGICOS: Não trabalhar no que já é ELITE ou já foi reciclado
-                if (content.includes('lexis_version: "2.0"') ||
-                    content.includes('lexis_version: "2.5-leo"') ||
-                    content.includes('lexis_version: "2.5-evergreen-leo"')) {
-                    results.skipped.push(`${file.name} (já é elite/reciclado)`);
+                // PULOS ESTRATÉGICOS: Só pular se já for a versão 3.5-elite ultra-recente
+                if (content.includes('lexis_version: "3.5-elite"')) {
+                    results.skipped.push(`${file.name} (já está na versão elite 10/10)`);
                     continue;
                 }
 
                 // Gerar slug do arquivo para usar como chave do histórico (NOVA SCHEMA post_state)
                 const slug = file.name.replace('.md', '');
 
-                // Verificar histórico: pular se já foi aprovado com nota alta definitivamente
+                // Verificar histórico: pular se já foi aprovado com nota altíssima definitivamente
+                // A MENOS que tenha a flag upgrade_mandatory (Dual Mode)
                 const stateRaw = await env.LEXIS_PUBLISHED_POSTS.get(`post_state:${slug}`, 'json');
-                if (stateRaw && stateRaw.score >= 80) {
+                const needsMandatoryUpgrade = stateRaw?.upgrade_mandatory === true || content.includes('upgrade_mandatory: true');
+
+                if (stateRaw && stateRaw.score >= 95 && !needsMandatoryUpgrade) {
                     results.skipped.push(`${file.name} (já aprovado com ${stateRaw.score}pts)`);
                     continue;
                 }
@@ -234,33 +250,47 @@ export async function performGreatPurge(env, batchSize = 3) {
                     continue;
                 }
 
-                // Se a nota já é boa (>=80), não precisa reciclar/mexer, apenas salvar o estado
-                if (score >= 80) {
-                    await log(env, `✨ Score ${score} já é alto. Marcando como Elite e pulando upgrade.`);
-                    const successState = { score, verdict: 'APROVADO', stage: 'authority', lastAudit: Date.now() };
+                // Se a nota for altíssima (>=95) e já for elite, não mexemos
+                if (score >= 95) {
+                    await log(env, `✨ Score ${score} impecável. Marcando como Elite Suprema.`);
+                    const successState = { score, verdict: 'APROVADO', stage: 'elite', lastAudit: Date.now() };
                     await env.LEXIS_PUBLISHED_POSTS.put(`post_state:${slug}`, JSON.stringify(successState));
                     results.approved.push(`${file.name} (${score}pts)`);
                     continue;
                 }
 
-                if (score >= 60 && score < 75) {
-                    await log(env, `🛠️ Score ${score} (Improving). Iniciando Upgrade...`);
+                // Qualquer nota abaixo de 95 agora é candidata a UPGRADE 10/10
+                if (score >= 60 && score < 95) {
+                    await log(env, `🛠️ Score ${score}. Iniciando Reciclagem para Padrão 10/10...`);
                     try {
-                        const upgradedContent = await upgradePostContent(env, file, content, 'structural');
-                        const success = await updateFileOnGitHub(env, `src/posts/${file.name}`, upgradedContent, `feat(qa): upgrade post to elite (score prior: ${score})`);
+                        let upgradedContent = await upgradePostContent(env, file, content, 'structural', audit.reason);
+
+                        // Injetar versão 3.5-elite no frontmatter do conteúdo reciclado
+                        if (upgradedContent.includes('---')) {
+                            const secondDashes = upgradedContent.indexOf('---', 3);
+                            if (secondDashes !== -1) {
+                                let fm = upgradedContent.substring(0, secondDashes);
+                                if (!fm.includes('lexis_version:')) {
+                                    fm += `lexis_version: "3.5-elite"\n`;
+                                } else {
+                                    fm = fm.replace(/lexis_version: .*/, 'lexis_version: "3.5-elite"');
+                                }
+                                upgradedContent = fm + upgradedContent.substring(secondDashes);
+                            }
+                        }
+
+                        const success = await updateFileOnGitHub(env, `src/posts/${file.name}`, upgradedContent, `feat(qa): recycle to elite 10/10 (prev score: ${score})`);
                         if (success) {
-                            stage = 'improving';
-                            results.upgraded.push(`${file.name} (${score}pts -> upgrade)`);
-                            await log(env, `✅ Upgrade Concluído: ${file.name}`);
+                            stage = 'elite';
+                            results.upgraded.push(`${file.name} (${score}pts -> recycled)`);
+                            await log(env, `✅ Reciclagem concluída: ${file.name}`);
                         }
                     } catch (e) {
-                        await log(env, `⚠️ Falha no upgrade de ${file.name}: ${e.message}`);
+                        await log(env, `⚠️ Falha na reciclagem de ${file.name}: ${e.message}`);
                     }
-                } else if (score >= 75 && score < 85) {
+                } else if (score >= 75 && score < 95) {
+                    // Fallback para garantir marcação
                     stage = 'optimized';
-                    results.approved.push(`${file.name} (${score}pts)`);
-                } else if (score >= 85) {
-                    stage = 'authority';
                     results.approved.push(`${file.name} (${score}pts)`);
                 }
 

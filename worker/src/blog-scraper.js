@@ -20,7 +20,7 @@ export async function scrapeBlogArticles(env) {
 
   for (const feed of RSS_FEEDS) {
     try {
-      await env.LEXIS_PUBLISHED_POSTS.put('system:log', `[SCRAPER] Lendo: ${feed.name}...`);
+      console.log(`[SCRAPER] Lendo: ${feed.name}...`);
 
       // Promise.race para timeout confiável no Cloudflare Workers
       const TIMEOUT_MS = 7000;
