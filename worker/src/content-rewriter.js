@@ -2,6 +2,7 @@ import { auditPost } from './content-auditor.js';
 import { callGemini, extractTag, cleanFullContent, callOpenAI } from './multi-model.js';
 import { getTemaDoAno } from './temas365.js';
 import { getLeoTarget } from './leo-strategy.js';
+import { runEliteRetrospective, loadElitePatterns, formatPatternsForPrompt } from './post-retrospective.js';
 
 /**
  * Prompt Mestre do Diretor (Versão Elite 3.3 - Evolutionary)
@@ -149,9 +150,13 @@ async function processWithFeedback(env, topic, meta, kvKey, successList, current
     // 0.1 Carregar Memória Evolutiva
     const learnedDirectives = await env.LEXIS_PUBLISHED_POSTS.get('system:directives') || "";
 
+    // 0.2 Carregar Padrões de Elite (memória de acertos)
+    const elitePatterns = await loadElitePatterns(env);
+    const elitePatternsBlock = formatPatternsForPrompt(elitePatterns, 10);
+
     // TENTATIVA 1
     console.log(`[REWRITER] (${currentIdx}/${totalNeeded}) Léo escrevendo versão 1: ${topic}...`);
-    let prompt = GET_DIRECTOR_PROMPT(topic, learnedDirectives);
+    let prompt = GET_DIRECTOR_PROMPT(topic, learnedDirectives + elitePatternsBlock);
     let content = await callOpenAI(env, prompt, "Você é o Diretor de Elite da Lexis.");
 
     console.log(`[REWRITER] (${currentIdx}/${totalNeeded}) Roger auditando versão 1: ${topic}...`);
@@ -211,6 +216,12 @@ async function processWithFeedback(env, topic, meta, kvKey, successList, current
       await env.LEXIS_REWRITTEN_POSTS.put(`post:${post.id}`, JSON.stringify(post));
       successList.push(smartTitle);
       console.log(`[REWRITER] ✅ APROVADO PARA PUBLICAÇÃO (Score: ${audit.score} em ${attempts + 1} tentativas)`);
+
+      // 🧬 RETROSPECTIVA DE ELITE (assíncrona, não bloqueia)
+      runEliteRetrospective(env, smartTitle, content, audit.score, audit.reason).catch(e =>
+        console.error(`[PRE] Erro silencioso na retrospectiva: ${e.message}`)
+      );
+
       return true;
     } else {
       console.log(`[REWRITER] ❌ REJEITADO (Abaixo do Piso de 60pts após 5 tentativas): ${topic} (Score: ${audit.score})`);
