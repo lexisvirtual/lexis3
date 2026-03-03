@@ -1,41 +1,41 @@
 {
-    "version": "1.0.0",
-    "mode": "seasonal",
-    "event": "carnival",
-    "visual_intensity": 2,
-    "concept": "Rhythmic Energy",
-    "movement_axis": "diagonal",
-    "geometry_language": "diagonal",
-    "rhythm_profile": "asymmetrical",
-    "atmosphere_type": "light_based",
-    "intensity": 0.08,
-    "active_range_br": {
-        "days_before": 7,
-        "end": "tuesday"
-    },
-    "palette": {
-        "primary": "#0f0a1a",
-        "secondary": "#1a0f2e",
-        "accent": "#fbbf24",
-        "background": "#080510",
-        "hexAcc": "#fbbf24"
-    },
-    "webgl": {
-        "enabled": true,
-        "hero_only": true,
-        "parallax_max": 0.08,
-        "particle_opacity_max": 0.10,
-        "concept_note": "Controlled chromatic shift with diagonal displacement. No color explosions."
-    },
-    "motion": {
-        "duration_ms": 500,
-        "ease": "cubic-bezier(0.22, 1, 0.36, 1)",
-        "max_simultaneous_elements": 2,
-        "reduced_motion_support": true
-    },
-    "rules": {
-        "color_dominance": "70/20/10",
-        "ui_neutral_ratio": 0.85,
-        "hero_only": true
-    }
+  "version": "1.0.0",
+  "mode": "seasonal",
+  "event": "carnival",
+  "visual_intensity": 2,
+  "concept": "Rhythmic Energy",
+  "movement_axis": "diagonal",
+  "geometry_language": "diagonal",
+  "rhythm_profile": "asymmetrical",
+  "atmosphere_type": "light_based",
+  "intensity": 0.08,
+  "active_range_br": {
+    "days_before": 7,
+    "end": "tuesday"
+  },
+  "palette": {
+    "primary": "#0f0a1a",
+    "secondary": "#1a0f2e",
+    "accent": "#fbbf24",
+    "background": "#080510",
+    "hexAcc": "#fbbf24"
+  },
+  "webgl": {
+    "enabled": true,
+    "hero_only": true,
+    "parallax_max": 0.08,
+    "particle_opacity_max": 0.1,
+    "concept_note": "Controlled chromatic shift with diagonal displacement. No color explosions."
+  },
+  "motion": {
+    "duration_ms": 500,
+    "ease": "cubic-bezier(0.22, 1, 0.36, 1)",
+    "max_simultaneous_elements": 2,
+    "reduced_motion_support": true
+  },
+  "rules": {
+    "color_dominance": "70/20/10",
+    "ui_neutral_ratio": 0.85,
+    "hero_only": true
+  }
 }
