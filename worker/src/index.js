@@ -15,6 +15,7 @@ import { performGreatPurge, executeLeoCommand, updateFileOnGitHub } from './retr
 import { getLeoTarget } from './leo-strategy.js';
 import { fetchCommands, processTopCommand } from './leo-sync.js';
 import { getActiveThemeName } from './ana-scheduler.js';
+import { runRecyclerCycle, resetRecycler } from './post-recycler.js';
 
 // ================================================
 // Helpers
@@ -254,7 +255,28 @@ export default {
             return jsonResponse({ success: true, message: "Auditoria iniciada." });
         }
 
-        return jsonResponse({ v: '7.21 Stockpile Engine', status: await getStatus(env) });
+        // --- /recycle-status ---
+        if (url.pathname === '/recycle-status') {
+            const [statusRaw, cursorRaw, complete] = await Promise.all([
+                env.LEXIS_PUBLISHED_POSTS.get('recycler:status'),
+                env.LEXIS_PUBLISHED_POSTS.get('recycler:cursor'),
+                env.LEXIS_PUBLISHED_POSTS.get('recycler:complete')
+            ]);
+            return jsonResponse({
+                complete: !!complete,
+                completed_at: complete || null,
+                cursor: cursorRaw ? parseInt(cursorRaw) : 0,
+                stats: statusRaw ? JSON.parse(statusRaw) : null
+            });
+        }
+
+        // --- /recycle-reset ---
+        if (url.pathname === '/recycle-reset') {
+            const result = await resetRecycler(env);
+            return jsonResponse(result);
+        }
+
+        return jsonResponse({ v: '8.0 IPL Execution Engine', status: await getStatus(env) });
     },
 
     async scheduled(event, env, ctx) {
@@ -298,6 +320,24 @@ export default {
                 if (hourBRT % 2 === 0 || currentStock.keys.length === 0) {
                     await log(env, "⚙️ [AUTO] Ciclo de Refill (2h): Refinando Stockpile...");
                     await rewriteArticles(env, 5);
+                }
+
+                // 🌙 RECICLAGEM EM OCIOSIDADE
+                // Horas ímpares não usadas pelo pipeline principal: 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23
+                // Roda após refill apenas se o estoque já estiver cheio (sistema ocioso real)
+                const isIdleHour = hourBRT % 2 !== 0;
+                if (isIdleHour) {
+                    const stockFull = await env.LEXIS_REWRITTEN_POSTS.list({ prefix: 'post:', limit: 5 });
+                    if (stockFull.keys.length >= 3) { // Ocioso se tiver 3+ posts em estoque
+                        console.log('[RECYCLER] 🌙 Hora ímpar + estoque cheio. Ativando reciclagem em background...');
+                        ctx.waitUntil(
+                            runRecyclerCycle(env).then(r =>
+                                console.log(`[RECYCLER] Ciclo: ${JSON.stringify(r)}`)
+                            ).catch(e =>
+                                console.error(`[RECYCLER] Erro no ciclo: ${e.message}`)
+                            )
+                        );
+                    }
                 }
 
                 await log(env, `✨ [AUTO] Ciclo de manuntenção das ${hourBRT}:00 finalizado.`);
