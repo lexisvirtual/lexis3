@@ -1,0 +1,36 @@
+{
+    "version": "1.0.0",
+    "mode": "base",
+    "event": null,
+    "visual_intensity": 1,
+    "concept": "Premium Minimal",
+    "movement_axis": "static",
+    "geometry_language": "linear",
+    "rhythm_profile": "progressive",
+    "atmosphere_type": "light_based",
+    "intensity": 0.02,
+    "palette": {
+        "primary": "#0f172a",
+        "secondary": "#1e293b",
+        "accent": "#fbd24c",
+        "background": "#020617",
+        "hexAcc": "#fbd24c"
+    },
+    "webgl": {
+        "enabled": true,
+        "hero_only": true,
+        "parallax_max": 0.05,
+        "particle_opacity_max": 0.08
+    },
+    "motion": {
+        "duration_ms": 500,
+        "ease": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "max_simultaneous_elements": 2,
+        "reduced_motion_support": true
+    },
+    "rules": {
+        "color_dominance": "70/20/10",
+        "animations_max_per_viewport": 2,
+        "whitespace_priority": "high"
+    }
+}

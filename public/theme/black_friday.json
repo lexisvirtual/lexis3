@@ -1,0 +1,39 @@
+{
+    "version": "1.0.0",
+    "mode": "campaign",
+    "event": "black_friday",
+    "visual_intensity": 3,
+    "concept": "Contrast & Compression",
+    "movement_axis": "static",
+    "geometry_language": "noise",
+    "rhythm_profile": "pulse",
+    "atmosphere_type": "contrast_based",
+    "intensity": 0.13,
+    "active_range_note": "10 days before last Friday of November until Black Friday",
+    "palette": {
+        "primary": "#020202",
+        "secondary": "#080810",
+        "accent": "#3b82f6",
+        "background": "#010101",
+        "hexAcc": "#3b82f6"
+    },
+    "webgl": {
+        "enabled": true,
+        "hero_only": true,
+        "parallax_max": 0.05,
+        "particle_opacity_max": 0.12,
+        "concept_note": "Solid dark background + micro glitch light in hero. Remove ALL other page animations."
+    },
+    "motion": {
+        "duration_ms": 400,
+        "ease": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "max_simultaneous_elements": 1,
+        "reduced_motion_support": true
+    },
+    "rules": {
+        "color_dominance": "70/20/10",
+        "ui_neutral_ratio": 0.95,
+        "hero_only": true,
+        "disable_other_animations": true
+    }
+}

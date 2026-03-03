@@ -14,6 +14,7 @@ import { publishPostsToGitHub } from './publish-to-github.js';
 import { performGreatPurge, executeLeoCommand, updateFileOnGitHub } from './retroactive-audit.js';
 import { getLeoTarget } from './leo-strategy.js';
 import { fetchCommands, processTopCommand } from './leo-sync.js';
+import { getActiveThemeName } from './ana-scheduler.js';
 
 // ================================================
 // Helpers
@@ -217,6 +218,24 @@ export default {
                 }
             })());
             return jsonResponse({ success: true, message: "Estoque vazio. Produção completa iniciada.", status: await getStatus(env) });
+        }
+
+        // --- /theme-sync (Ana CEE Scheduler) ---
+        if (url.pathname === '/theme-sync') {
+            const themeName = getActiveThemeName(new Date());
+            const themeUrl = `https://raw.githubusercontent.com/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/${env.GITHUB_BRANCH}/public/theme/${themeName}.json`;
+            const themeRes = await fetch(themeUrl);
+            if (!themeRes.ok) return jsonResponse({ success: false, error: `Theme file not found: ${themeName}.json` }, 404);
+            const themeData = await themeRes.json();
+
+            // Publica active-theme.json no GitHub (public/theme/active-theme.json)
+            const pushed = await updateFileOnGitHub(
+                env,
+                'public/theme/active-theme.json',
+                JSON.stringify(themeData, null, 2),
+                `chore(ana): activate theme ${themeName} for ${new Date().toISOString().split('T')[0]}`
+            );
+            return jsonResponse({ success: pushed, theme: themeName, intensity: themeData.visual_intensity });
         }
 
         // --- /reset-busy ---

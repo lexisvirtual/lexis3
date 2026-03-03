@@ -1,0 +1,41 @@
+{
+    "version": "1.0.0",
+    "mode": "seasonal",
+    "event": "new_year",
+    "visual_intensity": 3,
+    "concept": "Emergence",
+    "movement_axis": "vertical",
+    "geometry_language": "linear",
+    "rhythm_profile": "progressive",
+    "atmosphere_type": "light_based",
+    "intensity": 0.12,
+    "active_range": {
+        "start": "12-26",
+        "end": "01-05"
+    },
+    "palette": {
+        "primary": "#0a0a0f",
+        "secondary": "#1a1a2e",
+        "accent": "#ffffff",
+        "background": "#05050a",
+        "hexAcc": "#ffffff"
+    },
+    "webgl": {
+        "enabled": true,
+        "hero_only": true,
+        "parallax_max": 0.10,
+        "particle_opacity_max": 0.12,
+        "concept_note": "Ascending lines + discrete golden particles. No fireworks."
+    },
+    "motion": {
+        "duration_ms": 600,
+        "ease": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "max_simultaneous_elements": 2,
+        "reduced_motion_support": true
+    },
+    "rules": {
+        "color_dominance": "70/20/10",
+        "ui_neutral_ratio": 0.90,
+        "hero_only": true
+    }
+}

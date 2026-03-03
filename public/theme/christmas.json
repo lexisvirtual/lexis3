@@ -1,0 +1,41 @@
+{
+    "version": "1.0.0",
+    "mode": "seasonal",
+    "event": "christmas",
+    "visual_intensity": 3,
+    "concept": "Light Transition",
+    "movement_axis": "vertical",
+    "geometry_language": "layered",
+    "rhythm_profile": "slow",
+    "atmosphere_type": "light_based",
+    "intensity": 0.10,
+    "active_range": {
+        "start": "12-10",
+        "end": "12-26"
+    },
+    "palette": {
+        "primary": "#080810",
+        "secondary": "#10101a",
+        "accent": "#fef3c7",
+        "background": "#040408",
+        "hexAcc": "#fef3c7"
+    },
+    "webgl": {
+        "enabled": true,
+        "hero_only": true,
+        "parallax_max": 0.10,
+        "particle_opacity_max": 0.12,
+        "concept_note": "Light golden particles + subtle radial glow. Parallax max 10%. No trees or snow literals."
+    },
+    "motion": {
+        "duration_ms": 700,
+        "ease": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "max_simultaneous_elements": 2,
+        "reduced_motion_support": true
+    },
+    "rules": {
+        "color_dominance": "70/20/10",
+        "ui_neutral_ratio": 0.90,
+        "hero_only": true
+    }
+}

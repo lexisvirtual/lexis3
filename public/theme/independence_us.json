@@ -1,0 +1,41 @@
+{
+    "version": "1.0.0",
+    "mode": "seasonal",
+    "event": "independence_us",
+    "visual_intensity": 3,
+    "concept": "Structural Axis",
+    "movement_axis": "diagonal",
+    "geometry_language": "diagonal",
+    "rhythm_profile": "progressive",
+    "atmosphere_type": "contrast_based",
+    "intensity": 0.11,
+    "active_range": {
+        "start": "06-25",
+        "end": "07-05"
+    },
+    "palette": {
+        "primary": "#05080f",
+        "secondary": "#0a1020",
+        "accent": "#60a5fa",
+        "background": "#020508",
+        "hexAcc": "#60a5fa"
+    },
+    "webgl": {
+        "enabled": true,
+        "hero_only": true,
+        "parallax_max": 0.10,
+        "particle_opacity_max": 0.15,
+        "concept_note": "Discrete diagonal lines red/blue (opacity ≤ 0.15). No literal flags."
+    },
+    "motion": {
+        "duration_ms": 500,
+        "ease": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "max_simultaneous_elements": 2,
+        "reduced_motion_support": true
+    },
+    "rules": {
+        "color_dominance": "70/20/10",
+        "ui_neutral_ratio": 0.90,
+        "hero_only": true
+    }
+}

@@ -1,0 +1,41 @@
+{
+    "version": "1.0.0",
+    "mode": "seasonal",
+    "event": "valentine_us",
+    "visual_intensity": 2,
+    "concept": "Connection Field",
+    "movement_axis": "vertical",
+    "geometry_language": "curved",
+    "rhythm_profile": "slow",
+    "atmosphere_type": "light_based",
+    "intensity": 0.07,
+    "active_range": {
+        "start": "02-07",
+        "end": "02-15"
+    },
+    "palette": {
+        "primary": "#12050e",
+        "secondary": "#1e0d18",
+        "accent": "#f472b6",
+        "background": "#0a0308",
+        "hexAcc": "#f472b6"
+    },
+    "webgl": {
+        "enabled": true,
+        "hero_only": true,
+        "parallax_max": 0.07,
+        "particle_opacity_max": 0.10,
+        "concept_note": "Warm light diffusion + slow ascending particles. No hearts."
+    },
+    "motion": {
+        "duration_ms": 700,
+        "ease": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "max_simultaneous_elements": 2,
+        "reduced_motion_support": true
+    },
+    "rules": {
+        "color_dominance": "70/20/10",
+        "ui_neutral_ratio": 0.85,
+        "hero_only": true
+    }
+}

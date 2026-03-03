@@ -1,0 +1,38 @@
+{
+    "version": "1.0.0",
+    "mode": "seasonal",
+    "event": "mothers_day",
+    "visual_intensity": 2,
+    "concept": "Gentle Elevation",
+    "movement_axis": "vertical",
+    "geometry_language": "curved",
+    "rhythm_profile": "slow",
+    "atmosphere_type": "light_based",
+    "intensity": 0.06,
+    "active_range_note": "2nd Sunday of May, BR and USA. Activate 7 days before.",
+    "palette": {
+        "primary": "#0f0a10",
+        "secondary": "#1a1020",
+        "accent": "#e879f9",
+        "background": "#080508",
+        "hexAcc": "#e879f9"
+    },
+    "webgl": {
+        "enabled": true,
+        "hero_only": true,
+        "parallax_max": 0.08,
+        "particle_opacity_max": 0.10,
+        "concept_note": "Subtle vertical gradient + slow parallax up to 8%. Near-imperceptible motion."
+    },
+    "motion": {
+        "duration_ms": 700,
+        "ease": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "max_simultaneous_elements": 2,
+        "reduced_motion_support": true
+    },
+    "rules": {
+        "color_dominance": "70/20/10",
+        "ui_neutral_ratio": 0.85,
+        "hero_only": true
+    }
+}
