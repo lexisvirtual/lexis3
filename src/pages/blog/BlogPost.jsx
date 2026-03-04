@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { useParams, Link } from 'react-router-dom';
 import { getPostBySlug } from '../../utils/posts';
 import Navbar from '../../components/Navbar';
@@ -71,6 +72,17 @@ const BlogPost = () => {
                 .ana-prose a { color: #fbd24c; font-weight: 800; text-decoration: none; border-bottom: 1px solid rgba(251, 210, 76, 0.3); transition: all 0.3s; }
                 .ana-prose a:hover { border-bottom-color: #fbd24c; }
                 .ana-prose blockquote { border-left-color: #fbd24c; background: rgba(251, 210, 76, 0.03); padding: 2rem; border-radius: 0 2rem 2rem 0; font-style: italic; color: #cbd5e1; }
+
+                /* Tabela AMADOR vs ELITE */
+                .ana-prose table { width: 100%; border-collapse: collapse; margin: 2rem 0; font-size: 0.9rem; }
+                .ana-prose thead tr { background: rgba(251, 210, 76, 0.08); border-bottom: 2px solid rgba(251, 210, 76, 0.3); }
+                .ana-prose th { color: #fbd24c; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.7rem; padding: 1rem 1.25rem; text-align: left; }
+                .ana-prose td { padding: 0.85rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.05); color: #cbd5e1; vertical-align: top; line-height: 1.6; }
+                .ana-prose tr:last-child td { border-bottom: none; }
+                .ana-prose tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+                .ana-prose td:first-child { color: #94a3b8; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+                .ana-prose td:nth-child(2) { color: #ef4444; }
+                .ana-prose td:nth-child(3) { color: #4ade80; font-weight: 600; }
             `}</style>
 
             <div className="scroll-progress-bar" style={{ width: `${scrollProgress}%` }} />
@@ -109,7 +121,7 @@ const BlogPost = () => {
 
                     <div className="bg-white/[0.02] backdrop-blur-sm border border-white/5 p-8 md:p-16 rounded-[3rem] shadow-2xl relative overflow-hidden reveal active" style={{ animationDelay: '0.6s' }}>
                         <div className="absolute top-0 right-0 w-64 h-64 bg-[#fbd24c]/5 rounded-full blur-[100px] -mr-32 -mt-32"></div>
-                        <ReactMarkdown>{post.content}</ReactMarkdown>
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
 
                         <div className="mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
                             <div className="flex items-center gap-4">
