@@ -162,7 +162,14 @@ const BlogPost = () => {
 
                     <div className="bg-white/[0.02] backdrop-blur-sm border border-white/5 p-8 md:p-16 rounded-[3rem] shadow-2xl relative overflow-hidden reveal active" style={{ animationDelay: '0.6s' }}>
                         <div className="absolute top-0 right-0 w-64 h-64 bg-[#fbd24c]/5 rounded-full blur-[100px] -mr-32 -mt-32"></div>
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
+                        <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
+                            components={{
+                                h1: () => null // Suprime qualquer H1 dentro do corpo do post para evitar duplicidade com o Hero
+                            }}
+                        >
+                            {post.content}
+                        </ReactMarkdown>
 
                         <div className="mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
                             <div className="flex items-center gap-4">
