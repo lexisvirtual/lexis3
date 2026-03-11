@@ -152,14 +152,12 @@ const BlogPost = () => {
 
             <main className="pt-32 md:pt-48 pb-32 px-4 md:px-6 max-w-4xl mx-auto relative z-10 hero-focus-shift">
                 <article className="ana-prose prose prose-invert prose-lg max-w-none">
-                    <header className="mb-16 text-center">
-                        <div className="text-[#fbd24c] text-[10px] font-black uppercase tracking-[0.3em] mb-6 opacity-60 reveal active">
+                    <header className="mb-16 text-center max-w-full overflow-hidden">
+                        <div className="text-[#fbd24c] text-[10px] font-black uppercase tracking-[0.3em] mb-6 opacity-60">
                             {post.category || 'Blog Lexis'} • <time className="font-mono">{post.date}</time>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black text-white mb-10 leading-tight ana-heading">
-                            {post.title.split(' ').map((word, i) => (
-                                <span key={i} className="word-stagger" style={{ animationDelay: `${i * 40}ms` }}>{word}&nbsp;</span>
-                            ))}
+                        <h1 className="text-4xl md:text-6xl font-black text-white mb-10 leading-tight ana-heading hero-focus-shift">
+                            {post.title}
                         </h1>
 
                         {post.image && (

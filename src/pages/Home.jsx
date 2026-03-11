@@ -188,18 +188,9 @@ const Home = () => {
             <header id="inicio" className="relative pt-60 pb-48 px-6 overflow-hidden bg-[#0f172a] hero-focus-shift">
                 <div className="bg-mesh opacity-40"></div>
                 <div className="max-w-6xl mx-auto text-center relative z-10">
-                    <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-[5.8rem] font-extrabold mb-10 leading-[1.05] tracking-tight text-white ana-heading">
-                        {["Inglês", "é", "uma", "habilidade."].map((word, i) => (
-                            <span key={i} className="word-stagger" style={{ animationDelay: `${i * 60}ms` }}>
-                                {word === "habilidade." ? <span className="text-[#fbd24c]">{word}</span> : word}&nbsp;
-                            </span>
-                        ))}
-                        <br />
-                        {["Treine", "como", "um", "atleta."].map((word, i) => (
-                            <span key={i} className="word-stagger" style={{ animationDelay: `${(i + 4) * 60 + 100}ms` }}>
-                                {word}&nbsp;
-                            </span>
-                        ))}
+                    <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-[5.8rem] font-extrabold mb-10 leading-[1.05] tracking-tight text-white ana-heading hero-focus-shift">
+                        Inglês é uma <span className="text-[#fbd24c]">habilidade.</span><br />
+                        Treine como um atleta.
                     </h1>
                     <p className="text-[#94a3b8] text-lg md:text-2xl max-w-4xl mx-auto mb-16 leading-relaxed font-medium reveal" style={{ transitionDelay: '600ms' }}>
                         A Lexis English Academy transforma o aprendizado em automação cognitiva. Escolha seu caminho e alcance a fluência real em tempo recorde.
