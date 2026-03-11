@@ -55,7 +55,19 @@ const BlogPost = () => {
                 @keyframes focusShift { from { filter: blur(2px); opacity: 0; } to { filter: blur(0); opacity: 1; } }
                 .word-stagger { display: inline-block; opacity: 0; transform: translateY(4px); animation: wordUp 0.7s var(--premium-easing) forwards; }
                 @keyframes wordUp { to { opacity: 1; transform: translateY(0); } }
-                .ana-heading { letter-spacing: -0.015em; line-height: 1.05; }
+                .ana-heading { 
+                    letter-spacing: -0.015em; 
+                    line-height: 1.05; 
+                }
+                
+                @media (max-width: 768px) {
+                    .ana-heading { font-size: 2.5rem !important; }
+                    .ana-prose h2 { font-size: 1.75rem !important; margin-top: 2.5em !important; }
+                    .ana-prose h3 { font-size: 1.4rem !important; }
+                    main { pt-32 !important; }
+                    .ana-prose table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+                    .ana-prose td, .ana-prose th { min-width: 140px; padding: 1rem !important; }
+                }
                 
                 /* Apple-Inspired Minimalism (Ana v3.7) */
                 .ana-prose {
@@ -135,7 +147,7 @@ const BlogPost = () => {
             />
             <Navbar onOpenModal={() => { }} />
 
-            <main className="pt-48 pb-32 px-6 max-w-4xl mx-auto relative z-10 hero-focus-shift">
+            <main className="pt-32 md:pt-48 pb-32 px-4 md:px-6 max-w-4xl mx-auto relative z-10 hero-focus-shift">
                 <article className="ana-prose prose prose-invert prose-lg max-w-none">
                     <header className="mb-16 text-center">
                         <div className="text-[#fbd24c] text-[10px] font-black uppercase tracking-[0.3em] mb-6 opacity-60 reveal active">
