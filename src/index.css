@@ -22,6 +22,14 @@
     .reveal-left { opacity: 0; transform: translateX(-30px); transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
     .reveal-left.active { opacity: 1; transform: translateX(0); }
 
+    /* Mobile: desativa efeitos de entrada para garantir visibilidade */
+    @media (max-width: 768px) {
+        .reveal, .reveal-left {
+            opacity: 1 !important;
+            transform: none !important;
+        }
+    }
+
     .modality-card { position: relative; border-radius: 2.5rem; overflow: hidden; transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); border: 1px solid rgba(255,255,255,0.05); }
     .modality-card:hover { transform: translateY(-10px); }
     .benefit-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 12px; }
