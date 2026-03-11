@@ -46,11 +46,11 @@ export async function publishPostsToGitHub(env, maxPosts = 3) {
         stringToBase64(markdown),
         `feat(blog): ${post.title}`
       );
-      console.log(`[PUBLISH] GitHub Response: ${JSON.stringify(githubRes).substring(0, 100)}...`);
 
-      // 3.5 Remover IMEDIATAMENTE da fila (Evitar duplicatas em caso de timeout posterior)
+      // 3.5 REMOÇÃO IMEDIATA DA FILA (Crítico para evitar duplicatas em caso de timeout de build posterior)
+      // Fazemos isso logo após o commit ser aceito pelo GitHub
       await env.LEXIS_REWRITTEN_POSTS.delete(key.name);
-      console.log(`[PUBLISH] Remoção precoce da fila (${key.name}) confirmada.`);
+      console.log(`[PUBLISH] Post ${filename} removido da fila após sucesso no commit.`);
 
       // 4. Registrar como publicado
       const publishedRecord = {
@@ -292,10 +292,9 @@ function generateSlug(title) {
   return String(title)
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .substring(0, 60);
+    .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+    .replace(/[^a-z0-9]+/g, '-')     // Caracteres especiais viram hífens
+    .replace(/^-+|-+$/g, '');        // Limpa hífens no início e fim agressivamente
 }
 
 function simpleHash(text) {

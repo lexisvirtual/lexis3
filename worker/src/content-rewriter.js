@@ -8,61 +8,90 @@ import { runEliteRetrospective, loadElitePatterns, formatPatternsForPrompt } fro
  * Prompt Mestre do Diretor (Versão Elite 3.3 - Evolutionary)
  * Focado em Performance Executiva e Aprendizado Contínuo.
  */
+/**
+ * Repositório de Cenários de Elite (Amostra de Pressão Real)
+ */
+const ELITE_SCENARIOS = `
+1. Boardroom Rejection: Defender um orçamento de expansão contra um CFO agressivo que busca cortes imediatos.
+2. Crisis Management: Comunicar um atraso crítico de entrega a um cliente internacional VIP durante uma call de status.
+3. Hostile Pitch: Responder a perguntas céticas e interrupções de um investidor durante a apresentação de um QBR.
+4. Salary Negotiation: Negociar termos de bônus e benefícios em uma promoção direta com o RH Global.
+5. Technical Failure: Explicar uma queda de sistema catastrófica em tempo real para stakeholders durante uma demonstração ao vivo.
+`;
+
+/**
+ * Prompt Mestre do Diretor (Versão Elite 3.5 - Hybrid & Anchor Focus)
+ * Focado em Performance Executiva, Acessibilidade Bilingue e Integração Lexical.
+ */
 const GET_DIRECTOR_PROMPT = (topic, directives = "", feedback = null, previousContent = null) => {
-  let basePrompt = `Você é Leo (Versão 3.0), Diretor de Performance Linguística da Lexis Academy. 
+  let basePrompt = `Você é Leo (Versão 3.5), Diretor de Performance Linguística da Lexis Academy. 
 
-SUA MISSÃO: Produzir um Workshop que maximize o IPL (Indicador de Performance Linguística). 
-O foco é aumentar a capacidade do aluno de formular respostas executivas de ALTO IMPACTO sob pressão.
+SUA MISSÃO: Produzir um Workshop de Elite que maximize o IPL (Indicador de Performance Linguística) seguindo o **Apple Executive Design Standard** (Minimalismo, Impacto e Autoridade).
 
-🚨 MÉTRICAS IPL OBRIGATÓRIAS:
-1. DENSIDADE C1: Mínimo de 10 expressões C1 reais aplicadas em contexto.
-2. INTEGRAÇÃO: Toda expressão apresentada no Nível 1 DEVE reaparecer aplicada no Nível 2 (Cenário) ou Nível 3 (Roleplay).
-3. TENSÃO CORPORATIVA: Pelo menos 1 cenário de tensão realista (boardroom, negociação, crise).
-4. PROGRESSÃO: O treino deve ser progressivo (do chunk isolado à missão final).
-5. PROPORÇÃO: 70% de inglês funcional.
+🚨 MÉTRICAS IPL OBRIGATÓRIAS (VERSÃO 3.7 - APPLE STYLE):
+1. DNA DE TREINO (60/40): 60% Inglês Funcional / 40% Português Instrucional.
+2. ESTILO APPLE (NOVO): 
+   - Use frases curtas e de alto impacto. 
+   - Evite parágrafos longos (máximo 3 linhas).
+   - O excesso de informação é o inimigo da clareza. Respiro (whitespace) é luxo.
+3. ANCORAGEM LEXICAL (CRÍTICO): Toda expressão apresentada no Nível 1 DEVE ser usada nos Níveis 2 e 3.
+   - REGRA DE OURO: Você DEVE colocar em **negrito** (ex: **stalling for time**) cada termo da lista do Nível 1 quando usá-lo na prática.
+4. BILINGUISMO FUNCIONAL:
+   - Resposta Rápida e FAQ: Use o modelo "Resumo PT + Action Item EN" (Espelhamento).
+   - Títulos (H2): Use o formato "Título em PT | Authority Hook in EN".
+4. TENSÃO CORPORATIVA REAL: Inspire-se nestes cenários de pressão executiva:
+${ELITE_SCENARIOS}
+5. SEO & AUTORIDADE (NOVO): 
+   - Logo no início: Inclua 1 Link Externo (markdown básico) para uma fonte de autoridade (ex: BBC Learning English, Cambridge Dictionary, HBR) validando o tema.
+   - Logo no final: Inclua 1-2 Links Internos para outros workshops da Lexis Academy ou para a página de Imersão (/imersao).
 
 🚨 ESTRUTURA CONTRATUAL OBRIGATÓRIA:
-# [Headline de Autoridade em PT]
-## Resposta Rápida (Quick Answer): 40-60 palavras em PT. Direta e técnica.
-## Anatomia da Fluência (ROI Cognitivo): Explique por que treinar isso eleva o patamar executivo.
-## Tabela de Performance: AMADOR vs ELITE (Choque Cognitivo).
-   - Use uma Tabela Markdown real e limpa.
-   - Contraste "Amador (Reativo)" vs "Elite (Estratégico)".
-   - Não use apenas descrições; use FRASES REAIS. Ex: Amador: "I think this is bad" | Elite: "This move is likely to trigger unintended regional repercussions."
+## Resposta Rápida (Quick Answer) | Executive Summary
+   - Resumo técnico em PT + 2 frases de poder em EN (Action Items).
+## Anatomia da Fluência (ROI Cognitivo)
+   - Por que este treinamento gera retorno imediato na carreira.
+## Tabela de Performance: AMADOR vs ELITE
+   - Contraste frases "Safe/Genéricas" vs "Strategic/High-Impact".
 ## ⚡ O Treino Lexis: (O coração do workshop)
    - Aquecimento (Mapping PT/EN)
    - Nível 1 (10+ Chunks & Vocabulary C1)
-   - Nível 2 (Cenário de Alta Pressão: Reaplicar Chunks)
-   - Nível 3 (Missão Final / Roleplay: Reaplicar Chunks)
-## Erros Comuns: Evite soar como um amador.
-## Plano de Treino 7 Dias (Drill): Roteiro de repetição estruturada.
-## FAQ de Mentoria: Respostas estratégicas para executivos.
+   - Nível 2 (Cenário de Alta Pressão | **Negrite os termos ancorados**)
+   - Nível 3 (Missão Final / Roleplay | **Negrite os termos ancorados**)
+## Erros Comuns | Avoiding Amateur Pitfalls
+   - Explicação PT + Tabela "Don't say / Say instead".
+## Plano de Treino 7 Dias (Drill)
+## FAQ de Mentoria | Executive Q&A
+   - Perguntas em PT / Respostas Curtas e Diretas em EN.
 
 🚨 OBRIGATÓRIO (FIM DO POST):
-Gere o bloco abaixo para sua autoavaliação:
-IPL_SELF_CHECK:
-- Percentual estimado de inglês: XX%
-- Número de expressões C1: XX
-- Expressões reaplicadas nos desafios: [sim/não]
-- Cenário com tensão realista: [sim/não]
-- Drill 7 dias estruturado: [sim/não]
+Gere o bloco IPL_SELF_CHECK com o percentual real de inglês e contagem de termos ancorados. Inclua aqui os links internos de SEO.
 
-Este conteúdo será auditado pelo Roger 3.0 sob critérios estritos de IPL e Integração Lexical.`;
+Este conteúdo será auditado pelo Roger 3.5. Seja implacável na tensão, fiel na ancoragem e estratégico nos links.`;
 
   if (feedback && previousContent) {
+    const isIntegrationIssue = feedback.toLowerCase().includes('integração') || feedback.toLowerCase().includes('ancoragem');
+
+    if (isIntegrationIssue) {
+      return `${basePrompt}
+
+🚨 PROTOCOLO DE RESET DE CENÁRIO (FALHA DE ANCORAGEM):
+O Roger detectou que as expressões do Nível 1 NÃO foram devidamente integradas ou negritadas na prática.
+
+SUA MISSÃO DE REPARO:
+1. MANTENHA o Nível 1 original.
+2. DESCARTES os cenários atuais dos Níveis 2 e 3.
+3. CRIE NOVOS CENÁRIOS de maior impacto, garantindo que você use e COLOQUE EM NEGRITO pelo menos 8 termos da lista.
+4. FOQUE no bilinguismo funcional nos títulos e resumos.
+
+CONTEÚDO PARA REFERÊNCIA:
+${previousContent.substring(0, 3000)}`;
+    }
+
     return `${basePrompt}
 
 🚨 PROTOCOLO DE REPARO CIRÚRGICO IPL:
-O Roger detectou falha no IPL: "${feedback}".
-
-REGRAS DO REPARO:
-1. NÃO REESCREVA O POST INTEIRO.
-2. Identifique onde a integração ou a tensão falhou.
-3. Se o Roger pedir densidade, não apenas liste palavras; integre-as na narrativa do cenário.
-4. Se houver dúvida técnica, adicione [[ROGER_HELP]] no fim com sua pergunta ao auditor.
-
-CONTEÚDO ANTERIOR:
-${previousContent.substring(0, 3000)}`;
+Feedback do Roger: "${feedback}".
+Refine apenas as seções afetadas focando em elevar a tensão ou o bilinguismo funcional.`;
   }
 
   return basePrompt;
@@ -171,31 +200,32 @@ async function processWithFeedback(env, topic, meta, kvKey, successList, current
       const logMsg = `[REWRITER] (${currentIdx}/${totalNeeded}) 🛠️ Refinamento Cirúrgico (${attempts}/5) p/ atingir ${eliteThreshold}pts: ${topic}...`;
       console.log(logMsg);
 
-      // Preparar os comandos específicos do Roger para o Leo
-      const specificFixes = audit.specific_fixes ? JSON.stringify(audit.specific_fixes, null, 2) : "Nenhum comando específico.";
       const englishCommand = audit.roger_to_leo_english_command || audit.reason || "Improve content quality.";
+      const isIntegrationIssue = audit.reason?.toLowerCase().includes('integração') || audit.reason?.toLowerCase().includes('ancoragem');
 
-      prompt = `Você é o Diretor Editorial da Lexis Academy (Leo). O Auditor Roger REJEITOU seu conteúdo com nota ${audit.score}.
-      
-      SUA MISSÃO: UM REPARO CIRÚRGICO DE ALTA PRECISÃO.
-      NÃO REESCREVA O ARTIGO INTEIRO. Mantenha os 90% que funcionam e foque APENAS nos comandos técnicos abaixo.
+      if (isIntegrationIssue) {
+        prompt = GET_DIRECTOR_PROMPT(topic, learnedDirectives + elitePatternsBlock, audit.reason, content);
+        console.log(`[REWRITER] 🔄 RESET DE CENÁRIO ATIVADO: Roger exigiu melhor ancoragem.`);
+      } else {
+        prompt = `Você é o Diretor Editorial da Lexis Academy (Leo). O Auditor Roger REJEITOU seu conteúdo com nota ${audit.score}.
+        
+        SUA MISSÃO: UM REPARO CIRÚRGICO DE ALTA PRECISÃO.
+        NÃO REESCREVA O ARTIGO INTEIRO. Mantenha os 90% que funcionam e foque APENAS nos comandos técnicos abaixo.
 
-      🚨 FEEDBACK DO ROGER (EM PORTUGUÊS): "${audit.reason}"
-      🚨 COMANDOS ESPECÍFICOS: 
-      ${specificFixes}
+        🚨 FEEDBACK DO ROGER (EM PORTUGUÊS): "${audit.reason}"
+        🚨 COMANDOS ESPECÍFICOS: 
+        ${specificFixes}
 
-      🚨 ENGLISH DIRECTIVE (FOLLOW THIS STRICTLY): 
-      "${englishCommand}"
+        🚨 ENGLISH DIRECTIVE (FOLLOW THIS STRICTLY): 
+        "${englishCommand}"
 
-      🚨 PROTOCOLO DE AJUDA: Se o comando for genérico ou você não souber o que fazer, adicione no fim do artigo:
-      "[[ROGER_HELP]]: [Sua pergunta específica em Inglês para o Roger sobre o que está te travando]"
+        CONTEÚDO PARA REPARO:
+        ${content}
 
-      CONTEÚDO PARA REPARO:
-      ${content}
+        Instrução Final: Siga a diretriz técnica para elevar o bilinguismo e a densidade executiva.`;
+      }
 
-      Instrução Final: Reescreva as partes problemáticas em PORTUGUÊS (ou Inglês onde solicitado) seguindo a diretriz em inglês do Roger. Se o comando for genérico, use sua expertise para elevar a densidade de Phrasal Verbs e Chunks C1.`;
-
-      content = await callOpenAI(env, prompt, `CORREÇÃO CIRÚRGICA: O Roger quer que você foque em: ${englishCommand}. Seja técnico e direto.`);
+      content = await callOpenAI(env, prompt, `REFINAMENTO IPL: ${englishCommand}`);
 
       console.log(`[REWRITER] (${currentIdx}/${totalNeeded}) Roger re-auditando (${attempts}/5): ${topic}...`);
       audit = await auditPost(env, { title: topic, content: cleanFullContent(content) });

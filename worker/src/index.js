@@ -125,6 +125,43 @@ async function runPublishPipeline(env, limit = 1) {
     return await rewriteArticles(env, 5);
 }
 
+async function runThemeSync(env) {
+    const themeName = getActiveThemeName(new Date());
+    const themeUrl = `https://raw.githubusercontent.com/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/${env.GITHUB_BRANCH}/public/theme/${themeName}.json`;
+    const themeRes = await fetch(themeUrl);
+    if (!themeRes.ok) throw new Error(`Theme file not found: ${themeName}.json`);
+    const themeData = await themeRes.json();
+
+    // 1. Atualiza public para acesso via URL (Legado/API)
+    await updateFileOnGitHub(
+        env,
+        'public/theme/active-theme.json',
+        JSON.stringify(themeData, null, 2),
+        `chore(ana): update public theme to ${themeName}`
+    );
+
+    // 2. Atualiza src/data/cee para o build do Vite (Frontend Real)
+    const ceeData = {
+        concept: themeData.concept || "Premium Minimal",
+        movement_axis: themeData.movement_axis || "static",
+        geometry_language: themeData.geometry_language || "linear",
+        rhythm_profile: themeData.rhythm_profile || "progressive",
+        atmosphere_type: themeData.atmosphere_type || "light_based",
+        intensity: themeData.intensity || 0.02,
+        mode: themeData.mode || "base",
+        event: themeName
+    };
+
+    const pushed = await updateFileOnGitHub(
+        env,
+        'src/data/cee/active-theme.json',
+        JSON.stringify(ceeData, null, 2),
+        `chore(ana): sync vite theme to ${themeName}`
+    );
+
+    return { success: pushed, theme: themeName, intensity: themeData.visual_intensity };
+}
+
 // ================================================
 // Handler Principal
 // ================================================
@@ -193,14 +230,18 @@ export default {
         // --- /auto-publish ---
         if (url.pathname === '/auto-publish') {
             await log(env, "🚀 Trigger manual acionado.");
-
             const stock = await env.LEXIS_REWRITTEN_POSTS.list({ prefix: 'post:', limit: 1 });
 
             if (stock.keys.length > 0) {
                 await log(env, `📦 Post em estoque detectado. Publicando (trigger manual)...`);
-                await publishPostsToGitHub(env, 1);
-                ctx.waitUntil(rewriteArticles(env, 5));
-                return jsonResponse({ success: true, message: "Publicado via Stockpile.", status: await getStatus(env) });
+                const result = await publishPostsToGitHub(env, 1);
+
+                if (result.published > 0) {
+                    ctx.waitUntil(rewriteArticles(env, 5));
+                    return jsonResponse({ success: true, message: "Publicado via Stockpile.", result, status: await getStatus(env) });
+                } else {
+                    return jsonResponse({ success: false, message: "Falha na publicação.", errors: result.errors, status: await getStatus(env) });
+                }
             }
 
             // Estoque vazio: Produção completa agora
@@ -221,22 +262,14 @@ export default {
             return jsonResponse({ success: true, message: "Estoque vazio. Produção completa iniciada.", status: await getStatus(env) });
         }
 
-        // --- /theme-sync (Ana CEE Scheduler) ---
+        // --- /theme-sync (Ana CEE Scheduler Manua) ---
         if (url.pathname === '/theme-sync') {
-            const themeName = getActiveThemeName(new Date());
-            const themeUrl = `https://raw.githubusercontent.com/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/${env.GITHUB_BRANCH}/public/theme/${themeName}.json`;
-            const themeRes = await fetch(themeUrl);
-            if (!themeRes.ok) return jsonResponse({ success: false, error: `Theme file not found: ${themeName}.json` }, 404);
-            const themeData = await themeRes.json();
-
-            // Publica active-theme.json no GitHub (public/theme/active-theme.json)
-            const pushed = await updateFileOnGitHub(
-                env,
-                'public/theme/active-theme.json',
-                JSON.stringify(themeData, null, 2),
-                `chore(ana): activate theme ${themeName} for ${new Date().toISOString().split('T')[0]}`
-            );
-            return jsonResponse({ success: pushed, theme: themeName, intensity: themeData.visual_intensity });
+            try {
+                const result = await runThemeSync(env);
+                return jsonResponse(result);
+            } catch (e) {
+                return jsonResponse({ success: false, error: e.message }, 500);
+            }
         }
 
         // --- /reset-busy ---
@@ -290,6 +323,22 @@ export default {
             try {
                 const now = new Date();
                 const hourBRT = (now.getUTCHours() - 3 + 24) % 24;
+
+                // 0. TEMA (Ana CEE - Proatividade diária às 00:00)
+                if (hourBRT === 0) {
+                    const themeName = getActiveThemeName(now);
+                    const lastTheme = await env.LEXIS_PUBLISHED_POSTS.get('system:lastTheme');
+                    if (lastTheme !== themeName) {
+                        try {
+                            await log(env, `🎨 [ANA] Mudança de estação: ${lastTheme || 'base'} -> ${themeName}`);
+                            await runThemeSync(env);
+                            await env.LEXIS_PUBLISHED_POSTS.put('system:lastTheme', themeName);
+                            await log(env, `✅ [ANA] Tema ${themeName} sincronizado.`);
+                        } catch (e) {
+                            await log(env, `⚠️ [ANA] Falha no sync automático da Ana: ${e.message}`, 'error');
+                        }
+                    }
+                }
 
                 // 1. PUBLICAÇÃO (Apenas às 06:00 BRT, prioridade máxima)
                 if (hourBRT === 6) {
