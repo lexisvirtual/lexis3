@@ -58,14 +58,17 @@ const BlogPost = () => {
                 .ana-heading { 
                     letter-spacing: -0.015em; 
                     line-height: 1.05; 
+                    overflow-wrap: break-word;
+                    word-wrap: break-word;
+                    hyphens: auto;
                 }
                 
                 @media (max-width: 768px) {
                     .ana-heading { font-size: 1.8rem !important; letter-spacing: -0.02em !important; }
-                    .ana-prose h2 { font-size: 1.5rem !important; margin-top: 2em !important; }
-                    .ana-prose h3 { font-size: 1.25rem !important; }
-                    .ana-prose table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 1rem; }
-                    .ana-prose td, .ana-prose th { min-width: 160px; padding: 1rem !important; font-size: 0.85rem !important; }
+                    .ana-prose h2 { font-size: 1.5rem !important; margin-top: 2em !important; overflow-wrap: break-word; }
+                    .ana-prose h3 { font-size: 1.25rem !important; overflow-wrap: break-word; }
+                    .ana-prose table { display: block; width: 100% !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch; border-radius: 1rem; position: relative; }
+                    .ana-prose td, .ana-prose th { min-width: 140px; padding: 1rem !important; font-size: 0.85rem !important; }
                     .ana-prose blockquote { font-size: 1.1rem !important; margin: 2rem 0 !important; }
                 }
                 
@@ -172,7 +175,7 @@ const BlogPost = () => {
                         )}
                     </header>
 
-                    <div className="bg-white/[0.02] backdrop-blur-sm border border-white/5 p-8 md:p-16 rounded-[3rem] shadow-2xl relative overflow-hidden reveal active" style={{ animationDelay: '0.6s' }}>
+                    <div className="bg-white/[0.02] backdrop-blur-sm border border-white/5 p-6 md:p-16 rounded-[2rem] md:rounded-[3rem] shadow-2xl relative overflow-x-auto reveal active" style={{ animationDelay: '0.6s' }}>
                         <div className="absolute top-0 right-0 w-64 h-64 bg-[#fbd24c]/5 rounded-full blur-[100px] -mr-32 -mt-32"></div>
                         <ReactMarkdown
                             remarkPlugins={[remarkGfm]}
