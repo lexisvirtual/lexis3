@@ -46,6 +46,7 @@ ${ELITE_SCENARIOS}
    - Logo no final: Inclua 1-2 Links Internos para outros workshops da Lexis Academy ou para a página de Imersão (/imersao).
 
 🚨 ESTRUTURA CONTRATUAL OBRIGATÓRIA:
+[TITLE] Coloque aqui o título real e estratégico do workshop (ex: OpenAI no Pentágono) [/TITLE]
 ## Resposta Rápida (Quick Answer) | Executive Summary
    - Resumo técnico em PT + 2 frases de poder em EN (Action Items).
 ## Anatomia da Fluência (ROI Cognitivo)
@@ -276,8 +277,13 @@ async function processWithFeedback(env, topic, meta, kvKey, successList, current
 }
 
 function extractTitle(content) {
-  const match = content.match(/^#\s*(.*)/m);
-  return match ? match[1].replace(/Título:\s*/i, '').trim() : null;
+  // 1. Prioridade para a nova tag administrativa
+  const tagMatch = content.match(/\[TITLE\]\s*(.*?)\s*\[\/TITLE\]/i);
+  if (tagMatch) return tagMatch[1].trim();
+
+  // 2. Fallback para H1 (apenas se houver exatamente um #)
+  const h1Match = content.match(/^#[^#]\s*(.*)/m);
+  return h1Match ? h1Match[1].replace(/Título:\s*/i, '').trim() : null;
 }
 
 async function preparePostObject(meta, title, content, audit) {

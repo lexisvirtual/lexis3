@@ -146,6 +146,7 @@ export const cleanFullContent = (text) => {
     }
 
     // 3. Remover Tags de Metadados e cabeçalhos técnicos residuais
+    clean = clean.replace(/\[TITLE\].*?\[\/TITLE\]/gi, '');
     clean = clean.replace(/##?\s*(SEO DATA|METADADOS|AI DATA|DADOS SEO).*/gi, '');
     clean = clean.replace(/\*?\*?\[\[(DESCRIPTION|AI_SNIPPET|AI_CONTEXT)\]\]\*?\*?[:\s]*.*/gi, '');
 
