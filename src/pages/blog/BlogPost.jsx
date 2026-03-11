@@ -57,32 +57,73 @@ const BlogPost = () => {
                 @keyframes wordUp { to { opacity: 1; transform: translateY(0); } }
                 .ana-heading { letter-spacing: -0.015em; line-height: 1.05; }
                 
-                /* Prose Optimization for Ana v60 */
+                /* Apple-Inspired Minimalism (Ana v3.7) */
                 .ana-prose {
                     color: #94a3b8;
-                    font-weight: 500;
+                    font-weight: 400;
+                    line-height: 1.8;
+                    letter-spacing: -0.011em;
                 }
                 .ana-prose h2, .ana-prose h3 {
                     color: white;
-                    font-weight: 900;
-                    letter-spacing: -0.02em;
-                    margin-top: 2.5em;
+                    font-weight: 800;
+                    letter-spacing: -0.03em; /* Apple-style tight tracking */
+                    margin-top: 4em; /* Extra whitespace for clarity */
+                    margin-bottom: 1.5em;
                 }
-                .ana-prose strong { color: white; font-weight: 800; }
-                .ana-prose a { color: #fbd24c; font-weight: 800; text-decoration: none; border-bottom: 1px solid rgba(251, 210, 76, 0.3); transition: all 0.3s; }
-                .ana-prose a:hover { border-bottom-color: #fbd24c; }
-                .ana-prose blockquote { border-left-color: #fbd24c; background: rgba(251, 210, 76, 0.03); padding: 2rem; border-radius: 0 2rem 2rem 0; font-style: italic; color: #cbd5e1; }
+                .ana-prose h2 { font-size: 2.25rem; }
+                .ana-prose h3 { font-size: 1.8rem; }
+                .ana-prose strong { color: white; font-weight: 700; }
+                .ana-prose a { color: #fbd24c; font-weight: 600; text-decoration: none; transition: opacity 0.3s; }
+                .ana-prose a:hover { opacity: 0.7; }
+                .ana-prose blockquote { 
+                    border-left: 2px solid #fbd24c; 
+                    background: transparent; 
+                    padding: 0 0 0 2rem; 
+                    margin: 3rem 0;
+                    font-size: 1.4rem;
+                    line-height: 1.6;
+                    color: #e2e8f0;
+                }
 
-                /* Tabela AMADOR vs ELITE */
-                .ana-prose table { width: 100%; border-collapse: collapse; margin: 2rem 0; font-size: 0.9rem; }
-                .ana-prose thead tr { background: rgba(251, 210, 76, 0.08); border-bottom: 2px solid rgba(251, 210, 76, 0.3); }
-                .ana-prose th { color: #fbd24c; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.7rem; padding: 1rem 1.25rem; text-align: left; }
-                .ana-prose td { padding: 0.85rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.05); color: #cbd5e1; vertical-align: top; line-height: 1.6; }
+                /* Apple Comparison Style Table */
+                .ana-prose table { 
+                    width: 100%; 
+                    border-collapse: separate; 
+                    border-spacing: 0;
+                    margin: 4rem 0; 
+                    background: rgba(255,255,255,0.01);
+                    border-radius: 1.5rem;
+                    overflow: hidden;
+                    border: 1px solid rgba(255,255,255,0.05);
+                }
+                .ana-prose thead tr { background: transparent; }
+                .ana-prose th { 
+                    color: #94a3b8; 
+                    font-weight: 600; 
+                    text-transform: none; 
+                    letter-spacing: -0.01em; 
+                    font-size: 0.85rem; 
+                    padding: 2rem 1.5rem; 
+                    text-align: left;
+                    border-bottom: 1px solid rgba(255,255,255,0.05);
+                }
+                .ana-prose td { 
+                    padding: 1.5rem; 
+                    border-bottom: 1px solid rgba(255,255,255,0.03); 
+                    color: #cbd5e1; 
+                    vertical-align: middle; 
+                }
                 .ana-prose tr:last-child td { border-bottom: none; }
-                .ana-prose tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
-                .ana-prose td:first-child { color: #94a3b8; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
-                .ana-prose td:nth-child(2) { color: #ef4444; }
-                .ana-prose td:nth-child(3) { color: #4ade80; font-weight: 600; }
+                .ana-prose td:first-child { 
+                    color: white; 
+                    font-weight: 600; 
+                    font-size: 0.9rem; 
+                    text-transform: none;
+                    width: 30%;
+                }
+                .ana-prose td:nth-child(2) { color: #94a3b8; } /* Column 1 fade */
+                .ana-prose td:nth-child(3) { color: white; font-weight: 600; } /* Highlight column */
             `}</style>
 
             <div className="scroll-progress-bar" style={{ width: `${scrollProgress}%` }} />
