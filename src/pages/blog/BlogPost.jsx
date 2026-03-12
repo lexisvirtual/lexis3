@@ -82,8 +82,8 @@ const BlogPost = () => {
                 .ana-prose h2, .ana-prose h3 {
                     color: white;
                     font-weight: 800;
-                    letter-spacing: -0.03em; /* Apple-style tight tracking */
-                    margin-top: 4em; /* Extra whitespace for clarity */
+                    letter-spacing: -0.03em;
+                    margin-top: 4em;
                     margin-bottom: 1.5em;
                 }
                 .ana-prose h2 { font-size: 2.25rem; }
@@ -106,11 +106,17 @@ const BlogPost = () => {
                     width: 100%; 
                     border-collapse: separate; 
                     border-spacing: 0;
-                    margin: 4rem 0; 
+                    margin: 0;
                     background: rgba(255,255,255,0.01);
                     border-radius: 1.5rem;
-                    overflow: hidden;
                     border: 1px solid rgba(255,255,255,0.05);
+                }
+                .table-scroll-wrapper {
+                    overflow-x: auto;
+                    -webkit-overflow-scrolling: touch;
+                    border-radius: 1.5rem;
+                    margin: 4rem 0;
+                    width: 100%;
                 }
                 .ana-prose thead tr { background: transparent; }
                 .ana-prose th { 
@@ -137,8 +143,17 @@ const BlogPost = () => {
                     text-transform: none;
                     width: 30%;
                 }
-                .ana-prose td:nth-child(2) { color: #94a3b8; } /* Column 1 fade */
-                .ana-prose td:nth-child(3) { color: white; font-weight: 600; } /* Highlight column */
+                .ana-prose td:nth-child(2) { color: #94a3b8; }
+                .ana-prose td:nth-child(3) { color: white; font-weight: 600; }
+
+                /* Mobile — DEVE VIR DEPOIS das regras desktop para ter prioridade correta */
+                @media (max-width: 768px) {
+                    .ana-heading { font-size: 1.8rem !important; letter-spacing: -0.02em !important; }
+                    .ana-prose h2 { font-size: 1.5rem !important; margin-top: 2em !important; overflow-wrap: break-word; }
+                    .ana-prose h3 { font-size: 1.25rem !important; overflow-wrap: break-word; }
+                    .ana-prose td, .ana-prose th { min-width: 130px; padding: 0.875rem 1rem !important; font-size: 0.85rem !important; }
+                    .ana-prose blockquote { font-size: 1.1rem !important; margin: 2rem 0 !important; }
+                }
             `}</style>
 
             <div className="scroll-progress-bar" style={{ width: `${scrollProgress}%` }} />
@@ -173,12 +188,17 @@ const BlogPost = () => {
                         )}
                     </header>
 
-                    <div className="bg-white/[0.02] backdrop-blur-sm border border-white/5 p-6 md:p-16 rounded-[2rem] md:rounded-[3rem] shadow-2xl relative overflow-x-auto reveal active" style={{ animationDelay: '0.6s' }}>
+                    <div className="bg-white/[0.02] backdrop-blur-sm border border-white/5 p-6 md:p-16 rounded-[2rem] md:rounded-[3rem] shadow-2xl relative overflow-hidden reveal active" style={{ animationDelay: '0.6s' }}>
                         <div className="absolute top-0 right-0 w-64 h-64 bg-[#fbd24c]/5 rounded-full blur-[100px] -mr-32 -mt-32"></div>
                         <ReactMarkdown
                             remarkPlugins={[remarkGfm]}
                             components={{
-                                h1: () => null // Suprime qualquer H1 dentro do corpo do post para evitar duplicidade com o Hero
+                                h1: () => null,
+                                table: ({node, ...props}) => (
+                                    <div className="table-scroll-wrapper">
+                                        <table {...props} />
+                                    </div>
+                                )
                             }}
                         >
                             {post.content}

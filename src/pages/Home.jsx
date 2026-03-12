@@ -74,7 +74,7 @@ const Home = () => {
     ];
 
     return (
-        <div className="flex flex-col w-full min-h-screen relative overflow-x-hidden ana-design-system">
+        <div className="flex flex-col w-full min-h-screen relative ana-design-system">
             <style>{`
                 /* 1. Atmo WebGL Field (v10/10) */
                 .ana-design-system {
@@ -159,6 +159,11 @@ const Home = () => {
                 .section-alt:nth-child(odd) { padding: 160px 0; }
                 .section-alt:nth-child(even) { padding: 112px 0; }
                 .divider-v { width: 1px; height: 50px; background: rgba(255,255,255,0.08); margin: 60px auto; }
+
+                @media (max-width: 768px) {
+                    .section-alt:nth-child(odd), .section-alt:nth-child(even) { padding: 60px 0; }
+                    .divider-v { margin: 30px auto; height: 30px; }
+                }
 
                 .ana-heading { letter-spacing: -0.015em; line-height: 1.05; }
                 .ana-sub { letter-spacing: 0.12em; text-transform: uppercase; font-weight: 800; font-size: 0.65rem; opacity: 0.7; }
