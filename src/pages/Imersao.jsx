@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import LeadModal from '../components/LeadModal';
 import { useRevealOnScroll, Button, SectionHeader } from '../components/shared';
-import WebGLBackground from '../components/WebGLBackground';
+
 
 const DoubtsSection = () => {
     const categories = [
@@ -144,7 +144,7 @@ const Imersao = () => {
             `}</style>
 
             <div className="scroll-progress-bar" style={{ width: `${scrollProgress}%` }} />
-            <WebGLBackground opacity={heroOpacity} parallax={parallaxY} />
+
 
             <SEO
                 title="Imersão Presencial de Inglês em São Carlos | 14 Dias | Lexis Academy"

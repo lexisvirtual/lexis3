@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import LeadModal from '../components/LeadModal';
 import { useRevealOnScroll, Button, SectionHeader } from '../components/shared';
-import WebGLBackground from '../components/WebGLBackground';
+
 
 const TheWay = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -52,7 +52,7 @@ const TheWay = () => {
             `}</style>
 
             <div className="scroll-progress-bar" style={{ width: `${scrollProgress}%` }} />
-            <WebGLBackground opacity={heroOpacity} parallax={parallaxY} />
+
 
             <SEO
                 title="The Way Cíclico | Curso de Inglês Flexível Online | Início Imediato"

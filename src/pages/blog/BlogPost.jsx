@@ -6,7 +6,7 @@ import { getPostBySlug } from '../../utils/posts';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import SEO from '../../components/SEO';
-import WebGLBackground from '../../components/WebGLBackground';
+
 
 const BlogPost = () => {
     const { slug } = useParams();
@@ -157,7 +157,7 @@ const BlogPost = () => {
             `}</style>
 
             <div className="scroll-progress-bar" style={{ width: `${scrollProgress}%` }} />
-            <WebGLBackground opacity={heroOpacity} parallax={parallaxY} />
+
 
             <SEO
                 title={post.title}

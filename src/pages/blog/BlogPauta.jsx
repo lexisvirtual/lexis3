@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import SEO from '../../components/SEO';
-import WebGLBackground from '../../components/WebGLBackground';
+
 
 const BlogPauta = () => {
     const [data, setData] = useState(null);
@@ -66,7 +66,7 @@ const BlogPauta = () => {
             `}</style>
 
             <div className="scroll-progress-bar" style={{ width: `${scrollProgress}%` }} />
-            <WebGLBackground opacity={0.3} />
+
 
             <SEO title="Pauta de Elite - Controle de Estoque Lexis" description="Visualize a fila de produção e os artigos prontos para publicação." />
             <Navbar onOpenModal={() => { }} />

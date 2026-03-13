@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import LeadModal from '../components/LeadModal';
 import { useRevealOnScroll, SectionHeader } from '../components/shared';
-import WebGLBackground from '../components/WebGLBackground';
+
 
 const PilarIntensivo = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -71,7 +71,7 @@ const PilarIntensivo = () => {
             `}</style>
 
             <div className="scroll-progress-bar" style={{ width: `${scrollProgress}%` }} />
-            <WebGLBackground opacity={0.3} />
+
             <Navbar onOpenModal={openModal} />
             <LeadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} defaultCourse="Intensivo Inquiry" />
 

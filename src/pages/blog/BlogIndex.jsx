@@ -4,7 +4,7 @@ import { getPosts } from '../../utils/posts';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import SEO from '../../components/SEO';
-import WebGLBackground from '../../components/WebGLBackground';
+
 
 const BlogIndex = () => {
     const posts = getPosts();
@@ -45,7 +45,7 @@ const BlogIndex = () => {
             `}</style>
 
             <div className="scroll-progress-bar" style={{ width: `${scrollProgress}%` }} />
-            <WebGLBackground opacity={heroOpacity} parallax={parallaxY} />
+
 
             <SEO
                 title="Blog - Artigos sobre Fluência e Alta Performance"

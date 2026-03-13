@@ -33,7 +33,7 @@ const FAQItem = ({ question, answer, index }) => {
     );
 };
 
-import WebGLBackground from '../components/WebGLBackground';
+
 
 const Home = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -178,7 +178,7 @@ const Home = () => {
             <div className="scroll-progress-bar" style={{ width: `${scrollProgress}%` }} />
 
             {/* Atmosfera WebGL (10/10 Authority Field) */}
-            <WebGLBackground opacity={heroOpacity} parallax={parallaxY} />
+
 
             <div id="seasonal-layer"></div>
 

@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import LeadModal from '../components/LeadModal';
 import { useRevealOnScroll, Button, SectionHeader } from '../components/shared';
-import WebGLBackground from '../components/WebGLBackground';
+
 
 const PilarImersao = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -131,7 +131,7 @@ const PilarImersao = () => {
             `}</style>
 
             <div className="scroll-progress-bar" style={{ width: `${scrollProgress}%` }} />
-            <WebGLBackground opacity={0.4} />
+
 
             <Navbar onOpenModal={openModal} />
             <LeadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} defaultCourse="Lexis Pillar Inquiry" />

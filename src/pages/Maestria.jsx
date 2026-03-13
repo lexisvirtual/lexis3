@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import LeadModal from '../components/LeadModal';
 import { useRevealOnScroll, Button, SectionHeader } from '../components/shared';
-import WebGLBackground from '../components/WebGLBackground';
+
 
 const Maestria = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -50,7 +50,7 @@ const Maestria = () => {
             `}</style>
 
             <div className="scroll-progress-bar" style={{ width: `${scrollProgress}%` }} />
-            <WebGLBackground opacity={heroOpacity} parallax={parallaxY} />
+
 
             <SEO
                 title="Maestria Online | Curso Intensivo de Inglês 8 Semanas | 120h Ao Vivo"
