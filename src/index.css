@@ -22,11 +22,20 @@
     .reveal-left { opacity: 0; transform: translateX(-30px); transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
     .reveal-left.active { opacity: 1; transform: translateX(0); }
 
-    /* Mobile: desativa efeitos de entrada para garantir visibilidade */
+    /* Mobile: desativa efeitos pesados para garantir fluidez total do responsivo */
     @media (max-width: 768px) {
         .reveal, .reveal-left {
             opacity: 1 !important;
             transform: none !important;
+            transition: none !important; /* Desliga transições CSS complexas na entrada */
+        }
+        .ana-design-system::after {
+            display: none !important; /* Desliga o overlay SVG de noise 100% no celular */
+            content: none !important;
+        }
+        .backdrop-blur-sm, .backdrop-blur-md, .backdrop-blur-lg, .backdrop-blur {
+            backdrop-filter: none !important; /* Desliga o desfoque de vidraça (glassmorphism) custoso pra celular */
+            -webkit-backdrop-filter: none !important;
         }
     }
 

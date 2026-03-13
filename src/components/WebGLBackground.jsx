@@ -5,8 +5,17 @@ import { getActivePalette } from '../utils/themePalettes';
 const WebGLBackground = ({ opacity = 1, parallax = 0 }) => {
     const canvasRef = React.useRef(null);
     const currentPalette = getActivePalette(activeTheme.event);
+    const [isMobile, setIsMobile] = React.useState(false);
 
     React.useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    React.useEffect(() => {
+        if (isMobile) return;
         const canvas = canvasRef.current;
         if (!canvas) return;
         const gl = canvas.getContext('webgl');
@@ -139,7 +148,9 @@ const WebGLBackground = ({ opacity = 1, parallax = 0 }) => {
             if (!isReduced) requestAnimationFrame(render);
         };
         requestAnimationFrame(render);
-    }, [opacity, parallax, currentPalette]);
+    }, [opacity, parallax, currentPalette, isMobile]);
+
+    if (isMobile) return null;
 
     return <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />;
 };
