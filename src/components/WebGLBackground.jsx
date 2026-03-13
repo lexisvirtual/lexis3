@@ -5,11 +5,10 @@ import { getActivePalette } from '../utils/themePalettes';
 const WebGLBackground = ({ opacity = 1, parallax = 0 }) => {
     const canvasRef = React.useRef(null);
     const currentPalette = getActivePalette(activeTheme.event);
-    const [isMobile, setIsMobile] = React.useState(false);
+    const [isMobile, setIsMobile] = React.useState(typeof window !== 'undefined' ? window.innerWidth <= 768 : false);
 
     React.useEffect(() => {
         const checkMobile = () => setIsMobile(window.innerWidth <= 768);
-        checkMobile();
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
@@ -20,6 +19,7 @@ const WebGLBackground = ({ opacity = 1, parallax = 0 }) => {
         if (!canvas) return;
         const gl = canvas.getContext('webgl');
         if (!gl) return;
+        let animationId;
 
         const vs = `
             attribute vec2 position;
@@ -145,9 +145,12 @@ const WebGLBackground = ({ opacity = 1, parallax = 0 }) => {
             gl.uniform3fv(u.acc, currentPalette.acc);
 
             gl.drawArrays(gl.TRIANGLES, 0, 6);
-            if (!isReduced) requestAnimationFrame(render);
+            if (!isReduced) animationId = requestAnimationFrame(render);
         };
-        requestAnimationFrame(render);
+        animationId = requestAnimationFrame(render);
+        
+        // CLEANUP: Mata o loop se o widget desmontar, consertando o erro de RAM no mobile.
+        return () => cancelAnimationFrame(animationId);
     }, [opacity, parallax, currentPalette, isMobile]);
 
     if (isMobile) return null;
