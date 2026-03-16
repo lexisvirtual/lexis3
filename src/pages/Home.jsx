@@ -212,7 +212,7 @@ const Home = () => {
             <section id="metodo" className="section-alt py-32 px-6 bg-slate-50 text-[#0f172a] relative overflow-hidden scroll-mt-20">
                 <div className="max-w-6xl mx-auto relative z-10">
                     <div className="divider-v mb-20"></div>
-                    <div className="grid md:grid-cols-2 gap-20 items-center mb-32">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-20 items-center mb-16 md:mb-32">
                         <div className="reveal-left">
                             <span className="ana-sub text-[#8c5414] mb-5 block underline decoration-[#fbd24c] decoration-4 underline-offset-8">A Filosofia Lexis</span>
                             <h2 className="ana-heading text-4xl md:text-5xl font-black mb-10 leading-tight tracking-tight">Idioma não se aprende, <br /><span className="text-[#8c5414] italic">se treina.</span></h2>
