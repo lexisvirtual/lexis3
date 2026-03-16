@@ -209,7 +209,7 @@ const Home = () => {
             </header>
 
             {/* SEÇÃO MÉTODO */}
-            <section id="metodo" className="section-alt py-32 px-6 bg-slate-50 text-[#0f172a] relative overflow-hidden scroll-mt-20">
+            <section id="metodo" className="section-alt py-16 md:py-32 px-6 bg-slate-50 text-[#0f172a] relative overflow-hidden scroll-mt-20">
                 <div className="max-w-6xl mx-auto relative z-10">
                     <div className="divider-v mb-20"></div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-20 items-center mb-16 md:mb-32">
