@@ -41,7 +41,7 @@ const BlogPost = () => {
     }
 
     return (
-        <div className="flex flex-col w-full min-h-screen relative overflow-x-hidden ana-design-system bg-[#0f172a]">
+        <div className="flex flex-col w-full min-h-screen relative ana-design-system bg-[#0f172a]">
             <style>{`
                 .ana-design-system {
                     --premium-easing: cubic-bezier(0.22, 1, 0.36, 1);
@@ -165,7 +165,7 @@ const BlogPost = () => {
             />
             <Navbar onOpenModal={() => { }} />
 
-            <main className="pt-32 md:pt-48 pb-32 px-4 md:px-6 max-w-4xl mx-auto relative z-10 hero-focus-shift">
+            <main className="pt-32 md:pt-48 pb-32 px-6 md:px-6 max-w-4xl mx-auto relative z-10 hero-focus-shift">
                 <article className="ana-prose prose prose-invert prose-lg max-w-none">
                     <header className="mb-16 text-center max-w-full overflow-hidden">
                         <div className="text-[#fbd24c] text-[10px] font-black uppercase tracking-[0.3em] mb-6 opacity-60">
@@ -188,7 +188,7 @@ const BlogPost = () => {
                         )}
                     </header>
 
-                    <div className="bg-white/[0.02] backdrop-blur-sm border border-white/5 p-6 md:p-16 rounded-[2rem] md:rounded-[3rem] shadow-2xl relative overflow-hidden reveal active" style={{ animationDelay: '0.6s' }}>
+                    <div className="bg-white/[0.02] backdrop-blur-sm border border-white/5 p-4 md:p-16 rounded-[2rem] md:rounded-[3rem] shadow-2xl relative overflow-x-auto reveal active" style={{ animationDelay: '0.6s' }}>
                         <div className="absolute top-0 right-0 w-64 h-64 bg-[#fbd24c]/5 rounded-full blur-[100px] -mr-32 -mt-32"></div>
                         <ReactMarkdown
                             remarkPlugins={[remarkGfm]}
