@@ -69,4 +69,17 @@
     .prose {
         max-width: 100% !important;
     }
+    
+    /* Previne overflow em containers principais */
+    main, article {
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+    }
+    
+    /* Container do post com padding reduzido */
+    .bg-white\/\[0\.02\] {
+        max-width: calc(100vw - 3rem) !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
 }

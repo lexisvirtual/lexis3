@@ -190,7 +190,7 @@ const BlogPost = () => {
                         )}
                     </header>
 
-                    <div className="bg-white/[0.02] backdrop-blur-sm border border-white/5 p-4 md:p-16 rounded-[2rem] md:rounded-[3rem] shadow-2xl relative overflow-x-auto reveal active" style={{ animationDelay: '0.6s' }}>
+                    <div className="bg-white/[0.02] backdrop-blur-sm border border-white/5 p-3 md:p-16 rounded-[1rem] md:rounded-[3rem] shadow-2xl relative overflow-x-auto reveal active" style={{ animationDelay: '0.6s' }}>
                         <div className="absolute top-0 right-0 w-64 h-64 bg-[#fbd24c]/5 rounded-full blur-[100px] -mr-32 -mt-32"></div>
                         <ReactMarkdown
                             remarkPlugins={[remarkGfm]}
