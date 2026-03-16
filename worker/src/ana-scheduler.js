@@ -5,21 +5,34 @@
  * Novos Princípios:
  * - Apple aesthetic priority: Whitespace over clutter.
  * - Google context awareness: Reactive to global events/doodles.
+ * import { getExternalContext } from './external-context';
  */
 
-export function getActiveThemeName(date = new Date(), externalContext = null) {
+export async function getActiveThemeName(date = new Date(), externalContext = null) {
     const month = date.getMonth() + 1;
     const day = date.getDate();
     const mmdd = `${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const year = date.getFullYear();
 
     // 1. PRIORIDADE ZERO: Contexto Externo (Google/Doodles/News) Dynamic Sync
-    // Se o sistema externo detectar algo "quente", ele sobrescreve o calendário fixo.
-    if (externalContext?.event_id) {
-        return externalContext.event_id;
+      // 1. PRIORIDADE ZERO: Contexto Externo (Google/Apple) - Dynamic Sync
+  let externalContext = null;
+  try {
+    const contextResult = await getExternalContext({ useGoogle: true, useApple: true, timeout: 3000 });
+    externalContext = contextResult.externalContext;
+  } catch (error) {
+    console.warn('Erro ao obter contexto externo:', error);
+  }
+  
+  if (externalContext?.active && (externalContext?.google || externalContext?.apple)) {
+    // Usa contexto externo se disponível
+    if (externalContext.google?.trends?.length > 0) {
+      return { source: 'google-trends', data: externalContext.google.trends[0] };
     }
-
-    // Helper: verifica se mmdd está dentro de um range
+    if (externalContext.apple?.campaigns?.length > 0) {
+      return { source: 'apple-design', data: externalContext.apple.campaigns[0] };
+    }
+  }// Helper: verifica se mmdd está dentro de um range
     const inRange = (start, end) => {
         if (start <= end) return mmdd >= start && mmdd <= end;
         return mmdd >= start || mmdd <= end;
