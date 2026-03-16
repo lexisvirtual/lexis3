@@ -67,8 +67,10 @@ const BlogPost = () => {
                     .ana-heading { font-size: 1.8rem !important; letter-spacing: -0.02em !important; }
                     .ana-prose h2 { font-size: 1.5rem !important; margin-top: 2em !important; overflow-wrap: break-word; }
                     .ana-prose h3 { font-size: 1.25rem !important; overflow-wrap: break-word; }
-                    .ana-prose table { display: block; width: 100% !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch; border-radius: 1rem; position: relative; }
-                    .ana-prose td, .ana-prose th { min-width: 140px; padding: 1rem !important; font-size: 0.85rem !important; }
+                    .ana-prose table { display: block; width: 100% !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch; border-radius: 1rem; position: relative; margin: 0 !important; }
+                    .ana-prose td, .ana-prose th { min-width: 100px; padding: 0.75rem !important; font-size: 0.8rem !important; white-space: normal !important; word-wrap: break-word !important; }
+                    .ana-prose tbody { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+                    .ana-prose thead, .ana-prose tr { display: table; width: 100%; table-layout: fixed; }
                     .ana-prose blockquote { font-size: 1.1rem !important; margin: 2rem 0 !important; }
                 }
                 
