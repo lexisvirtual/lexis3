@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lexis - Painel do Licenciado</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen font-sans p-4">
+
+    <div class="bg-white p-8 rounded-2xl shadow-lg max-w-sm w-full border-t-4 border-black">
+        <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">Painel de Vendas</h2>
+        
+        <form id="vendaForm" class="space-y-5">
+            
+            <!-- 1. Identificação -->
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Quem é você?</label>
+                <select id="licenciadoId" required class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm">
+                    <option value="" disabled selected>⏳ Buscando Licenciados na Nuvem...</option>
+                </select>
+            </div>
+
+            <!-- 2. Produto/Curso -->
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Qual curso vai vender?</label>
+                <select id="cursoId" required class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm" onchange="calcularSimulacao()">
+                    <option value="" disabled selected>⏳ Buscando Produtos...</option>
+                </select>
+            </div>
+
+            <!-- 3. Valor da Venda -->
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Preço Final Negociado (R$)</label>
+                <input type="number" id="valor" required min="1" step="0.01" oninput="calcularSimulacao()" class="font-bold text-lg block w-full px-3 py-2 bg-green-50 text-green-700 border border-green-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500" placeholder="Ex: 5000.00">
+            </div>
+
+            <!-- 4. Simulador Dinâmico -->
+            <div id="simuladorPanel" class="hidden p-4 rounded-lg bg-gray-50 border border-gray-200">
+                <h4 class="text-xs font-bold text-gray-500 uppercase mb-2">Previsão (Pior Cenário: 12x Antecipado)</h4>
+                
+                <div class="space-y-1 text-sm text-gray-600">
+                    <div class="flex justify-between">
+                        <span>Valor Cheio</span>
+                        <span id="simValor" class="font-medium">-</span>
+                    </div>
+                    <div class="flex justify-between text-red-500">
+                        <span>Tributação (13,33%)</span>
+                        <span id="simImposto">-</span>
+                    </div>
+                    <div class="flex justify-between text-red-500 text-xs">
+                        <span>Asaas (Cartão 2,99% + 0,49)</span>
+                        <span id="simAsaasTaxa">-</span>
+                    </div>
+                    <div class="flex justify-between text-red-500 text-xs">
+                        <span>Asaas Antecipação (~10,4%)</span>
+                        <span id="simAsaasAntecipacao">-</span>
+                    </div>
+                    <div class="flex justify-between text-red-500">
+                        <span>Custo Lexis (Sua Tabela)</span>
+                        <span id="simLexis">-</span>
+                    </div>
+                    
+                    <hr class="my-2 border-gray-300">
+                    
+                    <div class="flex justify-between font-bold text-green-700 text-lg">
+                        <span>Seu Lucro Limpo</span>
+                        <span id="simLucro">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <button id="btnSubmit" type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors opacity-50 cursor-not-allowed" disabled>
+                🔗 Aguarde Carregamento...
+            </button>
+        </form>
+
+        <!-- 5. Resultado: O Link URL de Pagamento limpo -->
+        <div id="resultadoPix" class="hidden mt-6 p-4 bg-green-50 border border-green-200 rounded-lg text-center">
+            <h3 class="text-green-800 font-bold mb-2">🎉 Link Pronto!</h3>
+            <p class="text-xs text-green-700 mb-2">Envie este link de checkout para o cliente:</p>
+            <input type="text" id="linkPagamento" readonly class="w-full text-sm p-3 rounded border border-green-300 bg-white font-mono text-black mb-3 text-center" />
+            <button onclick="copiarLink()" class="w-full bg-green-600 text-white font-bold py-2 rounded-lg hover:bg-green-700 text-sm">
+                📋 Copiar Link de Pagamento
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // URLs do Google Sheets
+        const URL_LICENCIADOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQy4sxa9jQ9m_8_rrsuf4tdIwKS69pWNevfWBDuWCQ1lugHyvCuv-AvbdNZTWzQxO0NzSXFQaf4byS-/pub?gid=0&single=true&output=csv";
+        const URL_CURSOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQy4sxa9jQ9m_8_rrsuf4tdIwKS69pWNevfWBDuWCQ1lugHyvCuv-AvbdNZTWzQxO0NzSXFQaf4byS-/pub?gid=1026386382&single=true&output=csv";
+
+        // Simulador de Tabela de Preços (Agora Carrega Dinâmico)
+        const CUSTOS_LEXIS = {};
+
+        const TAXA_IMPOSTO = 0.1333; // 13,33%
+        const TAXA_CARTAO_12X = 0.0299; // 2.99%
+        const CUSTO_FIXO_ASAAS = 0.49; // R$ 0.49
+        const TAXA_ANTECIPACAO_MEDIA_12X = 0.104; 
+
+        // 🟢 CARREGAR VALORES AO ABRIR A TELA 🟢
+        async function conectarComSheets() {
+            try {
+                // A API da Lexis fará a ponte direta com o banco Google de forma invisível
+                const res = await fetch('https://api-lexis.lexis-english-account.workers.dev', { method: 'GET' });
+                const dadosPlanilhas = await res.json();
+                
+                // Preenchendo Licenciados da Planilha 1
+                const selLic = document.getElementById('licenciadoId');
+                selLic.innerHTML = '<option value="" disabled selected>Selecione seu nome (Planilha)</option>';
+                
+                dadosPlanilhas.licenciados.forEach(lic => {
+                    const opt = document.createElement('option');
+                    opt.value = lic.id;
+                    opt.text = lic.nome;
+                    selLic.appendChild(opt);
+                });
+
+                // Preenchendo Cursos da Planilha 2
+                const selCur = document.getElementById('cursoId');
+                selCur.innerHTML = '<option value="" disabled selected>Selecione o Curso (Planilha)</option>';
+
+                dadosPlanilhas.cursos.forEach(cur => {
+                    CUSTOS_LEXIS[cur.id] = cur.custo;
+                    const opt = document.createElement('option');
+                    opt.value = cur.id;
+                    opt.text = `${cur.nome}`;
+                    selCur.appendChild(opt);
+                });
+
+                // Habilitando Botão de Venda após carregar tudo
+                const btn = document.getElementById('btnSubmit');
+                btn.innerHTML = "🔗 Criar Link de Pagamento Asaas";
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                btn.disabled = false;
+
+            } catch(e) {
+                alert("Erro grave de conexão. O seu navegador (por segurança) pode ter bloqueado arquivos locais, ou a internet caiu. Tente novamente.");
+            }
+        }
+        
+        // Dispara a leitura assim que HTML abre:
+        conectarComSheets();
+
+
+        // 🟡 SIMULADOR DE LUCRO 🟡
+        function calcularSimulacao() {
+            const cursoSelecionado = document.getElementById('cursoId').value;
+            const valorInput = document.getElementById('valor').value;
+            const simulador = document.getElementById('simuladorPanel');
+
+            if (!cursoSelecionado || !CUSTOS_LEXIS[cursoSelecionado] || !valorInput || valorInput <= 0) {
+                simulador.classList.add('hidden');
+                return;
+            }
+
+            const valorVenda = parseFloat(valorInput);
+            const custoCurso = CUSTOS_LEXIS[cursoSelecionado];
+
+            // Cálculos
+            const impostoLexis = valorVenda * TAXA_IMPOSTO;
+            const asaasTaxaBase = (valorVenda * TAXA_CARTAO_12X) + CUSTO_FIXO_ASAAS;
+            const asaasAntecipacao = valorVenda * TAXA_ANTECIPACAO_MEDIA_12X;
+            
+            const totalDescontos = impostoLexis + asaasTaxaBase + asaasAntecipacao + custoCurso;
+            const lucroLicenciado = valorVenda - totalDescontos;
+
+            // Formatação Monetária
+            const formatador = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+
+            document.getElementById('simValor').innerText = formatador.format(valorVenda);
+            document.getElementById('simImposto').innerText = `- ${formatador.format(impostoLexis)}`;
+            document.getElementById('simAsaasTaxa').innerText = `- ${formatador.format(asaasTaxaBase)}`;
+            document.getElementById('simAsaasAntecipacao').innerText = `- ${formatador.format(asaasAntecipacao)}`;
+            document.getElementById('simLexis').innerText = `- ${formatador.format(custoCurso)}`;
+            
+            const elLucro = document.getElementById('simLucro');
+            elLucro.innerText = formatador.format(lucroLicenciado);
+
+            if (lucroLicenciado <= 0) {
+                elLucro.classList.replace('text-green-700', 'text-red-600');
+                elLucro.innerText = `Prejuízo: ${formatador.format(lucroLicenciado)}`;
+            } else {
+                elLucro.classList.replace('text-red-600', 'text-green-700');
+            }
+
+            simulador.classList.remove('hidden');
+        }
+
+        // 🔴 EFETIVAR PEDIDO 🔴
+        document.getElementById('vendaForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerHTML = "⏳ Conectando com Banco Asaas...";
+            btn.disabled = true;
+
+            const dados = {
+                licenciadoId: document.getElementById('licenciadoId').value,
+                cursoId: document.getElementById('cursoId').value,
+                valorVenda: parseFloat(document.getElementById('valor').value)
+            };
+
+            try {
+                // Aqui o GitHub Pages chama o Cloudflare Worker em segurança
+                const res = await fetch('https://api-lexis.lexis-english-account.workers.dev', {
+                    method: 'POST',
+                    body: JSON.stringify(dados),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const data = await res.json();
+                
+                if (data.erro) {
+                    alert("Atenção, Venda Interceptada:\n" + data.erro);
+                } else {
+                    document.getElementById('linkPagamento').value = data.linkDePagamentoUrl;
+                    document.getElementById('resultadoPix').classList.remove('hidden');
+                    window.scrollTo(0, document.body.scrollHeight);
+                }
+                
+            } catch (error) {
+                alert("Erro ao comunicar com o servidor da Lexis. Tente novamente em 1 minuto.");
+            } finally {
+                btn.innerHTML = "🔗 Criar Link de Pagamento Asaas";
+                btn.disabled = false;
+            }
+        });
+
+        function copiarLink() {
+            const linkField = document.getElementById('linkPagamento');
+            linkField.select();
+            document.execCommand('copy');
+            alert('Link copiado com sucesso! Pode colar no WhatsApp do cliente.');
+        }
+    </script>
+</body>
+</html>
