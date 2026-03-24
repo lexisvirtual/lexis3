@@ -296,9 +296,7 @@
             btn.innerHTML = "⏳ Conectando com Banco Asaas...";
             btn.disabled = true;
 
-            const parcelas = formaSelecionada === 'CREDIT_CARD'
-                ? parseInt(document.getElementById('maxParcelas').value)
-                : 3; // Máximo de 3x para PIX/Boleto
+            const parcelas = parseInt(document.getElementById('maxParcelas').value) || 1;
 
             const dados = {
                 licenciadoId:    document.getElementById('licenciadoId').value,
