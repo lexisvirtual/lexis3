@@ -17,7 +17,7 @@
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-1">Quem é você?</label>
                 <select id="licenciadoId" required class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm">
-                    <option value="" disabled selected>⏳ Buscando Licenciados na Nuvem...</option>
+                    <option value="" disabled selected>⏳ Buscando Licenciados...</option>
                 </select>
             </div>
 
@@ -35,9 +35,35 @@
                 <input type="number" id="valor" required min="1" step="0.01" oninput="calcularSimulacao()" class="font-bold text-lg block w-full px-3 py-2 bg-green-50 text-green-700 border border-green-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500" placeholder="Ex: 5000.00">
             </div>
 
-            <!-- 4. Simulador Dinâmico -->
+            <!-- 4. Forma de Pagamento -->
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Forma de Pagamento Combinada</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <label id="labelCartao" class="flex flex-col items-center justify-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-black transition-all" onclick="selecionarPagamento('CREDIT_CARD')">
+                        <span class="text-xl mb-1">💳</span>
+                        <span class="text-xs font-bold text-gray-700">Cartão</span>
+                        <span class="text-xs text-gray-400">até 12x</span>
+                        <input type="radio" name="formaPagamento" value="CREDIT_CARD" class="hidden" required>
+                    </label>
+                    <label id="labelPixBoleto" class="flex flex-col items-center justify-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-black transition-all" onclick="selecionarPagamento('PIX_BOLETO')">
+                        <span class="text-xl mb-1">⚡</span>
+                        <span class="text-xs font-bold text-gray-700">Pix / Boleto</span>
+                        <span class="text-xs text-gray-400">até 3x</span>
+                        <input type="radio" name="formaPagamento" value="PIX_BOLETO" class="hidden" required>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 5. Parcelas (adapta conforme a forma selecionada) -->
+            <div id="parcelasDiv" class="hidden">
+                <label class="block text-sm font-bold text-gray-700 mb-1">Número máximo de parcelas</label>
+                <select id="maxParcelas" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm" onchange="calcularSimulacao()">
+                </select>
+            </div>
+
+            <!-- 6. Simulador Dinâmico -->
             <div id="simuladorPanel" class="hidden p-4 rounded-lg bg-gray-50 border border-gray-200">
-                <h4 class="text-xs font-bold text-gray-500 uppercase mb-2">Previsão (Pior Cenário: 12x Antecipado)</h4>
+                <h4 id="simTitulo" class="text-xs font-bold text-gray-500 uppercase mb-2">Previsão</h4>
                 
                 <div class="space-y-1 text-sm text-gray-600">
                     <div class="flex justify-between">
@@ -48,16 +74,16 @@
                         <span>Tributação (6%)</span>
                         <span id="simImposto">-</span>
                     </div>
-                    <div class="flex justify-between text-red-500 text-xs">
-                        <span>Asaas (Cartão 2,99% + 0,49)</span>
+                    <div id="linhaAsaasTaxa" class="flex justify-between text-red-500 text-xs">
+                        <span id="labelAsaasTaxa">Asaas (Cartão 2,99% + 0,49)</span>
                         <span id="simAsaasTaxa">-</span>
                     </div>
-                    <div class="flex justify-between text-red-500 text-xs">
-                        <span>Asaas Antecipação (~10,4%)</span>
+                    <div id="linhaAntecipacao" class="flex justify-between text-red-500 text-xs">
+                        <span id="labelAntecipacao">Asaas Antecipação</span>
                         <span id="simAsaasAntecipacao">-</span>
                     </div>
                     <div class="flex justify-between text-red-500">
-                        <span>Custo Lexis (Sua Tabela)</span>
+                        <span>Custo Lexis</span>
                         <span id="simLexis">-</span>
                     </div>
                     
@@ -75,7 +101,7 @@
             </button>
         </form>
 
-        <!-- 5. Resultado: O Link URL de Pagamento limpo -->
+        <!-- 7. Resultado: O Link URL de Pagamento limpo -->
         <div id="resultadoPix" class="hidden mt-6 p-4 bg-green-50 border border-green-200 rounded-lg text-center">
             <h3 class="text-green-800 font-bold mb-2">🎉 Link Pronto!</h3>
             <p class="text-xs text-green-700 mb-2">Envie este link de checkout para o cliente:</p>
@@ -87,28 +113,79 @@
     </div>
 
     <script>
-        // URLs do Google Sheets
-        const URL_LICENCIADOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQy4sxa9jQ9m_8_rrsuf4tdIwKS69pWNevfWBDuWCQ1lugHyvCuv-AvbdNZTWzQxO0NzSXFQaf4byS-/pub?gid=0&single=true&output=csv";
-        const URL_CURSOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQy4sxa9jQ9m_8_rrsuf4tdIwKS69pWNevfWBDuWCQ1lugHyvCuv-AvbdNZTWzQxO0NzSXFQaf4byS-/pub?gid=1026386382&single=true&output=csv";
-
-        // Simulador de Tabela de Preços (Agora Carrega Dinâmico)
+        // Simulador de Tabela de Preços (Carrega Dinâmico)
         const CUSTOS_LEXIS = {};
 
         const TAXA_IMPOSTO = 0.06; // 6% (Simples Nacional)
-        const TAXA_CARTAO_12X = 0.0299; // 2.99%
+        const TAXA_CARTAO  = 0.0299; // 2.99% por parcela
         const CUSTO_FIXO_ASAAS = 0.49; // R$ 0.49
-        const TAXA_ANTECIPACAO_MEDIA_12X = 0.104; 
+
+        // Tabela de Taxa de Antecipação por número de parcelas (aproximado, baseado no Asaas)
+        const TAXA_ANTECIPACAO_POR_PARCELAS = {
+            1:  0.000, 2:  0.013, 3:  0.020,
+            4:  0.027, 5:  0.034, 6:  0.040,
+            7:  0.048, 8:  0.055, 9:  0.062,
+            10: 0.069, 11: 0.076, 12: 0.083,
+        };
+
+        // Estado de qual forma de pagamento foi selecionada
+        let formaSelecionada = null;
+
+        function selecionarPagamento(forma) {
+            formaSelecionada = forma;
+            const labelCartao    = document.getElementById('labelCartao');
+            const labelPixBoleto = document.getElementById('labelPixBoleto');
+            const parcelasDiv    = document.getElementById('parcelasDiv');
+            const selParcelas    = document.getElementById('maxParcelas');
+
+            // Rebuilds the options list based on the selected method
+            if (forma === 'CREDIT_CARD') {
+                labelCartao.classList.add('border-black', 'bg-gray-50');
+                labelCartao.classList.remove('border-gray-200');
+                labelPixBoleto.classList.remove('border-black', 'bg-gray-50');
+                labelPixBoleto.classList.add('border-gray-200');
+                document.querySelector('input[value="CREDIT_CARD"]').checked = true;
+
+                // Cartão: até 12x
+                selParcelas.innerHTML = '';
+                for (let i = 1; i <= 12; i++) {
+                    const opt = document.createElement('option');
+                    opt.value = i;
+                    opt.text = i === 1 ? 'À Vista (1x)' : `${i}x`;
+                    if (i === 12) opt.selected = true;
+                    selParcelas.appendChild(opt);
+                }
+            } else {
+                labelPixBoleto.classList.add('border-black', 'bg-gray-50');
+                labelPixBoleto.classList.remove('border-gray-200');
+                labelCartao.classList.remove('border-black', 'bg-gray-50');
+                labelCartao.classList.add('border-gray-200');
+                document.querySelector('input[value="PIX_BOLETO"]').checked = true;
+
+                // Pix/Boleto: até 3x
+                selParcelas.innerHTML = '';
+                for (let i = 1; i <= 3; i++) {
+                    const opt = document.createElement('option');
+                    opt.value = i;
+                    opt.text = i === 1 ? 'À Vista (1x)' : `${i}x`;
+                    if (i === 3) opt.selected = true;
+                    selParcelas.appendChild(opt);
+                }
+            }
+
+            parcelasDiv.classList.remove('hidden');
+            calcularSimulacao();
+        }
 
         // 🟢 CARREGAR VALORES AO ABRIR A TELA 🟢
         async function conectarComSheets() {
             try {
-                // A API da Lexis fará a ponte direta com o banco Google de forma invisível
                 const res = await fetch('https://api-lexis.lexis-english-account.workers.dev', { method: 'GET' });
                 const dadosPlanilhas = await res.json();
                 
-                // Preenchendo Licenciados da Planilha 1
+                // Preenchendo Licenciados
                 const selLic = document.getElementById('licenciadoId');
-                selLic.innerHTML = '<option value="" disabled selected>Selecione seu nome (Planilha)</option>';
+                selLic.innerHTML = '<option value="" disabled selected>Selecione seu nome</option>';
                 
                 dadosPlanilhas.licenciados.forEach(lic => {
                     const opt = document.createElement('option');
@@ -117,58 +194,75 @@
                     selLic.appendChild(opt);
                 });
 
-                // Preenchendo Cursos da Planilha 2
+                // Preenchendo Cursos
                 const selCur = document.getElementById('cursoId');
-                selCur.innerHTML = '<option value="" disabled selected>Selecione o Curso (Planilha)</option>';
+                selCur.innerHTML = '<option value="" disabled selected>Selecione o Curso</option>';
 
                 dadosPlanilhas.cursos.forEach(cur => {
                     CUSTOS_LEXIS[cur.id] = cur.custo;
                     const opt = document.createElement('option');
                     opt.value = cur.id;
-                    opt.text = `${cur.nome}`;
+                    opt.text = cur.nome;
                     selCur.appendChild(opt);
                 });
 
-                // Habilitando Botão de Venda após carregar tudo
+                // Habilitando Botão de Venda
                 const btn = document.getElementById('btnSubmit');
                 btn.innerHTML = "🔗 Criar Link de Pagamento Asaas";
                 btn.classList.remove('opacity-50', 'cursor-not-allowed');
                 btn.disabled = false;
 
             } catch(e) {
-                alert("Erro grave de conexão. O seu navegador (por segurança) pode ter bloqueado arquivos locais, ou a internet caiu. Tente novamente.");
+                alert("Erro grave de conexão. Verifique sua internet e tente novamente.");
             }
         }
         
-        // Dispara a leitura assim que HTML abre:
         conectarComSheets();
-
 
         // 🟡 SIMULADOR DE LUCRO 🟡
         function calcularSimulacao() {
             const cursoSelecionado = document.getElementById('cursoId').value;
-            const valorInput = document.getElementById('valor').value;
-            const simulador = document.getElementById('simuladorPanel');
+            const valorInput       = document.getElementById('valor').value;
+            const simulador        = document.getElementById('simuladorPanel');
 
-            if (!cursoSelecionado || !CUSTOS_LEXIS[cursoSelecionado] || !valorInput || valorInput <= 0) {
+            if (!cursoSelecionado || !CUSTOS_LEXIS[cursoSelecionado] || !valorInput || valorInput <= 0 || !formaSelecionada) {
                 simulador.classList.add('hidden');
                 return;
             }
 
             const valorVenda = parseFloat(valorInput);
             const custoCurso = CUSTOS_LEXIS[cursoSelecionado];
-
-            // Cálculos
-            const impostoLexis = valorVenda * TAXA_IMPOSTO;
-            const asaasTaxaBase = (valorVenda * TAXA_CARTAO_12X) + CUSTO_FIXO_ASAAS;
-            const asaasAntecipacao = valorVenda * TAXA_ANTECIPACAO_MEDIA_12X;
-            
-            const totalDescontos = impostoLexis + asaasTaxaBase + asaasAntecipacao + custoCurso;
-            const lucroLicenciado = valorVenda - totalDescontos;
-
-            // Formatação Monetária
             const formatador = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 
+            const impostoLexis = valorVenda * TAXA_IMPOSTO;
+            let asaasTaxaBase = 0;
+            let asaasAntecipacao = 0;
+            let tituloSim = '';
+
+            if (formaSelecionada === 'CREDIT_CARD') {
+                const parcelas = parseInt(document.getElementById('maxParcelas').value);
+                asaasTaxaBase    = (valorVenda * TAXA_CARTAO) + CUSTO_FIXO_ASAAS;
+                asaasAntecipacao = valorVenda * (TAXA_ANTECIPACAO_POR_PARCELAS[parcelas] || 0.083);
+                tituloSim = `Previsão Cartão ${parcelas}x Antecipado`;
+
+                document.getElementById('labelAsaasTaxa').innerText = `Asaas Cartão (2,99% + 0,49)`;
+                document.getElementById('labelAntecipacao').innerText = `Asaas Antecipação ${parcelas}x`;
+                document.getElementById('linhaAntecipacao').classList.remove('hidden');
+                document.getElementById('linhaAsaasTaxa').classList.remove('hidden');
+            } else {
+                // PIX / Boleto: sem taxa de juros de cartão. Taxa fixa de Boleto ~R$1,99 ou Pix ~R$1,99.
+                asaasTaxaBase    = 1.99; // taxa fixa de operação
+                asaasAntecipacao = 0;
+                tituloSim = 'Previsão Pix / Boleto';
+
+                document.getElementById('labelAsaasTaxa').innerText = `Taxa Operacional Asaas`;
+                document.getElementById('linhaAntecipacao').classList.add('hidden');
+                document.getElementById('linhaAsaasTaxa').classList.remove('hidden');
+            }
+
+            const lucroLicenciado = valorVenda - impostoLexis - asaasTaxaBase - asaasAntecipacao - custoCurso;
+
+            document.getElementById('simTitulo').innerText = tituloSim;
             document.getElementById('simValor').innerText = formatador.format(valorVenda);
             document.getElementById('simImposto').innerText = `- ${formatador.format(impostoLexis)}`;
             document.getElementById('simAsaasTaxa').innerText = `- ${formatador.format(asaasTaxaBase)}`;
@@ -191,18 +285,30 @@
         // 🔴 EFETIVAR PEDIDO 🔴
         document.getElementById('vendaForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            // Validação da Forma de Pagamento
+            if (!formaSelecionada) {
+                alert('Por favor, selecione a forma de pagamento combinada com o cliente.');
+                return;
+            }
+
             const btn = e.target.querySelector('button[type="submit"]');
             btn.innerHTML = "⏳ Conectando com Banco Asaas...";
             btn.disabled = true;
 
+            const parcelas = formaSelecionada === 'CREDIT_CARD'
+                ? parseInt(document.getElementById('maxParcelas').value)
+                : 3; // Máximo de 3x para PIX/Boleto
+
             const dados = {
-                licenciadoId: document.getElementById('licenciadoId').value,
-                cursoId: document.getElementById('cursoId').value,
-                valorVenda: parseFloat(document.getElementById('valor').value)
+                licenciadoId:    document.getElementById('licenciadoId').value,
+                cursoId:         document.getElementById('cursoId').value,
+                valorVenda:      parseFloat(document.getElementById('valor').value),
+                formaPagamento:  formaSelecionada,   // CREDIT_CARD | PIX_BOLETO
+                maxParcelas:     parcelas
             };
 
             try {
-                // Aqui o GitHub Pages chama o Cloudflare Worker em segurança
                 const res = await fetch('https://api-lexis.lexis-english-account.workers.dev', {
                     method: 'POST',
                     body: JSON.stringify(dados),
