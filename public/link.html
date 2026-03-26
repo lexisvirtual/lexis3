@@ -117,8 +117,15 @@
         const CUSTOS_LEXIS = {};
 
         const TAXA_IMPOSTO = 0.06; // 6% (Simples Nacional)
-        const TAXA_CARTAO  = 0.0299; // 2.99% por parcela
         const CUSTO_FIXO_ASAAS = 0.49; // R$ 0.49
+        
+        function getTaxaCartao(parcelas) {
+            if (parcelas === 1) return 0.0249; // 2,49%
+            if (parcelas >= 2 && parcelas <= 6) return 0.0259; // 2,59%
+            if (parcelas >= 7 && parcelas <= 12) return 0.0279; // 2,79%
+            if (parcelas >= 13) return 0.0299; // 2,99%
+            return 0.0299;
+        }
 
         // Tabela de Taxa de Antecipação por número de parcelas (aproximado, baseado no Asaas)
         const TAXA_ANTECIPACAO_POR_PARCELAS = {
@@ -241,11 +248,14 @@
 
             if (formaSelecionada === 'CREDIT_CARD') {
                 const parcelas = parseInt(document.getElementById('maxParcelas').value);
-                asaasTaxaBase    = (valorVenda * TAXA_CARTAO) + CUSTO_FIXO_ASAAS;
+                const taxaAtiva = getTaxaCartao(parcelas);
+                
+                asaasTaxaBase    = (valorVenda * taxaAtiva) + CUSTO_FIXO_ASAAS;
                 asaasAntecipacao = valorVenda * (TAXA_ANTECIPACAO_POR_PARCELAS[parcelas] || 0.083);
                 tituloSim = `Previsão Cartão ${parcelas}x Antecipado`;
 
-                document.getElementById('labelAsaasTaxa').innerText = `Asaas Cartão (2,99% + 0,49)`;
+                const taxaFormatada = (taxaAtiva * 100).toFixed(2).replace('.', ',');
+                document.getElementById('labelAsaasTaxa').innerText = `Asaas Cartão (${taxaFormatada}% + 0,49)`;
                 document.getElementById('labelAntecipacao').innerText = `Asaas Antecipação ${parcelas}x`;
                 document.getElementById('linhaAntecipacao').classList.remove('hidden');
                 document.getElementById('linhaAsaasTaxa').classList.remove('hidden');
