@@ -16,9 +16,40 @@
             <!-- 1. Identificação -->
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-1">Quem é você?</label>
-                <select id="licenciadoId" required class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm">
+                <select id="licenciadoId" required onchange="carregarStatusMeta()" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm">
                     <option value="" disabled selected>⏳ Buscando Licenciados...</option>
                 </select>
+            </div>
+
+            <!-- PAINEL DE METAS -->
+            <div id="painelMeta" class="hidden rounded-xl border border-gray-200 overflow-hidden">
+                <!-- Cabeçalho -->
+                <div id="metaCabecalho" class="px-4 py-3 text-white text-sm font-bold flex justify-between items-center" style="background: linear-gradient(90deg,#1a1a2e,#16213e)">
+                    <span>🏆 Programa de Metas Lexis</span>
+                    <span id="metaBadge" class="px-2 py-0.5 rounded-full text-xs font-bold bg-yellow-400 text-black">Sem desconto</span>
+                </div>
+                <!-- Corpo -->
+                <div class="p-4 bg-gray-50 space-y-3">
+                    <!-- Acumulado -->
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500">Acumulado (30 dias)</span>
+                        <span id="metaAcumulado" class="font-bold text-gray-800">R$ 0,00</span>
+                    </div>
+                    <!-- Barra de progresso -->
+                    <div class="w-full bg-gray-200 rounded-full h-3">
+                        <div id="metaBarra" class="h-3 rounded-full transition-all duration-700" style="width:0%;background:linear-gradient(90deg,#f59e0b,#d97706)"></div>
+                    </div>
+                    <!-- Falta / Próxima meta -->
+                    <div id="metaProximaLinha" class="flex justify-between text-xs text-gray-500">
+                        <span id="metaFaltaTexto">—</span>
+                        <span id="metaProximaTexto">—</span>
+                    </div>
+                    <!-- Desconto Atual -->
+                    <div id="metaDescontoLinha" class="hidden mt-1 p-2 rounded-lg bg-green-50 border border-green-200 text-center">
+                        <p class="text-xs text-green-700">Desconto ativo sobre o Custo Lexis</p>
+                        <p id="metaDescontoValor" class="text-2xl font-black text-green-600">0%</p>
+                    </div>
+                </div>
             </div>
 
             <!-- 2. Produto/Curso -->
@@ -118,6 +149,8 @@
     <script>
         // Simulador de Tabela de Preços (Carrega Dinâmico)
         const CUSTOS_LEXIS = {};
+        let DESCONTO_META_ATUAL = 0; // 0 a 1 (ex: 0.06 = 6%)
+        const WORKER_URL = 'https://api-lexis.lexis-english-account.workers.dev';
 
         const TAXA_IMPOSTO = 0.06; // 6% (Simples Nacional)
         const CUSTO_FIXO_ASAAS = 0.49; // R$ 0.49
@@ -229,6 +262,59 @@
         
         conectarComSheets();
 
+        // 🏆 CARREGAR STATUS DE META DO LICENCIADO 🏆
+        async function carregarStatusMeta() {
+            const licId = document.getElementById('licenciadoId').value;
+            if (!licId) return;
+
+            const painel = document.getElementById('painelMeta');
+            painel.classList.remove('hidden');
+            document.getElementById('metaBadge').innerText = '⏳ Carregando...';
+
+            try {
+                const res = await fetch(`${WORKER_URL}/status?id=${encodeURIComponent(licId)}`);
+                const s = await res.json();
+
+                const fmt = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+
+                // Acumulado
+                document.getElementById('metaAcumulado').innerText = fmt.format(s.acumulado);
+
+                // Barra de progresso
+                const barra = document.getElementById('metaBarra');
+                if (s.proximaMeta) {
+                    const baseInicio = s.metaAtingida || 0;
+                    const progresso = Math.min(100, ((s.acumulado - baseInicio) / (s.proximaMeta - baseInicio)) * 100);
+                    barra.style.width = progresso + '%';
+                    document.getElementById('metaFaltaTexto').innerText = `Falta ${fmt.format(s.faltaParaProxima)}`;
+                    document.getElementById('metaProximaTexto').innerText = `Próxima: ${s.proximoDesconto}% em ${fmt.format(s.proximaMeta)}`;
+                } else {
+                    barra.style.width = '100%';
+                    barra.style.background = 'linear-gradient(90deg,#16a34a,#15803d)';
+                    document.getElementById('metaFaltaTexto').innerText = '🏆 Nível máximo atingido!';
+                    document.getElementById('metaProximaTexto').innerText = '';
+                }
+
+                // Badge e desconto
+                if (s.descontoAtual > 0) {
+                    document.getElementById('metaBadge').innerText = `✅ ${s.descontoAtual}% de desconto`;
+                    document.getElementById('metaDescontoValor').innerText = `${s.descontoAtual}%`;
+                    document.getElementById('metaDescontoLinha').classList.remove('hidden');
+                    DESCONTO_META_ATUAL = s.descontoAtual / 100;
+                } else {
+                    document.getElementById('metaBadge').innerText = 'Sem desconto ainda';
+                    document.getElementById('metaDescontoLinha').classList.add('hidden');
+                    DESCONTO_META_ATUAL = 0;
+                }
+
+                // Recalcula simulador com novo desconto
+                calcularSimulacao();
+
+            } catch(e) {
+                document.getElementById('metaBadge').innerText = 'Erro ao carregar';
+            }
+        }
+
         // 🟡 SIMULADOR DE LUCRO 🟡
         function calcularSimulacao() {
             const cursoSelecionado = document.getElementById('cursoId').value;
@@ -241,7 +327,8 @@
             }
 
             const valorVenda = parseFloat(valorInput);
-            const custoCurso = CUSTOS_LEXIS[cursoSelecionado];
+            const custoCursoBase = CUSTOS_LEXIS[cursoSelecionado];
+            const custoCurso = parseFloat((custoCursoBase * (1 - DESCONTO_META_ATUAL)).toFixed(2));
             const formatador = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 
             const impostoLexis = valorVenda * TAXA_IMPOSTO;
@@ -280,7 +367,10 @@
             document.getElementById('simImposto').innerText = `- ${formatador.format(impostoLexis)}`;
             document.getElementById('simAsaasTaxa').innerText = `- ${formatador.format(asaasTaxaBase)}`;
             document.getElementById('simAsaasAntecipacao').innerText = `- ${formatador.format(asaasAntecipacao)}`;
-            document.getElementById('simLexis').innerText = `- ${formatador.format(custoCurso)}`;
+            const textoLexis = DESCONTO_META_ATUAL > 0
+                ? `- ${formatador.format(custoCurso)} (era ${formatador.format(custoCursoBase)})`
+                : `- ${formatador.format(custoCurso)}`;
+            document.getElementById('simLexis').innerText = textoLexis;
             
             const elLucro = document.getElementById('simLucro');
             elLucro.innerText = formatador.format(lucroLicenciado);
