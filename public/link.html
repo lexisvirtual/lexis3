@@ -16,9 +16,20 @@
             <!-- 1. Identificação -->
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-1">Quem é você?</label>
-                <select id="licenciadoId" required onchange="carregarStatusMeta()" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm">
+                <select id="licenciadoId" required onchange="onLicenciadoChange()" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm">
                     <option value="" disabled selected>⏳ Buscando Licenciados...</option>
                 </select>
+            </div>
+
+            <!-- PIN de segurança -->
+            <div id="pinDiv" class="hidden">
+                <label class="block text-sm font-bold text-gray-700 mb-1">🔐 Sua senha (3 dígitos)</label>
+                <div class="flex gap-2">
+                    <input type="password" id="pinInput" maxlength="3" inputmode="numeric" pattern="[0-9]*"
+                        class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm tracking-widest text-center text-xl font-bold"
+                        placeholder="···" oninput="verificarPin()">
+                </div>
+                <p id="pinErro" class="hidden mt-1 text-xs text-red-500 font-semibold">❌ Senha incorreta. Tente novamente.</p>
             </div>
 
             <!-- PAINEL DE METAS -->
@@ -249,11 +260,9 @@
                     selCur.appendChild(opt);
                 });
 
-                // Habilitando Botão de Venda
+                // Botão aguarda PIN correto — não libera aqui
                 const btn = document.getElementById('btnSubmit');
                 btn.innerHTML = "🔗 Criar Link de Pagamento Asaas";
-                btn.classList.remove('opacity-50', 'cursor-not-allowed');
-                btn.disabled = false;
 
             } catch(e) {
                 alert("Erro grave de conexão. Verifique sua internet e tente novamente.");
@@ -261,6 +270,52 @@
         }
         
         conectarComSheets();
+
+        // Chamada ao trocar o select — mostra o campo PIN e trava o resto
+        function onLicenciadoChange() {
+            document.getElementById('pinDiv').classList.remove('hidden');
+            document.getElementById('pinInput').value = '';
+            document.getElementById('pinErro').classList.add('hidden');
+            document.getElementById('painelMeta').classList.add('hidden');
+            travarFormulario(); // Trava tudo até PIN correto
+        }
+
+        // Trava o formulário (exceto seleção de nome e PIN)
+        function travarFormulario() {
+            const btn = document.getElementById('btnSubmit');
+            btn.disabled = true;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+            document.getElementById('cursoId').disabled = true;
+            document.getElementById('valor').disabled = true;
+        }
+
+        // Libera o formulário após PIN correto
+        function liberarFormulario() {
+            const btn = document.getElementById('btnSubmit');
+            btn.disabled = false;
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            document.getElementById('cursoId').disabled = false;
+            document.getElementById('valor').disabled = false;
+        }
+
+        // Verifica PIN a cada dígito digitado
+        function verificarPin() {
+            const pin = document.getElementById('pinInput').value;
+            if (pin.length < 3) {
+                document.getElementById('pinErro').classList.add('hidden');
+                return;
+            }
+            // O value do select É o PIN (coluna ID da planilha)
+            const pinCorreto = document.getElementById('licenciadoId').value;
+            if (pin === pinCorreto) {
+                document.getElementById('pinErro').classList.add('hidden');
+                liberarFormulario();
+                carregarStatusMeta();
+            } else {
+                document.getElementById('pinErro').classList.remove('hidden');
+                travarFormulario();
+            }
+        }
 
         // 🏆 CARREGAR STATUS DE META DO LICENCIADO 🏆
         async function carregarStatusMeta() {
