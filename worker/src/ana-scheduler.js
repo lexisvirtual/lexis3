@@ -5,6 +5,7 @@
  * Novos Princípios:
  * - Apple aesthetic priority: Whitespace over clutter.
  * - Google context awareness: Reactive to global events/doodles.
+ */
 import { getExternalContext } from './external-context.js';
 
 export async function getActiveThemeName(date = new Date(), externalContext = null) {
@@ -26,12 +27,14 @@ export async function getActiveThemeName(date = new Date(), externalContext = nu
   if (externalContext?.active && (externalContext?.google || externalContext?.apple)) {
     // Usa contexto externo se disponível
     if (externalContext.google?.trends?.length > 0) {
-      return { source: 'google-trends', data: externalContext.google.trends[0] };
+      console.log('google-trends:', externalContext.google.trends[0]);
     }
     if (externalContext.apple?.campaigns?.length > 0) {
-      return { source: 'apple-design', data: externalContext.apple.campaigns[0] };
+      console.log('apple-design:', externalContext.apple.campaigns[0]);
     }
-  }// Helper: verifica se mmdd está dentro de um range
+  }
+  
+  // Helper: verifica se mmdd está dentro de um range
     const inRange = (start, end) => {
         if (start <= end) return mmdd >= start && mmdd <= end;
         return mmdd >= start || mmdd <= end;
