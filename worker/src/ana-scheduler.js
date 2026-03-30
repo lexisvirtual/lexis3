@@ -5,8 +5,7 @@
  * Novos Princípios:
  * - Apple aesthetic priority: Whitespace over clutter.
  * - Google context awareness: Reactive to global events/doodles.
- * import { getExternalContext } from './external-context';
- */
+import { getExternalContext } from './external-context.js';
 
 export async function getActiveThemeName(date = new Date(), externalContext = null) {
     const month = date.getMonth() + 1;
@@ -14,15 +13,15 @@ export async function getActiveThemeName(date = new Date(), externalContext = nu
     const mmdd = `${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const year = date.getFullYear();
 
-    // 1. PRIORIDADE ZERO: Contexto Externo (Google/Doodles/News) Dynamic Sync
-      // 1. PRIORIDADE ZERO: Contexto Externo (Google/Apple) - Dynamic Sync
-  let externalContext = null;
-  try {
-    const contextResult = await getExternalContext({ useGoogle: true, useApple: true, timeout: 3000 });
-    externalContext = contextResult.externalContext;
-  } catch (error) {
-    console.warn('Erro ao obter contexto externo:', error);
-  }
+    // 1. PRIORIDADE ZERO: Contexto Externo (Google/Apple) - Dynamic Sync
+    if (!externalContext) {
+        try {
+            const contextResult = await getExternalContext({ useGoogle: true, useApple: true, timeout: 3000 });
+            externalContext = contextResult.externalContext;
+        } catch (error) {
+            console.warn('Erro ao obter contexto externo:', error);
+        }
+    }
   
   if (externalContext?.active && (externalContext?.google || externalContext?.apple)) {
     // Usa contexto externo se disponível

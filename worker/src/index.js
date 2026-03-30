@@ -126,7 +126,7 @@ async function runPublishPipeline(env, limit = 1) {
 }
 
 async function runThemeSync(env) {
-    const themeName = getActiveThemeName(new Date());
+    const themeName = await getActiveThemeName(new Date());
     const themeUrl = `https://raw.githubusercontent.com/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/${env.GITHUB_BRANCH}/public/theme/${themeName}.json`;
     const themeRes = await fetch(themeUrl);
     if (!themeRes.ok) throw new Error(`Theme file not found: ${themeName}.json`);
@@ -326,7 +326,7 @@ export default {
 
                 // 0. TEMA (Ana CEE - Proatividade diária às 00:00)
                 if (hourBRT === 0) {
-                    const themeName = getActiveThemeName(now);
+                    const themeName = await getActiveThemeName(now);
                     const lastTheme = await env.LEXIS_PUBLISHED_POSTS.get('system:lastTheme');
                     if (lastTheme !== themeName) {
                         try {
