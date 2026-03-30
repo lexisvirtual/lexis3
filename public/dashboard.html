@@ -3,109 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lexis - Dashboard Financeiro</title>
+    <title>Lexis - Elite Financial Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
         
         :root {
-            --brand-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            --accent-gold: #f59e0b;
+            --brand-primary: #0f172a;
+            --brand-accent: #f59e0b;
+            --brand-success: #10b981;
+            --glass: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.2);
         }
 
         body {
             font-family: 'Outfit', sans-serif;
-            background: #f8fafc;
+            background: radial-gradient(circle at top right, #f8fafc 0%, #f1f5f9 100%);
+            color: #1e293b;
+            min-height: 100vh;
         }
 
         .glass {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
         }
 
         .premium-shadow {
-            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.08);
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .pulse-soft {
+            animation: pulse-soft 3s infinite ease-in-out;
+        }
+
+        @keyframes pulse-soft {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.02); opacity: 0.95; }
+        }
+
+        input:focus {
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
         }
 
         .table-row-hover:hover {
-            background-color: rgba(241, 245, 249, 0.5);
-            transition: all 0.2s ease;
+            background-color: rgba(241, 245, 249, 0.8);
+            transform: translateY(-2px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
+        /* Subtle scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="antialiased">
 
-    <!-- Tela de Login PIN -->
-    <div id="loginScreen" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900 bg-opacity-95 backdrop-blur-md transition-all duration-500">
-        <div class="glass p-8 rounded-[40px] premium-shadow w-full max-w-sm text-center border-slate-700">
-            <div class="w-16 h-16 rounded-2xl bg-white flex items-center justify-center text-slate-900 font-black text-3xl mx-auto mb-6 shadow-xl">L</div>
-            <h2 class="text-2xl font-bold text-white mb-2 tracking-tight">Dashboard Lexis</h2>
-            <p class="text-slate-400 text-sm mb-8">Digite sua senha de 3 dígitos</p>
+    <!-- Auth Overlay -->
+    <div id="loginScreen" class="fixed inset-0 z-[100] flex items-center justify-center bg-[#0f172a] transition-all duration-700">
+        <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#64748b 1px, transparent 1px); background-size: 40px 40px;"></div>
+        
+        <div class="glass p-10 rounded-[48px] premium-shadow w-full max-w-sm text-center border-slate-700/50 relative overflow-hidden group">
+            <div class="absolute -top-24 -right-24 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl group-hover:bg-amber-500/20 transition-all duration-700"></div>
             
-            <input type="password" id="pinInput" maxlength="3" inputmode="numeric" pattern="[0-9]*"
-                class="w-32 bg-slate-800 border-2 border-slate-700 rounded-2xl px-4 py-4 text-center text-3xl font-black text-white tracking-[0.5em] focus:outline-none focus:border-amber-500 transition-all mb-4"
-                placeholder="···" oninput="verificarPin()">
+            <div class="w-16 h-16 rounded-3xl bg-slate-900 flex items-center justify-center text-white font-black text-3xl mx-auto mb-8 shadow-2xl pulse-soft">L</div>
+            <h2 class="text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">Financeiro</h2>
+            <p class="text-slate-500 text-sm mb-10 font-medium">Acesse sua visão personalizada</p>
+            
+            <div class="relative inline-block">
+                <input type="password" id="pinInput" maxlength="3" inputmode="numeric" pattern="[0-9]*" autoFocus
+                    class="w-36 bg-white/50 border-2 border-slate-200 rounded-[24px] px-4 py-5 text-center text-4xl font-black text-slate-900 tracking-[0.4em] focus:outline-none focus:border-amber-500 transition-all mb-6 placeholder-slate-300"
+                    placeholder="···" oninput="verificarPin()">
+            </div>
                 
-            <p id="loginErro" class="hidden text-red-500 text-xs font-bold mt-2">❌ Senha incorreta</p>
+            <p id="loginErro" class="hidden text-red-500 text-xs font-bold mt-2 animate-bounce">❌ Acesso negado</p>
+            <div class="mt-8 text-[10px] text-slate-400 font-bold uppercase tracking-widest">Protocolo IPL v8.0</div>
         </div>
     </div>
 
-    <!-- Header / Navbar (Escondido inicial) -->
-    <header id="mainHeader" class="hidden sticky top-0 z-50 glass border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white font-black text-xl premium-shadow">L</div>
-                <h1 class="text-xl font-bold tracking-tight text-slate-900">Lexis <span class="text-slate-400 font-medium">Dashboard</span></h1>
+    <!-- Main Navigation -->
+    <nav id="mainHeader" class="hidden sticky top-0 z-50 glass border-b border-slate-200 transition-all duration-700 transform translate-y-[-100%]">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-4 group cursor-pointer">
+                <div class="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white font-black text-2xl premium-shadow group-hover:rotate-12 transition-transform">L</div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tighter text-slate-900 leading-tight">Lexis <span class="text-amber-500">Academy</span></h1>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Financial Intelligence</p>
+                </div>
             </div>
-            <div class="flex items-center gap-4">
-                <a href="index.html" class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                    Gerador de Link
-                </a>
-                <button onclick="logout()" class="px-3 py-1.5 border border-slate-200 rounded-lg text-xs font-bold text-slate-400 hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all">Sair</button>
-            </div>
-        </div>
-    </header>
-
-    <main id="mainContent" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        <!-- Stats Summary -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-            <div class="glass p-6 rounded-3xl premium-shadow border-l-4 border-slate-900">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 text-[10px]">Tudo Confirmado</p>
-                <h3 id="statTotalVendas" class="text-3xl font-extrabold text-slate-900">0</h3>
-            </div>
-            <div class="glass p-6 rounded-3xl premium-shadow border-l-4 border-green-500">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 text-[10px]">Total Bruto (Filtro)</p>
-                <h3 id="statTotalBruto" class="text-3xl font-extrabold text-slate-900">R$ 0,00</h3>
-            </div>
-            <div class="glass p-6 rounded-3xl premium-shadow border-l-4 border-amber-500 col-span-2">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 text-[10px]">Busca Instantânea</p>
-                <input type="text" id="searchInput" oninput="filtrarTabela()" placeholder="Digite o nome do consultor ou do curso..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 transition-all">
-            </div>
-        </div>
-
-        <!-- Main Content Table -->
-        <div class="glass rounded-[32px] premium-shadow overflow-hidden border border-slate-200 transition-all">
-            <div class="px-8 py-6 border-b border-slate-200 flex justify-between items-center bg-white">
-                <h2 id="tituloBoasVindas" class="text-xl font-bold text-slate-900 tracking-tighter">Histórico Financeiro Recente</h2>
-                <button onclick="carregarVendas()" class="p-2 hover:bg-slate-100 rounded-full transition-colors">
-                    <svg id="refreshIcon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            
+            <div class="flex items-center gap-6">
+                <div class="hidden md:flex items-center gap-8 text-sm font-bold text-slate-500">
+                    <a href="/" class="hover:text-slate-900 transition-colors">Home</a>
+                    <a href="/blog" class="hover:text-slate-900 transition-colors">Insights</a>
+                </div>
+                <div class="h-8 w-[1px] bg-slate-200"></div>
+                <button onclick="logout()" class="group flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-slate-50 hover:bg-red-50 text-slate-900 hover:text-red-600 font-bold text-xs transition-all border border-slate-100">
+                    <span>Sair</span>
+                    <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                 </button>
+            </div>
+        </div>
+    </nav>
+
+    <main id="mainContent" class="hidden max-w-7xl mx-auto px-6 py-12 transition-all duration-700 opacity-0 translate-y-10">
+        
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+            <div>
+                <h2 id="tituloBoasVindas" class="text-5xl font-black text-slate-900 tracking-tightest mb-4">Relatório Financeiro</h2>
+                <p class="text-slate-500 font-medium max-w-xl">Bem-vindo à sua visão consolidada de performance. Aqui você acompanha as vendas licenciadas e o status de faturamento em tempo real.</p>
+            </div>
+            <div class="flex items-center gap-3 bg-white p-2 rounded-3xl premium-shadow border border-slate-100">
+                <input type="text" id="searchInput" oninput="filtrarTabela()" placeholder="Buscar por curso, consultor..." 
+                    class="w-full md:w-64 bg-slate-50 border-none rounded-2xl px-5 py-3 text-sm font-semibold focus:ring-0 transition-all placeholder:text-slate-400">
+                <button onclick="carregarVendas()" class="p-3 bg-slate-900 text-white rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-lg">
+                    <svg id="refreshIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Key Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-16">
+            <div class="glass p-8 rounded-[40px] premium-shadow relative overflow-hidden group">
+                <div class="absolute top-0 right-0 p-4 opacity-10 rotate-12 group-hover:rotate-0 transition-transform">
+                    <svg class="w-16 h-16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                </div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Volume Operacional</p>
+                <div class="flex items-baseline gap-2">
+                    <h3 id="statTotalVendas" class="text-5xl font-black text-slate-900">0</h3>
+                    <span class="text-xs font-bold text-slate-400 uppercase">Vendas</span>
+                </div>
+            </div>
+            
+            <div class="glass p-8 rounded-[40px] premium-shadow relative overflow-hidden group">
+                <div class="absolute top-0 right-0 p-4 opacity-10 rotate-12 group-hover:rotate-0 transition-transform text-emerald-500">
+                    <svg class="w-16 h-16" fill="currentColor" viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 1.9 1.55 3.28 3.48 3.72V21h3v-2.15c2.19-.35 3.71-1.7 3.71-3.73 0-2.61-2.24-3.61-4.71-4.22z"/></svg>
+                </div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Total Bruto</p>
+                <h3 id="statTotalBruto" class="text-4xl font-black text-slate-900">R$ 0,00</h3>
+            </div>
+
+            <div id="additionalStat" class="md:col-span-2 glass p-8 rounded-[40px] premium-shadow bg-gradient-to-br from-slate-900 to-slate-800 border-none group">
+                <div class="flex justify-between items-start mb-6">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Status da Sessão</p>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Sistema Ativo</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-6">
+                    <div>
+                        <h4 class="text-2xl font-bold text-white mb-1">Últimos 30 Dias</h4>
+                        <p class="text-slate-400 text-xs font-medium">Os dados são atualizados via Webhook do Asaas API.</p>
+                    </div>
+                    <div class="w-24 h-24 bg-white/5 rounded-3xl border border-white/10 flex flex-col items-center justify-center group-hover:scale-105 transition-transform">
+                        <span class="text-xs font-black text-white">LIVE</span>
+                        <span class="text-[9px] text-slate-500 font-bold">API v3</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Table Container -->
+        <div class="glass rounded-[48px] premium-shadow overflow-hidden border border-slate-200 relative">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-amber-200"></div>
+            
+            <div class="px-10 py-8 border-b border-slate-200 flex justify-between items-center bg-white/50">
+                <div>
+                    <h3 class="text-xl font-black text-slate-900">Extrato Consolidado</h3>
+                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Transações Finalizadas</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-tighter">Filtro: Recentes</span>
+                </div>
             </div>
 
             <div class="overflow-x-auto">
-                <table class="w-full text-left">
+                <table class="w-full text-left border-collapse">
                     <thead id="tabelaCabecalho">
-                        <!-- Preenchido via JS -->
+                        <!-- JS Controlled -->
                     </thead>
-                    <tbody id="tabelaCorpo" class="bg-white text-xs">
+                    <tbody id="tabelaCorpo" class="bg-white">
                         <tr>
-                            <td colspan="10" class="px-8 py-20 text-center text-slate-400 font-medium italic">
-                                <div class="flex flex-col items-center gap-4">
-                                    <div class="w-8 h-8 border-4 border-slate-200 border-t-slate-900 rounded-full animate-spin"></div>
-                                    <span>Personalizando dashboard...</span>
+                            <td colspan="10" class="px-8 py-32 text-center">
+                                <div class="flex flex-col items-center gap-6">
+                                    <div class="w-12 h-12 border-[5px] border-slate-100 border-t-amber-500 rounded-full animate-spin"></div>
+                                    <span class="text-sm font-bold text-slate-400 uppercase tracking-widest italic animate-pulse">Sincronizando com Asaas Core...</span>
                                 </div>
                             </td>
                         </tr>
@@ -113,12 +213,14 @@
                 </table>
             </div>
             
-            <div class="px-8 py-4 bg-slate-50 border-t border-slate-200 text-[10px] text-slate-400 flex justify-between items-center font-bold uppercase tracking-widest">
-                <span>Relatório Financeiro dos últimos 30 dias</span>
-                <span>Asaas API Live v3</span>
+            <div class="px-10 py-6 bg-slate-50/50 border-t border-slate-100 flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <div class="w-3 h-3 rounded-full bg-slate-200"></div>
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Lexis Digital Economy • Intelligence & Control</span>
+                </div>
+                <div class="text-[10px] text-slate-300 font-medium">Build 2026.03.30.01</div>
             </div>
         </div>
-
     </main>
 
     <script>
@@ -161,15 +263,23 @@
                 dadosCompletos = await res.json();
                 
                 localStorage.setItem('lexis_dash_pin', PIN_SESSAO);
-                document.getElementById('loginScreen').classList.add('hidden');
-                document.getElementById('mainHeader').classList.remove('hidden');
-                document.getElementById('mainContent').classList.remove('hidden');
+                
+                // Transições suaves
+                document.getElementById('loginScreen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('mainHeader').classList.remove('hidden');
+                    document.getElementById('mainContent').classList.remove('hidden');
+                    
+                    setTimeout(() => {
+                        document.getElementById('mainHeader').classList.remove('translate-y-[-100%]');
+                        document.getElementById('mainContent').classList.remove('opacity-0', 'translate-y-10');
+                    }, 50);
+                }, 700);
 
                 if (dadosCompletos.length > 0) {
-                    const titulo = (PIN_SESSAO === '000') ? "Visão Geral (Últimos 30 dias)" : `Vendas de ${dadosCompletos[0].consultor}`;
+                    const titulo = (PIN_SESSAO === '000') ? "Visão Estratégica" : `Vendas: ${dadosCompletos[0].consultor}`;
                     document.getElementById('tituloBoasVindas').innerText = titulo;
-                } else {
-                    document.getElementById('tituloBoasVindas').innerText = "Vendas nos últimos 30 dias";
                 }
 
                 renderizarTabela(dadosCompletos);
@@ -177,9 +287,10 @@
 
             } catch (err) {
                 console.error(err);
-                if (document.getElementById('tabelaCorpo')) {
-                    document.getElementById('tabelaCorpo').innerHTML = `
-                        <tr><td colspan="10" class="px-8 py-20 text-center text-red-400 font-bold">❌ Falha na conexão ou venda manual não processada.</td></tr>
+                const corpo = document.getElementById('tabelaCorpo');
+                if (corpo) {
+                    corpo.innerHTML = `
+                        <tr><td colspan="10" class="px-8 py-32 text-center text-red-500 font-bold uppercase tracking-widest">❌ Falha crítica de sincronização. Tente logar novamente.</td></tr>
                     `;
                 }
             } finally {
@@ -188,8 +299,8 @@
         }
 
         const CellValue = (val, color = 'slate-900') => `
-            <div class="text-center">
-                <div class="text-[12px] font-black text-${color}">${formatadorCurrency.format(val)}</div>
+            <div class="flex flex-col items-center">
+                <span class="text-[13px] font-black text-${color}">${formatadorCurrency.format(val)}</span>
             </div>
         `;
 
@@ -197,27 +308,29 @@
             const head = document.getElementById('tabelaCabecalho');
             const isMaster = PIN_SESSAO === '000';
             
+            const commonStyle = "px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center border-b border-slate-100";
+            
             if (isMaster) {
                 head.innerHTML = `
-                    <tr class="bg-indigo-50 bg-opacity-30">
-                        <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Data/Status</th>
-                        <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Curso</th>
-                        <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Aluno (Pagador)</th>
-                        <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Licenciado</th>
-                        <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Bruto</th>
-                        <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Recibo</th>
+                    <tr class="bg-slate-50/30">
+                        <th class="${commonStyle}">Temporal</th>
+                        <th class="${commonStyle}">Produto/Curso</th>
+                        <th class="${commonStyle}">Aluno (Pagador)</th>
+                        <th class="${commonStyle}">Licenciado</th>
+                        <th class="${commonStyle}">Valor Bruto</th>
+                        <th class="${commonStyle}">Doc</th>
                     </tr>`;
             } else {
                 head.innerHTML = `
-                    <tr class="bg-indigo-50 bg-opacity-30">
-                        <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Data/Status</th>
-                        <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Curso</th>
-                        <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Bruto</th>
-                        <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center text-blue-500">Lexis</th>
-                        <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center text-red-400">Imposto</th>
-                        <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center text-slate-500">Asaas</th>
-                        <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center text-green-600">Lucro</th>
-                        <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Recibo</th>
+                    <tr class="bg-slate-50/30">
+                        <th class="${commonStyle}">Temporal</th>
+                        <th class="${commonStyle}">Produto/Curso</th>
+                        <th class="${commonStyle}">Bruto</th>
+                        <th class="${commonStyle} text-blue-600">Lexis Share</th>
+                        <th class="${commonStyle} text-rose-500">Imposto</th>
+                        <th class="${commonStyle} text-slate-500">Taxa Asaas</th>
+                        <th class="${commonStyle} text-emerald-600">Líquido</th>
+                        <th class="${commonStyle}">Doc</th>
                     </tr>`;
             }
         }
@@ -229,71 +342,68 @@
             renderizarCabecalho();
 
             if (vendas.length === 0) {
-                corpo.innerHTML = `<tr><td colspan="${isMaster?6:8}" class="px-8 py-20 text-center text-slate-400">Nenhuma venda paga encontrada nos últimos 30 dias.</td></tr>`;
+                corpo.innerHTML = `<tr><td colspan="${isMaster?6:8}" class="px-8 py-32 text-center text-slate-400 font-bold uppercase tracking-widest">Nenhuma transação recordada nos últimos 30 dias.</td></tr>`;
                 return;
             }
 
             corpo.innerHTML = vendas.map(v => {
-                const s = v.split;
+                const s = v.split || {};
+                const baseRow = `class="table-row-hover transition-all duration-300 border-b border-slate-50 group"`;
+                const dateHtml = `
+                    <td class="px-8 py-5 text-center">
+                        <div class="font-bold text-slate-900 text-xs">${formatadorData.format(new Date(v.data))}</div>
+                        <div class="text-[9px] text-slate-400 font-black tracking-widest uppercase mt-1 px-2 py-0.5 bg-slate-50 rounded-md inline-block">${v.status}</div>
+                    </td>`;
+                const courseHtml = `
+                    <td class="px-8 py-5">
+                        <div class="font-black text-slate-700 uppercase text-[11px] tracking-tight truncate max-w-[180px]">${v.curso}</div>
+                    </td>`;
+                const docHtml = `
+                    <td class="px-8 py-5 text-center">
+                        ${v.recibo ? `
+                            <a href="${v.recibo}" target="_blank" class="w-8 h-8 inline-flex items-center justify-center bg-slate-900 text-white rounded-xl hover:bg-slate-700 transition-all active:scale-90 hover:rotate-6 shadow-md">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1 -2 2z"></path></svg>
+                            </a>
+                        ` : '<span class="text-[10px] font-black text-slate-200">N/A</span>'}
+                    </td>`;
+
                 if (isMaster) {
                     return `
-                    <tr class="table-row-hover group border-b border-slate-50 transition-colors">
-                        <td class="px-6 py-4 text-center">
-                            <div class="font-bold text-slate-900">${formatadorData.format(new Date(v.data))}</div>
-                            <div class="text-[9px] text-slate-400 font-mono tracking-tighter uppercase">${v.status}</div>
-                        </td>
-                        <td class="px-6 py-4 text-center">
-                            <div class="font-semibold text-slate-600 uppercase text-[11px]">${v.curso}</div>
-                        </td>
-                        <td class="px-6 py-4 text-center">
+                    <tr ${baseRow}>
+                        ${dateHtml}
+                        ${courseHtml}
+                        <td class="px-8 py-5">
                             <div class="font-bold text-slate-900 uppercase tracking-tight text-[11px]">${v.aluno}</div>
                         </td>
-                        <td class="px-6 py-4 text-center">
-                            <div class="font-medium text-slate-500 uppercase tracking-tight text-[10px]">${v.consultor}</div>
+                        <td class="px-8 py-5">
+                            <div class="font-bold text-amber-600 uppercase tracking-widest text-[10px]">${v.consultor}</div>
                         </td>
-                        <td class="px-6 py-4 text-center">
-                            ${CellValue(v.valorBruto)}
+                        <td class="px-8 py-5 text-center">
+                            ${CellValue(v.valorBruto, 'slate-900')}
                         </td>
-                        <td class="px-6 py-4 text-center">
-                            ${v.recibo ? `
-                                <a href="${v.recibo}" target="_blank" class="p-1.5 inline-block bg-slate-900 text-white rounded-lg hover:bg-slate-700 transition-all active:scale-90">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1 -2 2z"></path></svg>
-                                </a>
-                            ` : ''}
-                        </td>
+                        ${docHtml}
                     </tr>`;
                 } else {
                     return `
-                    <tr class="table-row-hover group border-b border-slate-50 transition-colors">
-                        <td class="px-6 py-4">
-                            <div class="font-bold text-slate-900">${formatadorData.format(new Date(v.data))}</div>
-                            <div class="text-[9px] text-slate-400 font-mono tracking-tighter uppercase">${v.status}</div>
+                    <tr ${baseRow}>
+                        ${dateHtml}
+                        ${courseHtml}
+                        <td class="px-8 py-5 text-center">
+                            ${CellValue(v.valorBruto, 'slate-900')}
                         </td>
-                        <td class="px-6 py-4">
-                            <div class="font-semibold text-slate-600">${v.curso}</div>
+                        <td class="px-8 py-5 bg-blue-50/30 text-center">
+                             ${s.lexis > 0 ? CellValue(s.lexis, 'blue-600') : '<span class="text-[10px] font-black text-blue-200 italic">...</span>'}
                         </td>
-                        <td class="px-6 py-4 text-center">
-                            ${CellValue(v.valorBruto)}
+                        <td class="px-8 py-5 text-center">
+                             ${s.imposto > 0 ? CellValue(s.imposto, 'rose-500') : '<span class="text-[10px] font-black text-rose-200 italic">...</span>'}
                         </td>
-                        <td class="px-6 py-4 bg-blue-50 bg-opacity-30 text-center">
-                             ${s.lexis > 0 ? CellValue(s.lexis, 'blue-600') : '<span class="text-[9px] text-slate-300">Pendente</span>'}
+                        <td class="px-8 py-5 text-center">
+                             ${s.asaas > 0 ? CellValue(s.asaas, 'slate-500') : '<span class="text-[10px] font-black text-slate-200 italic">...</span>'}
                         </td>
-                        <td class="px-6 py-4 text-center">
-                             ${s.imposto > 0 ? CellValue(s.imposto, 'red-500') : '<span class="text-[9px] text-slate-300 italic">Pendente</span>'}
+                        <td class="px-8 py-5 bg-emerald-50/30 text-center">
+                             ${s.lucro > 0 ? CellValue(s.lucro, 'emerald-700') : '<span class="text-[10px] font-black text-emerald-400 italic font-medium animate-pulse">Calculando...</span>'}
                         </td>
-                        <td class="px-6 py-4 text-center">
-                             ${s.asaas > 0 ? CellValue(s.asaas, 'slate-500') : '<span class="text-[9px] text-slate-300 italic">Pendente</span>'}
-                        </td>
-                        <td class="px-6 py-4 bg-green-50 bg-opacity-30 text-center">
-                             ${s.lucro > 0 ? CellValue(s.lucro, 'green-700') : '<span class="text-[9px] text-slate-400 font-bold italic">Processando...</span>'}
-                        </td>
-                        <td class="px-6 py-4 text-center">
-                            ${v.recibo ? `
-                                <a href="${v.recibo}" target="_blank" class="p-1.5 inline-block bg-slate-900 text-white rounded-lg hover:bg-slate-700 transition-all active:scale-90">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1 -2 2z"></path></svg>
-                                </a>
-                            ` : ''}
-                        </td>
+                        ${docHtml}
                     </tr>`;
                 }
             }).join('');
@@ -308,14 +418,15 @@
         function filtrarTabela() {
             const termo = document.getElementById('searchInput').value.toLowerCase();
             const filtrados = dadosCompletos.filter(v => 
-                v.consultor.toLowerCase().includes(termo) || 
-                v.curso.toLowerCase().includes(termo) ||
+                (v.consultor && v.consultor.toLowerCase().includes(termo)) || 
+                (v.curso && v.curso.toLowerCase().includes(termo)) ||
                 (v.aluno && v.aluno.toLowerCase().includes(termo))
             );
             renderizarTabela(filtrados);
             atualizarEstatisticas(filtrados);
         }
 
+        // Auto-login se houver PIN saved
         if (PIN_SESSAO) {
             carregarVendas();
         }
