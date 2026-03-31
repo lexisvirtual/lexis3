@@ -233,8 +233,12 @@
             let taxaAsaas = 0; let antecip = 0;
             if (formaSelecionada === 'CREDIT_CARD') {
                 const parcelas = parseInt(document.getElementById('maxParcelas').value);
-                taxaAsaas = (vVenda * 0.0299) + 0.49;
-                antecip = vVenda * (parcelas * 0.007); // Aproximado
+                taxaAsaas = (parcelas > 12 ? vVenda * 0.0429 : vVenda * 0.0299) + (0.49 * parcelas);
+                if (parcelas === 1) {
+                    antecip = vVenda * 0.0115;
+                } else {
+                    antecip = vVenda * 0.008 * (parcelas + 1);
+                }
                 document.getElementById('linhaAntecipacao').classList.remove('hidden');
             } else {
                 taxaAsaas = 1.99; document.getElementById('linhaAntecipacao').classList.add('hidden');
