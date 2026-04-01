@@ -97,6 +97,12 @@
                 </select>
             </div>
 
+            <!-- 6. Validade do Link -->
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Validade do Link (Opcional)</label>
+                <input type="date" id="dataValidade" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm text-gray-700">
+            </div>
+
             <!-- 💰 SIMULADOR DE LUCRO 💰 -->
             <div id="simuladorPanel" class="hidden p-4 rounded-lg bg-gray-50 border border-gray-200">
                 <h4 id="simTitulo" class="text-[10px] font-bold text-gray-500 uppercase mb-2">Simulação de Lucro</h4>
@@ -266,7 +272,8 @@
                         cursoId: document.getElementById('cursoId').value,
                         valorVenda: parseFloat(document.getElementById('valor').value),
                         formaPagamento: formaSelecionada,
-                        maxParcelas: parseInt(document.getElementById('maxParcelas').value)
+                        maxParcelas: parseInt(document.getElementById('maxParcelas').value),
+                        validade: document.getElementById('dataValidade').value
                     })
                 });
                 const data = await res.json();
