@@ -350,9 +350,17 @@
             corpo.innerHTML = vendas.map(v => {
                 const s = v.split || {};
                 const baseRow = `class="table-row-hover transition-all duration-300 border-b border-slate-50 group"`;
+                let textoData = '';
+                if (v.data && v.data.length === 10 && v.data.includes('-')) {
+                    const dParts = v.data.split('-');
+                    textoData = `${dParts[2]}/${dParts[1]}/${dParts[0].substr(2)}`;
+                } else {
+                    textoData = formatadorData.format(new Date(v.data));
+                }
+
                 const dateHtml = `
                     <td class="px-8 py-5 text-center">
-                        <div class="font-bold text-slate-900 text-xs">${formatadorData.format(new Date(v.data))}</div>
+                        <div class="font-bold text-slate-900 text-[13px]">${textoData}</div>
                         <div class="text-[9px] text-slate-400 font-black tracking-widest uppercase mt-1 px-2 py-0.5 bg-slate-50 rounded-md inline-block">${v.status}</div>
                     </td>`;
                 const courseHtml = `
