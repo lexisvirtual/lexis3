@@ -12,8 +12,7 @@ async function fetchGoogleTrends() {
     
     const data = await response.text();
     // Remove o prefixo de segurança do Google
-    const jsonStr = data.replace(/^\)\]\}\'
-/, '');
+    const jsonStr = data.replace(/^\)\]\}\'\n/, '');
     const trends = JSON.parse(jsonStr);
     
     return {
