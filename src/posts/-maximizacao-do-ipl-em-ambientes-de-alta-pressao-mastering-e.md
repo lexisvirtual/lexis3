@@ -1,5 +1,5 @@
 ---
-title: "# Maximização do IPL em Ambientes de Alta Pressão | Mastering Executive Pressure in EN"
+title: "Maximização do IPL em Ambientes de Alta Pressão | Mastering Executive Pressure in EN"
 date: "2026-03-09"
 category: "Dicas"
 description: "# Maximização do IPL em Ambientes de Alta Pressão | Mastering Executive Pressure in EN"
