@@ -1,6 +1,6 @@
 # Sistema de Automação de Imagens e Conteúdo Lexis3 (v9.1)
 
-Este documento resume as melhorias e a arquitetura do sistema de publicação da Lexis Academy implementadas em Fevereiro de 2026.
+Este documento resume as melhorias e a arquitetura do sistema de publicação da Lexis Academy, consolidado na `PROJECT_VISION.md`.
 
 ## 1. Arquitetura de Imagens (Self-Hosted)
 Para evitar links quebrados e dependência de APIs externas (Unsplash/Pixabay), o sistema agora hospeda suas próprias imagens.
