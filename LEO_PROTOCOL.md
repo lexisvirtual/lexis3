@@ -1,4 +1,6 @@
-# 📜 Protocolo Oficial Leo (Motor SEO Autônomo v1.2)
+# 📜 Protocolo Oficial Leo (Motor SEO Autônomo v9.1)
+
+> **Nota:** Este documento é uma extensão da [PROJECT_VISION.md](PROJECT_VISION.md). Consulte o arquivo principal para a visão estratégica completa.
 
 Este documento é o cérebro algorítmico do Leo. Define gatilhos, decisões e ações corretivas baseadas em métricas REAIS.
 
