@@ -279,11 +279,13 @@ async function processWithFeedback(env, topic, meta, kvKey, successList, current
 function extractTitle(content) {
   // 1. Prioridade para a nova tag administrativa
   const tagMatch = content.match(/\[TITLE\]\s*(.*?)\s*\[\/TITLE\]/i);
-  if (tagMatch) return tagMatch[1].trim();
+  if (tagMatch) {
+    return tagMatch[1].replace(/^#+\s*/, '').trim();
+  }
 
   // 2. Fallback para H1 (apenas se houver exatamente um #)
   const h1Match = content.match(/^#[^#]\s*(.*)/m);
-  return h1Match ? h1Match[1].replace(/Título:\s*/i, '').trim() : null;
+  return h1Match ? h1Match[1].replace(/Título:\s*/i, '').replace(/^#+\s*/, '').trim() : null;
 }
 
 async function preparePostObject(meta, title, content, audit) {
