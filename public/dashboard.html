@@ -342,6 +342,16 @@
             
             renderizarCabecalho();
 
+            const getStatusBadge = (status) => {
+                let colors = 'bg-slate-50 text-slate-400';
+                if (status === 'PAGO') colors = 'bg-blue-50 text-blue-600';
+                if (status === 'LIBERADO') colors = 'bg-emerald-50 text-emerald-600';
+                if (status === 'COMPENSADO') colors = 'bg-amber-50 text-amber-600';
+                if (status === 'RECUSADO' || status === 'CANCELADO') colors = 'bg-rose-50 text-rose-600';
+                
+                return `<div class="text-[9px] ${colors} font-black tracking-widest uppercase mt-1 px-2 py-1 rounded-md inline-block shadow-sm border border-black/5">${status}</div>`;
+            };
+
             if (vendas.length === 0) {
                 corpo.innerHTML = `<tr><td colspan="${isMaster?6:8}" class="px-8 py-32 text-center text-slate-400 font-bold uppercase tracking-widest">Nenhuma transação recordada nos últimos 30 dias.</td></tr>`;
                 return;
@@ -361,11 +371,12 @@
                 const dateHtml = `
                     <td class="px-8 py-5 text-center">
                         <div class="font-bold text-slate-900 text-[13px]">${textoData}</div>
-                        <div class="text-[9px] text-slate-400 font-black tracking-widest uppercase mt-1 px-2 py-0.5 bg-slate-50 rounded-md inline-block">${v.status}</div>
+                        ${getStatusBadge(v.status)}
                     </td>`;
                 const courseHtml = `
                     <td class="px-8 py-5">
                         <div class="font-black text-slate-700 uppercase text-[11px] tracking-tight truncate max-w-[180px]">${v.curso}</div>
+                        <div class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter mt-1">${v.aluno || 'Aluno Lexis'}</div>
                     </td>`;
                 const docHtml = `
                     <td class="px-8 py-5 text-center">
