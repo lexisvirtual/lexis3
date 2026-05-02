@@ -1,10 +1,10 @@
 {
-  "concept": "Premium Minimal",
-  "movement_axis": "static",
-  "geometry_language": "linear",
-  "rhythm_profile": "progressive",
+  "concept": "Gentle Elevation",
+  "movement_axis": "vertical",
+  "geometry_language": "curved",
+  "rhythm_profile": "slow",
   "atmosphere_type": "light_based",
-  "intensity": 0.02,
-  "mode": "base",
-  "event": "base"
+  "intensity": 0.06,
+  "mode": "seasonal",
+  "event": "mothers_day"
 }
