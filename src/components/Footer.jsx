@@ -31,6 +31,11 @@ const Footer = () => {
             <div className="mt-10 pt-10 border-t border-white/5 text-center text-slate-600 text-xs">
                 <p>&copy; {new Date().getFullYear()} Lexis Academy. Todos os direitos reservados.</p>
                 <p className="mt-2 text-slate-700">Rua Visconde de Inhaúma, 1295 - São Carlos, SP</p>
+                <p className="mt-2">
+                    <a href="mailto:contato@lexis.academy" className="text-slate-500 hover:text-white transition-colors">
+                        contato@lexis.academy
+                    </a>
+                </p>
             </div>
         </footer>
     );
