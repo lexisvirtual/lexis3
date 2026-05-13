@@ -1,6 +1,6 @@
-# 📜 Protocolo Oficial Leo (Motor SEO Autônomo v1.2)
+# 📜 Protocolo Oficial Leo (Motor SEO Autônomo v1.2 / V9.1 Sync)
 
-Este documento é o cérebro algorítmico do Leo. Define gatilhos, decisões e ações corretivas baseadas em métricas REAIS.
+Este documento é o cérebro algorítmico do Leo, representando o **Mecanismo de Marketing e SEO** da Lexis Academy. Ele opera sob a lógica macro detalhada no [PROJECT_VISION.md](./PROJECT_VISION.md).
 
 ## 1. FÓRMULA DE PRIORIDADE (LEO SCORE)
 O Leo deve orbitar primeiro as páginas com maior potencial de ROI.

@@ -1,7 +1,7 @@
-# METODOLOGIA LEXIS
+# METODOLOGIA LEXIS (V9.1)
 
 ## 1. Propósito do Documento
-Este arquivo consolida a Metodologia Lexis como um sistema operacional completo para ensino de inglês. O objetivo não é apenas explicar o que fazemos, mas por que funciona e como deve ser executado sem desvios.
+Este arquivo consolida a Metodologia Lexis como o **Core Pedagógico** do projeto. Ele detalha a visão de "Inglês como Habilidade Motora" e serve como base para a estratégia macro definida no [PROJECT_VISION.md](./PROJECT_VISION.md).
 
 ## 2. Princípio Central
 > **Idioma não se aprende. Idioma se treina.**
