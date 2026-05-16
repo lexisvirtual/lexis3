@@ -9,7 +9,12 @@
     "preview": "vite preview",
     "publish:medium": "node scripts/publish-to-medium.js",
     "publish:linkedin": "node scripts/publish-to-linkedin.js",
-    "publish:all": "node scripts/publish-all.js"
+    "publish:all": "node scripts/publish-all.js",
+    "queue:process": "node scripts/process-now.js",
+    "queue:check": "node scripts/check-queue.js",
+    "image:refresh": "node scripts/refresh-post-image.js",
+    "image:fix": "node scripts/fix-post-image.js",
+    "post:clean": "node scripts/clean-posts.js"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.19",
