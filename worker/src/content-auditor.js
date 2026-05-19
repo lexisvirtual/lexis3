@@ -22,6 +22,7 @@ Conteúdo: ${post.content.substring(0, 4500)}
 2. Verifique o BILINGUISMO: Há resumos em inglês na Resposta Rápida e no FAQ?
 3. Verifique a ANCORAGEM: Os termos estão destacados em negrito no meio do texto?
 4. Verifique os LINKS: Há links para fontes externas e páginas internas da Lexis?
+5. Verifique a NARRATIVA: O texto reforça sutilmente que a falha de aprendizado é do método tradicional (Inocência do Aluno)?
 
 CRITÉRIOS DE AVALIAÇÃO IPL (0-20 pontos cada):
 1. RELEVÂNCIA E DNA (0-20): É workshop de treino? Segue a proporção 60/40?

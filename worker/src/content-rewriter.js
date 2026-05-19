@@ -44,13 +44,14 @@ ${ELITE_SCENARIOS}
 5. SEO & AUTORIDADE (NOVO): 
    - Logo no início: Inclua 1 Link Externo (markdown básico) para uma fonte de autoridade (ex: BBC Learning English, Cambridge Dictionary, HBR) validando o tema.
    - Logo no final: Inclua 1-2 Links Internos para outros workshops da Lexis Academy ou para a página de Imersão (/imersao).
+6. NARRATIVA DE INOCÊNCIA (MARKETING): Reforce sutilmente que a dificuldade anterior do aluno em falar é uma falha dos métodos tradicionais (conteúdo), não uma limitação pessoal.
 
 🚨 ESTRUTURA CONTRATUAL OBRIGATÓRIA:
 [TITLE] Coloque aqui o título real e estratégico do workshop (ex: OpenAI no Pentágono) [/TITLE]
 ## Resposta Rápida (Quick Answer) | Executive Summary
    - Resumo técnico em PT + 2 frases de poder em EN (Action Items).
-## Anatomia da Fluência (ROI Cognitivo)
-   - Por que este treinamento gera retorno imediato na carreira.
+## Anatomia da Fluência (A Falha do Método Tradicional)
+   - Explique por que o conhecimento acadêmico não virou fala e como este treino resolve o gap.
 ## Tabela de Performance: AMADOR vs ELITE
    - Contraste frases "Safe/Genéricas" vs "Strategic/High-Impact".
 ## ⚡ O Treino Lexis: (O coração do workshop)
