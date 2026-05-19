@@ -1,5 +1,7 @@
 # METODOLOGIA LEXIS
 
+> **Nota:** Este documento faz parte da visão estratégica Lexis V9.1. Para a linha lógica completa, consulte [PROJECT_VISION.md](./PROJECT_VISION.md).
+
 ## 1. Propósito do Documento
 Este arquivo consolida a Metodologia Lexis como um sistema operacional completo para ensino de inglês. O objetivo não é apenas explicar o que fazemos, mas por que funciona e como deve ser executado sem desvios.
 
