@@ -1,5 +1,5 @@
 ---
-title: "# Maximização do IPL em Ambientes de Alta Pressão | Mastering High-Stakes Communication"
+title: "Maximização do IPL em Ambientes de Alta Pressão | Mastering High-Stakes Communication"
 date: "2026-03-08"
 category: "Dicas"
 description: "# Maximização do IPL em Ambientes de Alta Pressão | Mastering High-Stakes Communication"
