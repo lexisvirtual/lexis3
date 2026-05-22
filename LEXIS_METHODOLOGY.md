@@ -1,4 +1,6 @@
-# METODOLOGIA LEXIS
+# METODOLOGIA LEXIS (V9.1)
+
+> **REFERÊNCIA ESTRATÉGICA:** Este documento é uma extensão da [VISÃO DO PROJETO (PROJECT_VISION.md)](./PROJECT_VISION.md), que serve como a "Source of Truth" definitiva para a integração entre Pedagogia, Marketing e Técnica.
 
 ## 1. Propósito do Documento
 Este arquivo consolida a Metodologia Lexis como um sistema operacional completo para ensino de inglês. O objetivo não é apenas explicar o que fazemos, mas por que funciona e como deve ser executado sem desvios.

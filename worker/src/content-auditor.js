@@ -5,8 +5,9 @@ export async function auditPost(env, post) {
 
 🚨 O QUE É IPL? É a medida de quanto um Workshop aumenta a capacidade do aluno de formular respostas executivas de alto impacto sob pressão.
 
-🚨 REGRAS DE OURO LEXIS (VERSÃO 3.6 - CLEAN SEO):
-1. ESTRUTURA SEM H1 INTERNO (OK): O Leo NÃO deve escrever o título # (H1), pois o site já o gera. O texto deve começar em ## (H2).
+🚨 REGRAS DE OURO LEXIS (VERSÃO 3.7 - CLEAN SEO & INNOCENCE):
+1. NARRATIVA DE INOCÊNCIA: O post valida que a falha passada do aluno é culpa do método tradicional? (Obrigatório para conexão emocional).
+2. ESTRUTURA SEM H1 INTERNO (OK): O Leo NÃO deve escrever o título # (H1), pois o site já o gera. O texto deve começar em ## (H2).
 2. TÍTULOS HÍBRIDOS (H2/H3): Devem seguir o formato \"Título PT | Authority Hook EN\".
 3. DNA DE TREINO (40/60): Alvo pedagógico: 40% PT (Instrução) e 60% EN (Músculo/Prática). 
 4. ANCORAGEM LEXICAL (NEGRITO): Verifique se o Leo colocou em **negrito** os termos do Nível 1 quando usados na prática. Se não houver negrito -> -15 pontos.
