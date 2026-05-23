@@ -23,6 +23,7 @@ const SPA_ROUTES = [
     '/imersao',
     '/maestria',
     '/the-way',
+    '/aplicacao',
     '/blog',
     '/metodo',
     '/depoimentos',

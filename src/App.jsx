@@ -12,6 +12,8 @@ import BlogIndex from './pages/blog/BlogIndex';
 import BlogPost from './pages/blog/BlogPost';
 import BlogPauta from './pages/blog/BlogPauta';
 import LeoInsights from './pages/LeoInsights';
+import Aplicacao from './pages/Aplicacao';
+import FloatingWhatsAppButton from './components/FloatingWhatsAppButton';
 
 const App = () => {
     return (
@@ -29,7 +31,9 @@ const App = () => {
                     <Route path="/blog/pauta" element={<BlogPauta />} />
                     <Route path="/blog/:slug" element={<BlogPost />} />
                     <Route path="/leo-insights" element={<LeoInsights />} />
+                    <Route path="/aplicacao" element={<Aplicacao />} />
                 </Routes>
+                <FloatingWhatsAppButton phoneE164="5519988197383" message="Quero mais informações" />
             </BrowserRouter>
         </HelmetProvider>
     );
