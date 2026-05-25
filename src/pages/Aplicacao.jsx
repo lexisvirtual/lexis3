@@ -35,11 +35,15 @@ const FAQItem = ({ question, answer, isOpen, onToggle }) => (
 );
 
 const Aplicacao = () => {
-    const [isModalOpen, setIsModalOpen] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [scrollProgress, setScrollProgress] = useState(0);
     const [openFaqIndex, setOpenFaqIndex] = useState(null);
 
     useRevealOnScroll();
+
+    React.useEffect(() => {
+        setIsModalOpen(false);
+    }, []);
 
     React.useEffect(() => {
         const handleScroll = () => {
