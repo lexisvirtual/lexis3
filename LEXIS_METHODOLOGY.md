@@ -1,5 +1,7 @@
 # METODOLOGIA LEXIS
 
+> **Source of Truth:** Esta metodologia é sincronizada com a visão estratégica definida em [PROJECT_VISION.md](./PROJECT_VISION.md).
+
 ## 1. Propósito do Documento
 Este arquivo consolida a Metodologia Lexis como um sistema operacional completo para ensino de inglês. O objetivo não é apenas explicar o que fazemos, mas por que funciona e como deve ser executado sem desvios.
 
