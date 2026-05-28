@@ -3,6 +3,8 @@
 ## 1. Propósito do Documento
 Este arquivo consolida a Metodologia Lexis como um sistema operacional completo para ensino de inglês. O objetivo não é apenas explicar o que fazemos, mas por que funciona e como deve ser executado sem desvios.
 
+Para a visão estratégica completa e alinhamento entre pedagogia, marketing e tecnologia, consulte o [PROJECT_VISION.md](./PROJECT_VISION.md).
+
 ## 2. Princípio Central
 > **Idioma não se aprende. Idioma se treina.**
 
