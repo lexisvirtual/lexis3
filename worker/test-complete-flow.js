@@ -1,5 +1,5 @@
 // Teste Completo - Simula geração de post com imagem
-const fetch = require('node-fetch');
+// Pixabay requer per_page entre 3 e 200
 
 const CATEGORIES = ['business', 'viagem', 'estudo', 'mindset', 'default'];
 
@@ -24,11 +24,9 @@ async function testCompleteFlow() {
     console.log(`🔍 Query Pixabay: "${QUERIES[category]}"\n`);
 
     try {
-      const url = `https://pixabay.com/api/?key=${API_KEY}&q=${encodeURIComponent(QUERIES[category])}&image_type=photo&orientation=horizontal&per_page=1`;
+      const url = `https://pixabay.com/api/?key=${API_KEY}&q=${encodeURIComponent(QUERIES[category])}&image_type=photo&orientation=horizontal&per_page=3`;
       
-      const response = await fetch(url, {
-        signal: AbortSignal.timeout(5000)
-      });
+      const response = await fetch(url);
 
       if (response.ok) {
         const data = await response.json();
@@ -39,8 +37,6 @@ async function testCompleteFlow() {
           console.log('✅ IMAGEM ENCONTRADA!');
           console.log(`   URL: ${image.largeImageURL}`);
           console.log(`   Tags: ${image.tags}`);
-          console.log(`   Fotógrafo: ${image.user}`);
-          console.log(`   Visualizações: ${image.views.toLocaleString()}`);
           console.log(`\n📄 Post seria criado com:`);
           console.log(`   ---`);
           console.log(`   title: "Como melhorar seu inglês - ${category}"`);
@@ -59,18 +55,12 @@ async function testCompleteFlow() {
       console.log(`❌ Erro: ${error.message}`);
     }
 
-    // Aguarda 1 segundo entre requisições
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 500));
   }
 
   console.log('\n' + '='.repeat(70));
   console.log('🎉 TESTE COMPLETO FINALIZADO');
   console.log('='.repeat(70) + '\n');
-  console.log('📊 RESUMO:');
-  console.log('   ✅ Sistema Pixabay funcionando');
-  console.log('   ✅ Todas as categorias testadas');
-  console.log('   ✅ Imagens dinâmicas sem repetição');
-  console.log('   ✅ Fluxo completo de geração de post validado\n');
 }
 
 testCompleteFlow().catch(console.error);
