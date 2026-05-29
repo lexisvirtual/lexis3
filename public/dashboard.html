@@ -231,6 +231,30 @@
         const formatadorCurrency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
         const formatadorData = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
 
+        function parseDashboardDate(valor) {
+            if (!valor) return null;
+            if (typeof valor === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(valor)) {
+                const [y, m, d] = valor.split('-').map(Number);
+                return new Date(y, m - 1, d);
+            }
+            const dt = new Date(valor);
+            return Number.isNaN(dt.getTime()) ? null : dt;
+        }
+
+        function filtrarUltimos30Dias(vendas) {
+            const hoje = new Date();
+            const inicioHoje = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+            const inicioJanela = new Date(inicioHoje);
+            inicioJanela.setDate(inicioJanela.getDate() - 29);
+            const fimJanela = new Date(inicioHoje);
+            fimJanela.setDate(fimJanela.getDate() + 1);
+
+            return (vendas || []).filter(v => {
+                const data = parseDashboardDate(v.data);
+                return data && data >= inicioJanela && data < fimJanela;
+            });
+        }
+
         function verificarPin() {
             const input = document.getElementById('pinInput');
             if (input.value.length === 3) {
@@ -277,13 +301,15 @@
                     }, 50);
                 }, 700);
 
-                if (dadosCompletos.length > 0) {
-                    const titulo = (PIN_SESSAO === '000') ? "Visão Estratégica" : `Vendas: ${dadosCompletos[0].consultor}`;
+                const dadosUltimos30Dias = filtrarUltimos30Dias(dadosCompletos);
+
+                if (dadosUltimos30Dias.length > 0) {
+                    const titulo = (PIN_SESSAO === '000') ? "Visão Estratégica" : `Vendas: ${dadosUltimos30Dias[0].consultor}`;
                     document.getElementById('tituloBoasVindas').innerText = titulo;
                 }
 
-                renderizarTabela(dadosCompletos);
-                atualizarEstatisticas(dadosCompletos);
+                renderizarTabela(dadosUltimos30Dias);
+                atualizarEstatisticas(dadosUltimos30Dias);
 
             } catch (err) {
                 console.error(err);
@@ -440,7 +466,8 @@
 
         function filtrarTabela() {
             const termo = document.getElementById('searchInput').value.toLowerCase();
-            const filtrados = dadosCompletos.filter(v => 
+            const base = filtrarUltimos30Dias(dadosCompletos);
+            const filtrados = base.filter(v => 
                 (v.consultor && v.consultor.toLowerCase().includes(termo)) || 
                 (v.curso && v.curso.toLowerCase().includes(termo)) ||
                 (v.aluno && v.aluno.toLowerCase().includes(termo))
