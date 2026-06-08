@@ -1,7 +1,7 @@
 # METODOLOGIA LEXIS
 
 ## 1. Propósito do Documento
-Este arquivo consolida a Metodologia Lexis como um sistema operacional completo para ensino de inglês. O objetivo não é apenas explicar o que fazemos, mas por que funciona e como deve ser executado sem desvios.
+Este arquivo consolida a Metodologia Lexis como um sistema operacional completo para ensino de inglês. O objetivo não é apenas explicar o que fazemos, mas por que funciona e como deve ser executado sem desvios. Este documento é sincronizado com a [PROJECT_VISION.md](./PROJECT_VISION.md).
 
 ## 2. Princípio Central
 > **Idioma não se aprende. Idioma se treina.**
@@ -14,16 +14,18 @@ A Lexis trata o inglês como uma habilidade cognitiva e comportamental, não com
 
 Assim como dirigir, tocar um instrumento ou praticar um esporte, o domínio surge da prática intensiva, não da teoria.
 
-## 3. Problema das Abordagens Tradicionais
-As metodologias tradicionais falham por atacarem o problema errado:
-- Ênfase excessiva em gramática declarativa
+## 3. O Vilão: Abordagens Tradicionais (Narrativa de Inocência)
+As metodologias tradicionais falham por atacarem o problema errado. É aqui que nasce a **Narrativa de Inocência do Aluno**: o aluno não falhou por falta de capacidade, mas porque foi submetido a um mecanismo falho (o "Vilão").
+
+Falhas do método tradicional:
+- Ênfase excessiva em gramática declarativa (saber *sobre* o idioma)
 - Progressão lenta e artificial
 - Ambiente passivo (aluno espectador)
 - Baixa carga horária real de fala
 - Tradução mental constante
 - Falsa sensação de progresso
 
-**Resultado típico:** alunos com anos de estudo, vocabulário passivo e incapacidade de falar.
+**Resultado típico:** alunos com anos de estudo, vocabulário passivo e incapacidade de falar. Na Lexis, inocentamos o aluno e atacamos o método.
 
 ## 4. Fundamentos da Metodologia Lexis
 A Lexis foi desenhada para produzir resposta automática em inglês. Fundamentos inegociáveis:
