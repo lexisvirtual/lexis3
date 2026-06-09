@@ -1,5 +1,7 @@
 # 📜 Protocolo Oficial Leo (Motor SEO Autônomo v1.2)
 
+> **Fonte de Verdade Estratégica:** Este documento está subordinado à visão consolidada em [PROJECT_VISION.md](./PROJECT_VISION.md).
+
 Este documento é o cérebro algorítmico do Leo. Define gatilhos, decisões e ações corretivas baseadas em métricas REAIS.
 
 ## 1. FÓRMULA DE PRIORIDADE (LEO SCORE)
