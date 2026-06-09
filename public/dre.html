@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lexis - DRE Mensal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
+        :root {
+            --brand-primary: #0f172a;
+            --brand-accent: #f59e0b;
+            --brand-success: #10b981;
+            --glass: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at top right, #f8fafc 0%, #f1f5f9 100%);
+            color: #1e293b;
+            min-height: 100vh;
+        }
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+        }
+        .premium-shadow {
+            box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.08);
+        }
+        .pulse-soft {
+            animation: pulse-soft 3s infinite ease-in-out;
+        }
+        @keyframes pulse-soft {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.02); opacity: 0.95; }
+        }
+        input:focus { box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .tab-btn.active { background: #0f172a; color: white; }
+        .table-row-hover:hover { background-color: rgba(241, 245, 249, 0.8); }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Auth Overlay -->
+    <div id="loginScreen" class="fixed inset-0 z-[100] flex items-center justify-center bg-[#0f172a] transition-all duration-700">
+        <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#64748b 1px, transparent 1px); background-size: 40px 40px;"></div>
+        <div class="glass p-10 rounded-[48px] premium-shadow w-full max-w-sm text-center border-slate-700/50 relative overflow-hidden group">
+            <div class="absolute -top-24 -right-24 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl group-hover:bg-amber-500/20 transition-all duration-700"></div>
+            <div class="w-16 h-16 rounded-3xl bg-slate-900 flex items-center justify-center text-white font-black text-3xl mx-auto mb-8 shadow-2xl pulse-soft">L</div>
+            <h2 class="text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">DRE</h2>
+            <p class="text-slate-500 text-sm mb-10 font-medium">Demonstrativo de Resultados</p>
+            <div class="relative inline-block">
+                <input type="password" id="pinInput" maxlength="3" inputmode="numeric" pattern="[0-9]*" autofocus
+                    class="w-36 bg-white/50 border-2 border-slate-200 rounded-[24px] px-4 py-5 text-center text-4xl font-black text-slate-900 tracking-[0.4em] focus:outline-none focus:border-amber-500 transition-all mb-6 placeholder-slate-300"
+                    placeholder="···" oninput="verificarPin()">
+            </div>
+            <p id="loginErro" class="hidden text-red-500 text-xs font-bold mt-2 animate-bounce">Acesso negado</p>
+            <div class="mt-8 text-[10px] text-slate-400 font-bold uppercase tracking-widest">Protocolo IPL v8.1</div>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <nav id="mainHeader" class="hidden sticky top-0 z-50 glass border-b border-slate-200 transition-all duration-700 transform translate-y-[-100%]">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-4 group cursor-pointer">
+                <div class="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white font-black text-2xl premium-shadow group-hover:rotate-12 transition-transform">L</div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tighter text-slate-900 leading-tight">Lexis <span class="text-amber-500">Academy</span></h1>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">DRE Mensal</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="hidden md:flex items-center gap-8 text-sm font-bold text-slate-500">
+                    <a href="/" class="hover:text-slate-900 transition-colors">Home</a>
+                    <a href="/blog" class="hover:text-slate-900 transition-colors">Insights</a>
+                    <a href="/dre" class="text-slate-900 transition-colors">DRE</a>
+                </div>
+                <div class="h-8 w-[1px] bg-slate-200"></div>
+                <button onclick="logout()" class="group flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-slate-50 hover:bg-red-50 text-slate-900 hover:text-red-600 font-bold text-xs transition-all border border-slate-100">
+                    <span>Sair</span>
+                    <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main id="mainContent" class="hidden max-w-7xl mx-auto px-6 py-12 transition-all duration-700 opacity-0 translate-y-10">
+
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+            <div>
+                <h2 id="tituloBoasVindas" class="text-5xl font-black text-slate-900 tracking-tightest mb-4">DRE Mensal</h2>
+                <p id="subtituloPainel" class="text-slate-500 font-medium max-w-xl">Demonstrativo de Resultados do Exercício por unidade.</p>
+            </div>
+            <div class="flex items-center gap-3 bg-white p-2 rounded-3xl premium-shadow border border-slate-100">
+                <select id="mesSelector" onchange="carregarDre()" class="bg-slate-50 border-none rounded-2xl px-5 py-3 text-sm font-semibold focus:ring-0">
+                </select>
+                <button onclick="carregarDre()" class="p-3 bg-slate-900 text-white rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-lg">
+                    <svg id="refreshIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Abas -->
+        <div class="flex gap-2 mb-8 flex-wrap">
+            <button onclick="switchTab('dre')" id="tabDreBtn" class="tab-btn active px-6 py-3 rounded-2xl text-sm font-bold transition-all bg-slate-900 text-white">DRE</button>
+            <button onclick="switchTab('despesas')" id="tabDespesasBtn" class="tab-btn px-6 py-3 rounded-2xl text-sm font-bold transition-all bg-white text-slate-600 hover:bg-slate-100">Despesas</button>
+            <button onclick="switchTab('nfs')" id="tabNfsBtn" class="tab-btn px-6 py-3 rounded-2xl text-sm font-bold transition-all bg-white text-slate-600 hover:bg-slate-100">Notas Fiscais</button>
+        </div>
+
+        <!-- Tab: DRE -->
+        <div id="tabDre" class="space-y-8">
+            <div class="glass rounded-[48px] premium-shadow overflow-hidden border border-slate-200 relative">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-amber-200"></div>
+                <div class="px-10 py-8 border-b border-slate-200 flex justify-between items-center bg-white/50">
+                    <div>
+                        <h3 class="text-xl font-black text-slate-900">Demonstrativo</h3>
+                        <p id="dreSubtitle" class="text-xs text-slate-400 font-bold uppercase tracking-widest">Carregando...</p>
+                    </div>
+                </div>
+                <div class="p-10">
+                    <table id="dreTable" class="w-full text-left">
+                        <tbody id="dreBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="glass rounded-[48px] premium-shadow overflow-hidden border border-slate-200 relative">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-emerald-200"></div>
+                <div class="px-10 py-8 border-b border-slate-200 bg-white/50">
+                    <h3 class="text-xl font-black text-slate-900">Por Curso</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50/50">
+                                <th class="px-10 py-4">Curso</th>
+                                <th class="px-10 py-4 text-right">Qtd</th>
+                                <th class="px-10 py-4 text-right">Receita</th>
+                                <th class="px-10 py-4 text-right">Lucro</th>
+                            </tr>
+                        </thead>
+                        <tbody id="porCursoBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Notas Fiscais -->
+        <div id="tabNfs" class="hidden space-y-8">
+            <div class="glass rounded-[48px] premium-shadow overflow-hidden border border-slate-200 relative">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-200"></div>
+                <div class="px-10 py-8 border-b border-slate-200 bg-white/50">
+                    <h3 class="text-xl font-black text-slate-900">Notas Fiscais de Cursos</h3>
+                    <p id="nfsSubtitle" class="text-xs text-slate-400 font-bold uppercase tracking-widest">Nenhuma NF disponível</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50/50">
+                                <th class="px-10 py-4">NF</th>
+                                <th class="px-10 py-4">Curso</th>
+                                <th class="px-10 py-4 text-right">Valor</th>
+                                <th class="px-10 py-4">Data</th>
+                                <th class="px-10 py-4">Status</th>
+                                <th class="px-10 py-4">Download</th>
+                            </tr>
+                        </thead>
+                        <tbody id="nfsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Despesas -->
+        <div id="tabDespesas" class="hidden space-y-8">
+            <div class="glass rounded-[48px] premium-shadow overflow-hidden border border-slate-200 relative">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-500 to-violet-200"></div>
+                <div class="px-10 py-8 border-b border-slate-200 bg-white/50">
+                    <h3 class="text-xl font-black text-slate-900">Lançar Despesa</h3>
+                </div>
+                <div class="p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Categoria</label>
+                        <select id="despCategoria" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm font-semibold mt-1">
+                            <option value="Operacional">Operacional</option>
+                            <option value="Serviço Terceiro">Serviço Terceiro</option>
+                            <option value="Facebook Ads">Facebook Ads</option>
+                            <option value="Google Ads">Google Ads</option>
+                            <option value="Ferramentas">Ferramentas</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Descrição</label>
+                        <input type="text" id="despDescricao" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm font-semibold mt-1" placeholder="Ex: Campanha maio">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Valor (R$)</label>
+                        <input type="number" id="despValor" step="0.01" min="0" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm font-semibold mt-1" placeholder="0,00">
+                    </div>
+                    <!-- Campos de Terceiro (aparecem quando selecionado) -->
+                    <div id="terceiroFields" class="hidden md:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6 p-4 bg-amber-50/50 rounded-3xl border border-amber-200">
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Prestador</label>
+                            <input type="text" id="despPrestador" class="w-full bg-white border border-slate-200 rounded-2xl px-4 py-3 text-sm font-semibold mt-1" placeholder="Nome do prestador">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">CPF/CNPJ</label>
+                            <input type="text" id="despCpfCnpj" class="w-full bg-white border border-slate-200 rounded-2xl px-4 py-3 text-sm font-semibold mt-1" placeholder="000.000.000-00">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Nº NF</label>
+                            <input type="text" id="despNfNumero" class="w-full bg-white border border-slate-200 rounded-2xl px-4 py-3 text-sm font-semibold mt-1" placeholder="NF-12345">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Série NF</label>
+                            <input type="text" id="despNfSerie" class="w-full bg-white border border-slate-200 rounded-2xl px-4 py-3 text-sm font-semibold mt-1" placeholder="1">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Data NF</label>
+                            <input type="date" id="despNfData" class="w-full bg-white border border-slate-200 rounded-2xl px-4 py-3 text-sm font-semibold mt-1">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Serviço</label>
+                            <input type="text" id="despServico" class="w-full bg-white border border-slate-200 rounded-2xl px-4 py-3 text-sm font-semibold mt-1" placeholder="Tipo de serviço">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Comprovante (link)</label>
+                        <input type="url" id="despComprovanteUrl" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm font-semibold mt-1" placeholder="https://drive.google.com/...">
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="adicionarDespesa()" class="w-full py-3 bg-slate-900 text-white font-bold rounded-2xl hover:scale-[1.02] active:scale-95 transition-all shadow-lg">
+                            + Adicionar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass rounded-[48px] premium-shadow overflow-hidden border border-slate-200 relative">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-rose-500 to-rose-200"></div>
+                <div class="px-10 py-8 border-b border-slate-200 bg-white/50">
+                    <h3 class="text-xl font-black text-slate-900">Despesas do Mês</h3>
+                    <p id="despTotalLabel" class="text-xs text-slate-400 font-bold uppercase tracking-widest">Total: R$ 0,00</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50/50">
+                                <th class="px-10 py-4">Categoria</th>
+                                <th class="px-10 py-4">Descrição</th>
+                                <th class="px-10 py-4 text-right">Valor</th>
+                                <th class="px-10 py-4">Prestador</th>
+                                <th class="px-10 py-4">NF</th>
+                                <th class="px-10 py-4">Comprovante</th>
+                                <th class="px-10 py-4 text-center">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="despesasBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 text-center text-[10px] font-medium text-slate-400 max-w-4xl mx-auto border-t border-slate-200 pt-6 uppercase tracking-widest leading-relaxed pb-8">
+            DRE — Demonstrativo de Resultados do Exercício. Os valores refletem a posição consolidada por unidade.
+        </div>
+    </main>
+
+    <script>
+        const BASE_WORKER_URL = 'https://api-lexis.lexis-english-account.workers.dev';
+        const DRE_URL = `${BASE_WORKER_URL}/dre`;
+        const DESPESAS_URL = `${BASE_WORKER_URL}/despesas`;
+        const COMPROVANTE_URL = `${BASE_WORKER_URL}/comprovante/upload`;
+
+        let PIN_SESSAO = localStorage.getItem('lexis_dash_pin') || '';
+        let despesasAtuais = [];
+
+        const fmtCurr = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+        const fmtDate = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' });
+
+        function getMesOptions() {
+            const hoje = new Date();
+            const opts = [];
+            for (let i = 0; i < 24; i++) {
+                const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+                const val = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                const label = fmtDate.format(d);
+                opts.push({ val, label });
+            }
+            return opts;
+        }
+
+        function verificarPin() {
+            const input = document.getElementById('pinInput');
+            if (input.value.length === 3) {
+                PIN_SESSAO = input.value;
+                document.getElementById('loginErro').classList.add('hidden');
+                iniciar();
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('lexis_dash_pin');
+            location.reload();
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('active', 'bg-slate-900', 'text-white');
+                b.classList.add('bg-white', 'text-slate-600');
+            });
+            ['tabDre', 'tabDespesas', 'tabNfs'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+
+            if (tab === 'dre') {
+                const btn = document.getElementById('tabDreBtn');
+                btn.classList.add('active', 'bg-slate-900', 'text-white');
+                document.getElementById('tabDre').classList.remove('hidden');
+                carregarDre();
+            } else if (tab === 'despesas') {
+                const btn = document.getElementById('tabDespesasBtn');
+                btn.classList.add('active', 'bg-slate-900', 'text-white');
+                document.getElementById('tabDespesas').classList.remove('hidden');
+                carregarDespesas();
+            } else {
+                const btn = document.getElementById('tabNfsBtn');
+                btn.classList.add('active', 'bg-slate-900', 'text-white');
+                document.getElementById('tabNfs').classList.remove('hidden');
+                carregarNfs();
+            }
+        }
+
+        async function iniciar() {
+            const sel = document.getElementById('mesSelector');
+            const opts = getMesOptions();
+            sel.innerHTML = opts.map(o => `<option value="${o.val}">${o.label}</option>`).join('');
+
+            const loginScreen = document.getElementById('loginScreen');
+            const mainContent = document.getElementById('mainContent');
+            const mainHeader = document.getElementById('mainHeader');
+
+            loginScreen.classList.add('opacity-0', 'translate-y-[-20px]');
+            setTimeout(() => { loginScreen.classList.add('hidden'); }, 700);
+            mainContent.classList.remove('hidden');
+            setTimeout(() => {
+                mainContent.classList.remove('opacity-0', 'translate-y-10');
+                mainHeader.classList.remove('translate-y-[-100%]');
+                mainHeader.classList.remove('hidden');
+            }, 100);
+
+            localStorage.setItem('lexis_dash_pin', PIN_SESSAO);
+            document.getElementById('tituloBoasVindas').textContent = `DRE — PIN ${PIN_SESSAO}`;
+            carregarDre();
+        }
+
+        async function carregarDre() {
+            const icon = document.getElementById('refreshIcon');
+            if (icon) icon.classList.add('animate-spin');
+
+            const mes = document.getElementById('mesSelector').value;
+            document.getElementById('dreSubtitle').textContent = `Carregando...`;
+
+            try {
+                const res = await fetch(`${DRE_URL}?pin=${PIN_SESSAO}&mes=${mes}`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+
+                const d = data.dre || {};
+                const mesLabel = getMesOptions().find(o => o.val === mes)?.label || mes;
+
+                document.getElementById('dreSubtitle').innerHTML = `
+                    ${mesLabel} &mdash; ${data.consultor || `PIN ${PIN_SESSAO}`}
+                    <span class="text-slate-300 mx-2">|</span>
+                    ${d.vendasNoMes || 0} vendas
+                    <span class="text-slate-300 mx-2">|</span>
+                    Margem: <strong class="${d.margem >= 0 ? 'text-emerald-600' : 'text-red-600'}">${d.margem}%</strong>
+                `;
+
+                renderDreTable(d);
+                renderPorCurso(data.porCurso || []);
+
+                if (icon) icon.classList.remove('animate-spin');
+            } catch (e) {
+                document.getElementById('dreSubtitle').textContent = `Erro ao carregar: ${e.message}`;
+                if (icon) icon.classList.remove('animate-spin');
+            }
+        }
+
+        function renderDreTable(d) {
+            const body = document.getElementById('dreBody');
+            const rows = [
+                { label: 'Receita Bruta', value: d.receitaBruta, separator: false, highlight: false },
+                { label: '(-) Impostos (6%)', value: -(d.imposto || 0), separator: false, highlight: false },
+                { label: '(-) Taxas Asaas', value: -(d.taxasAsaas || 0), separator: false, highlight: false },
+                { label: '  ├ Taxa de Processamento', value: -(d.taxaAsaas || 0), separator: false, highlight: false, indent: true },
+                { label: '  └ Taxa de Antecipação', value: -(d.taxaAntecipacao || 0), separator: false, highlight: false, indent: true },
+                { label: '(-) Custo ADM (Lexis)', value: -(d.custoAdm || 0), separator: false, highlight: false },
+                { label: 'Lucro Líquido (DLP)', value: d.lucroLiquido, separator: true, highlight: true },
+                { label: '(-) Despesas', value: -(d.totalDespesas || 0), separator: false, highlight: false },
+                ...(d.despesas || []).map(dp => ({
+                    label: `  ├ ${dp.categoria}: ${dp.descricao}`,
+                    value: -(dp.valor || 0),
+                    separator: false,
+                    highlight: false,
+                    indent: true
+                })),
+                { label: 'Resultado Final', value: d.resultadoFinal, separator: true, highlight: true },
+                { label: 'Margem', value: `${d.margem}%`, separator: false, highlight: false, isPercent: true },
+                { label: 'Balance (acumulado)', value: d.balance, separator: false, highlight: false }
+            ];
+
+            body.innerHTML = rows.map((r, i) => {
+                const isNeg = !r.isPercent && r.value < 0;
+                const isPos = !r.isPercent && r.value >= 0;
+                const valStr = r.isPercent ? r.value : fmtCurr.format(Math.abs(r.value));
+                const cls = r.highlight ? 'font-black text-lg border-t-2 border-slate-200' : 'text-sm';
+                const colorCls = r.isPercent ? (d.margem >= 0 ? 'text-emerald-600' : 'text-red-600') :
+                    r.highlight ? 'text-slate-900' : 'text-slate-600';
+                return `<tr class="${cls} ${r.indent ? 'text-slate-400' : ''} table-row-hover">
+                    <td class="px-10 py-3 ${r.indent ? 'pl-16' : ''}">${r.label}</td>
+                    <td class="px-10 py-3 text-right font-bold ${colorCls}">${r.isPercent ? '' : (isNeg ? '-' : '')}${valStr}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        function renderPorCurso(cursos) {
+            const body = document.getElementById('porCursoBody');
+            if (!cursos || cursos.length === 0) {
+                body.innerHTML = `<tr><td colspan="4" class="px-10 py-8 text-center text-sm text-slate-400">Nenhum curso no período</td></tr>`;
+                return;
+            }
+            body.innerHTML = cursos.map(c => `
+                <tr class="border-t border-slate-100 table-row-hover">
+                    <td class="px-10 py-4 text-sm font-bold">${c.curso}</td>
+                    <td class="px-10 py-4 text-right text-sm font-bold">${c.qtd}</td>
+                    <td class="px-10 py-4 text-right text-sm font-bold">${fmtCurr.format(c.receita)}</td>
+                    <td class="px-10 py-4 text-right text-sm font-bold ${c.lucro >= 0 ? 'text-emerald-600' : 'text-red-600'}">${fmtCurr.format(c.lucro)}</td>
+                </tr>
+            `).join('');
+        }
+
+        // ─── Despesas ──────────────────────────────────────────────────────────
+
+        document.getElementById('despCategoria').addEventListener('change', function() {
+            const el = document.getElementById('terceiroFields');
+            el.classList.toggle('hidden', this.value !== 'Serviço Terceiro');
+        });
+
+        async function adicionarDespesa() {
+            const categoria = document.getElementById('despCategoria').value;
+            const descricao = document.getElementById('despDescricao').value.trim();
+            const valor = parseFloat(document.getElementById('despValor').value) || 0;
+            const comprovanteUrl = document.getElementById('despComprovanteUrl').value.trim() || null;
+
+            if (!descricao || valor <= 0) { alert('Preencha descrição e valor.'); return; }
+
+            const item = { categoria, descricao, valor, comprovanteUrl };
+
+            if (categoria === 'Serviço Terceiro') {
+                item.prestador = document.getElementById('despPrestador').value.trim() || null;
+                item.cpfCnpj = document.getElementById('despCpfCnpj').value.trim() || null;
+                item.nfNumero = document.getElementById('despNfNumero').value.trim() || null;
+                item.nfSerie = document.getElementById('despNfSerie').value.trim() || null;
+                item.nfData = document.getElementById('despNfData').value || null;
+                item.servico = document.getElementById('despServico').value.trim() || null;
+            }
+
+            despesasAtuais.push(item);
+            await salvarDespesas();
+
+            document.getElementById('despDescricao').value = '';
+            document.getElementById('despValor').value = '';
+            document.getElementById('despComprovanteUrl').value = '';
+            document.getElementById('despPrestador').value = '';
+            document.getElementById('despCpfCnpj').value = '';
+            document.getElementById('despNfNumero').value = '';
+            document.getElementById('despNfSerie').value = '';
+            document.getElementById('despNfData').value = '';
+            document.getElementById('despServico').value = '';
+        }
+
+        async function salvarDespesas() {
+            const mes = document.getElementById('mesSelector').value;
+            try {
+                const res = await fetch(DESPESAS_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pin: PIN_SESSAO, mes, itens: despesasAtuais })
+                });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                await res.json();
+                renderDespesasTable();
+                carregarDre();
+            } catch (e) {
+                console.error('Erro ao salvar despesas:', e);
+            }
+        }
+
+        async function removerDespesa(idx) {
+            despesasAtuais.splice(idx, 1);
+            await salvarDespesas();
+        }
+
+        function renderDespesasTable() {
+            const body = document.getElementById('despesasBody');
+            const total = despesasAtuais.reduce((a, d) => a + (d.valor || 0), 0);
+            document.getElementById('despTotalLabel').textContent = `Total: ${fmtCurr.format(total)}`;
+
+            if (despesasAtuais.length === 0) {
+                body.innerHTML = `<tr><td colspan="7" class="px-10 py-8 text-center text-sm text-slate-400">Nenhuma despesa lançada</td></tr>`;
+                return;
+            }
+
+            body.innerHTML = despesasAtuais.map((d, i) => `
+                <tr class="border-t border-slate-100 table-row-hover">
+                    <td class="px-10 py-4 text-sm font-bold">${d.categoria}</td>
+                    <td class="px-10 py-4 text-sm">${d.descricao}</td>
+                    <td class="px-10 py-4 text-right text-sm font-bold text-rose-600">${fmtCurr.format(d.valor)}</td>
+                    <td class="px-10 py-4 text-sm">${d.prestador || '-'}</td>
+                    <td class="px-10 py-4 text-sm">${d.nfNumero ? `${d.nfNumero}${d.nfSerie ? ` (Série ${d.nfSerie})` : ''}` : '-'}</td>
+                    <td class="px-10 py-4 text-sm">${d.comprovanteUrl ? `<a href="${d.comprovanteUrl}" target="_blank" class="text-amber-600 hover:underline font-bold">Abrir</a>` : '-'}</td>
+                    <td class="px-10 py-4 text-center">
+                        <button onclick="removerDespesa(${i})" class="text-xs text-red-500 hover:text-red-700 font-bold">Remover</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function carregarDespesas() {
+            const mes = document.getElementById('mesSelector').value;
+            try {
+                const res = await fetch(`${DESPESAS_URL}?pin=${PIN_SESSAO}&mes=${mes}`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                despesasAtuais = data.itens || [];
+                renderDespesasTable();
+            } catch (e) {
+                console.error('Erro ao carregar despesas:', e);
+                despesasAtuais = [];
+                renderDespesasTable();
+            }
+        }
+
+        // ─── Notas Fiscais ──────────────────────────────────────────────────────
+
+        async function carregarNfs() {
+            const mes = document.getElementById('mesSelector').value;
+            const body = document.getElementById('nfsBody');
+            const sub = document.getElementById('nfsSubtitle');
+            sub.textContent = 'Carregando...';
+            try {
+                const res = await fetch(`${BASE_WORKER_URL}/nfs?pin=${PIN_SESSAO}&mes=${mes}`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                sub.textContent = `${data.total} NF(s) disponível(is)`;
+                renderNfsTable(data.nfs || []);
+            } catch (e) {
+                sub.textContent = `Erro: ${e.message}`;
+                body.innerHTML = '';
+            }
+        }
+
+        function renderNfsTable(nfs) {
+            const body = document.getElementById('nfsBody');
+            if (!nfs || nfs.length === 0) {
+                body.innerHTML = `<tr><td colspan="6" class="px-10 py-8 text-center text-sm text-slate-400">Nenhuma NF emitida neste mês</td></tr>`;
+                return;
+            }
+            body.innerHTML = nfs.map(n => `
+                <tr class="border-t border-slate-100 table-row-hover">
+                    <td class="px-10 py-4 text-sm font-bold">${n.numero || n.nfId || '-'}</td>
+                    <td class="px-10 py-4 text-sm">${n.curso || n.serviceDescription || '-'}</td>
+                    <td class="px-10 py-4 text-right text-sm font-bold">${fmtCurr.format(n.valor || 0)}</td>
+                    <td class="px-10 py-4 text-sm">${n.data || '-'}</td>
+                    <td class="px-10 py-4 text-sm">
+                        <span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase ${n.status === 'SCHEDULED' || n.status === 'PENDING' ? 'bg-amber-100 text-amber-700' : n.status === 'PAID' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'}">${n.status || '-'}</span>
+                    </td>
+                    <td class="px-10 py-4 text-sm">
+                        ${n.pdfUrl ? `<a href="${n.pdfUrl}" target="_blank" class="text-blue-600 hover:underline font-bold">PDF</a>` : n.nfUrl ? `<a href="${n.nfUrl}" target="_blank" class="text-blue-600 hover:underline font-bold">Abrir</a>` : '-'}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Auto-login se PIN salvo
+        if (PIN_SESSAO && PIN_SESSAO.length === 3) {
+            document.getElementById('pinInput').value = PIN_SESSAO;
+            iniciar();
+        }
+    </script>
+</body>
+</html>
