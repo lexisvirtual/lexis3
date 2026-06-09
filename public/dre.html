@@ -96,7 +96,7 @@
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
             <div>
                 <h2 id="tituloBoasVindas" class="text-5xl font-black text-slate-900 tracking-tightest mb-4">DRE Mensal</h2>
-                <p id="subtituloPainel" class="text-slate-500 font-medium max-w-xl">Demonstrativo de Resultados do Exercício por unidade.</p>
+                <p id="subtituloPainel" class="text-slate-500 font-medium max-w-xl">Demonstrativo de Resultados — Sociedade em Conta de Participação (SCP).</p>
             </div>
             <div class="flex items-center gap-3 bg-white p-2 rounded-3xl premium-shadow border border-slate-100">
                 <select id="mesSelector" onchange="carregarDre()" class="bg-slate-50 border-none rounded-2xl px-5 py-3 text-sm font-semibold focus:ring-0">
@@ -118,6 +118,22 @@
 
         <!-- Tab: DRE -->
         <div id="tabDre" class="space-y-8">
+
+            <!-- SCP Banner -->
+            <div id="scpBanner" class="glass rounded-[48px] premium-shadow overflow-hidden border border-slate-200 relative hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-amber-200"></div>
+                <div class="px-10 py-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <p id="scpTitle" class="text-sm font-black text-slate-900 uppercase tracking-widest">Sociedade em Conta de Participação</p>
+                        <p id="scpSubtitle" class="text-xs text-slate-400 font-medium mt-1">Art. 991 a 996 do Código Civil</p>
+                    </div>
+                    <div class="flex items-center gap-6 text-xs text-slate-500">
+                        <span><strong class="text-slate-900">Sócio Ostensivo:</strong> Lexis English Academy</span>
+                        <span><strong class="text-slate-900">Sócio Participante:</strong> <span id="scpParticipante">—</span></span>
+                    </div>
+                </div>
+            </div>
+
             <div class="glass rounded-[48px] premium-shadow overflow-hidden border border-slate-200 relative">
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-amber-200"></div>
                 <div class="px-10 py-8 border-b border-slate-200 flex justify-between items-center bg-white/50">
@@ -145,7 +161,7 @@
                                 <th class="px-10 py-4">Curso</th>
                                 <th class="px-10 py-4 text-right">Qtd</th>
                                 <th class="px-10 py-4 text-right">Receita</th>
-                                <th class="px-10 py-4 text-right">Lucro</th>
+                                <th class="px-10 py-4 text-right">Resultado Gerencial</th>
                             </tr>
                         </thead>
                         <tbody id="porCursoBody"></tbody>
@@ -272,7 +288,7 @@
         </div>
 
         <div class="mt-12 text-center text-[10px] font-medium text-slate-400 max-w-4xl mx-auto border-t border-slate-200 pt-6 uppercase tracking-widest leading-relaxed pb-8">
-            DRE — Demonstrativo de Resultados do Exercício. Os valores refletem a posição consolidada por unidade.
+            Demonstrativo de Resultados da Sociedade em Conta de Participação — SCP, elaborado conforme contrato societário firmado entre as partes.
         </div>
     </main>
 
@@ -360,7 +376,7 @@
             }, 100);
 
             localStorage.setItem('lexis_dash_pin', PIN_SESSAO);
-            document.getElementById('tituloBoasVindas').textContent = `DRE — PIN ${PIN_SESSAO}`;
+            document.getElementById('tituloBoasVindas').textContent = `DRE`;
             carregarDre();
         }
 
@@ -377,12 +393,26 @@
                 const data = await res.json();
 
                 const d = data.dre || {};
+                const s = data.scp || {};
                 const mesLabel = getMesOptions().find(o => o.val === mes)?.label || mes;
 
+                const nome = data.consultor || null;
+                if (nome) {
+                    document.getElementById('tituloBoasVindas').textContent = `DRE — ${nome}`;
+                }
+
+                const banner = document.getElementById('scpBanner');
+                if (s.estrutura) {
+                    banner.classList.remove('hidden');
+                    document.getElementById('scpParticipante').textContent = s.participante || '—';
+                } else {
+                    banner.classList.add('hidden');
+                }
+
                 document.getElementById('dreSubtitle').innerHTML = `
-                    ${mesLabel} &mdash; ${data.consultor || `PIN ${PIN_SESSAO}`}
+                    ${mesLabel} &mdash; ${nome || `PIN ${PIN_SESSAO}`}
                     <span class="text-slate-300 mx-2">|</span>
-                    ${d.vendasNoMes || 0} vendas
+                    ${(data.periodo?.operacoesNoMes || 0)} operações SCP
                     <span class="text-slate-300 mx-2">|</span>
                     Margem: <strong class="${d.margem >= 0 ? 'text-emerald-600' : 'text-red-600'}">${d.margem}%</strong>
                 `;
@@ -405,8 +435,8 @@
                 { label: '(-) Taxas Asaas', value: -(d.taxasAsaas || 0), separator: false, highlight: false },
                 { label: '  ├ Taxa de Processamento', value: -(d.taxaAsaas || 0), separator: false, highlight: false, indent: true },
                 { label: '  └ Taxa de Antecipação', value: -(d.taxaAntecipacao || 0), separator: false, highlight: false, indent: true },
-                { label: '(-) Custo ADM (Lexis)', value: -(d.custoAdm || 0), separator: false, highlight: false },
-                { label: 'Lucro Líquido (DLP)', value: d.lucroLiquido, separator: true, highlight: true },
+                { label: '(-) ADM Vigente do Período', value: -(d.custoAdm || 0), separator: false, highlight: false },
+                { label: 'Lucro Líquido (SCP)', value: d.lucroLiquido, separator: true, highlight: true },
                 { label: '(-) Despesas', value: -(d.totalDespesas || 0), separator: false, highlight: false },
                 ...(d.despesas || []).map(dp => ({
                     label: `  ├ ${dp.categoria}: ${dp.descricao}`,
