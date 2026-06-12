@@ -49,13 +49,16 @@ Se existir qualquer divergência funcional:
 - Promover build de origem diferente da release ativa
 - Publicar artefato que não contenha todas as funcionalidades existentes em produção
 
-## Prioridades
+## Servidor Whaticket (VPS)
 
-1. Preservar produção
-2. Evitar regressão
-3. Garantir confiabilidade
-4. Implementar melhorias
-5. Otimizar desempenho
+- **Host**: `31.220.86.112` — acesso via SSH com chave `~/.ssh/id_ed25519`
+- **Docker**: Traefik (proxy/SSL), Redis (`172.17.0.2:6379`), Evolution API, n8n, Typebot, Portainer, MinIO
+- **PM2**: 11 processos gerenciados pelo usuário `deploy`
+- **Redis**: Container na rede bridge. A porta 6379 NÃO é publicada no host — conectar via IP `172.17.0.2`.
+- **Healthcheck**: Script `/home/deploy/lexis/healthcheck.sh` (cron a cada 5min)
+- **Logs**: `/home/deploy/.pm2/logs/` (cada processo PM2 tem seu próprio log de erro/saída)
+
+## Prioridades
 
 ## Atualização Documental Obrigatória
 

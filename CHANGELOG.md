@@ -1,5 +1,24 @@
 # CHANGELOG.md
 
+## [2026-06-12]
+
+### Corrigido
+- **Redis URI incorreta no Whaticket**: `REDIS_URI` apontava para `127.0.0.1:5000` (porta errada, sem serviço). Corrigido para `172.17.0.2:6379` (IP do container `redis-lexis` no Docker bridge).
+  - Causa raiz: backend tentava conectar em Redis inexistente na porta 5000 → 224k erros `ECONNREFUSED`
+  - Efeitos: auth retornava 500, workers crashavam (620+ restarts), dashboard com `ERR_SESSION_EXPIRED`
+  - Correção: `.env` + `ecosystem*.config.cjs` atualizados em produção e staging
+
+### Alterado
+- `backend/.env`: `REDIS_URI` corrigido
+- `backend-staging/.env`: `REDIS_URI` corrigido
+- `backend/ecosystem-prod.config.cjs`: `REDIS_URI` adicionado aos 4 apps
+- `backend-staging/ecosystem-staging.config.cjs`: `REDIS_URI` adicionado aos 4 apps
+- `backend-staging/ecosystem.config.cjs`: `REDIS_URI` adicionado aos 4 apps
+
+### Operação
+- PM2 restart com `--update-env` e `REDIS_URI` explícito no environment
+- Logs de erro antigos limpos (14MB+ cada)
+
 ## [2026-06-08]
 
 ### Adicionado

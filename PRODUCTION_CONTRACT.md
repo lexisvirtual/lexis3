@@ -33,6 +33,33 @@ Este documento define o contrato funcional da aplicação em produção. Nenhuma
 - Repositório: `https://github.com/lexisvirtual/lexis3`
 - GitHub Pages: `https://lexisvirtual.github.io/lexis3/`
 
+### Whaticket (Plataforma de Atendimento)
+
+| Componente | Detalhe |
+|------------|---------|
+| Servidor | `31.220.86.112` — VPS 11GB RAM, 194GB SSD |
+| Acesso | `ssh -i ~/.ssh/id_ed25519 root@31.220.86.112` |
+| Painel | `https://lexis.whaticket.net` |
+| API | `https://api.whaticket.net` |
+| Usuário admin | `vitoria@admin.com` |
+| Gerenciador de processos | PM2 (deploy user) |
+| Proxy reverso / SSL | Traefik (Docker) |
+| Redis | Container `redis-lexis` (`172.17.0.2:6379`) — senha: `lexis` |
+| PostgreSQL | Container `evolution-postgres-1` + n8n + typebot |
+| Outros serviços | Evolution API, n8n, Typebot, Portainer |
+
+### Processos PM2 (Whaticket)
+
+| Nome | Função | Porta |
+|------|--------|-------|
+| `lexis-backend-api` | API REST | 4000 |
+| `lexis-backend-core-worker` | Worker de tarefas | — |
+| `lexis-backend-whatsapp-worker` | Worker WhatsApp | — |
+| `lexis-backend-scheduler` | Agendador | — |
+| `lexis-frontend` | Frontend produção | 3000 |
+| `lexis-frontend-canary` | Canary | 3010 |
+| `lexis-frontend-staging` | Staging | 3005 |
+
 ### Contato / Responsável
 
 - Projeto: Lexis Academy — Blog e Dashboard
