@@ -1,5 +1,7 @@
 # Sistema de Automação de Imagens e Conteúdo Lexis3 (v9.1)
 
+> **FONTE DE VERDADE ESTRATÉGICA:** Este documento é uma extensão técnica da [PROJECT_VISION.md](PROJECT_VISION.md). Em caso de conflito de diretrizes, a PROJECT_VISION prevalece como a âncora estratégica do ecossistema Lexis.
+
 Este documento resume as melhorias e a arquitetura do sistema de publicação da Lexis Academy implementadas em Fevereiro de 2026.
 
 ## 1. Arquitetura de Imagens (Self-Hosted)
