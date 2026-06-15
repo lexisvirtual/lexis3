@@ -1,5 +1,7 @@
 # 📜 Protocolo Oficial Leo (Motor SEO Autônomo v1.2)
 
+> **Nota Estratégica:** Este protocolo é subordinado à [PROJECT_VISION.md](PROJECT_VISION.md). Ele representa a execução técnica do pilar de Escala e Governança da Lexis Academy.
+
 Este documento é o cérebro algorítmico do Leo. Define gatilhos, decisões e ações corretivas baseadas em métricas REAIS.
 
 ## 1. FÓRMULA DE PRIORIDADE (LEO SCORE)
