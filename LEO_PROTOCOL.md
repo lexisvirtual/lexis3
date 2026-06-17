@@ -1,5 +1,7 @@
 # 📜 Protocolo Oficial Leo (Motor SEO Autônomo v1.2)
 
+> **Nota Estratégica:** Este documento é subordinado à [VISÃO DO PROJETO (V9.1)](PROJECT_VISION.md). Nenhuma diretriz aqui contida deve contradizer a Linha Lógica (Pedagogia -> Marketing -> Técnico) definida no documento mestre.
+
 Este documento é o cérebro algorítmico do Leo. Define gatilhos, decisões e ações corretivas baseadas em métricas REAIS.
 
 ## 1. FÓRMULA DE PRIORIDADE (LEO SCORE)
