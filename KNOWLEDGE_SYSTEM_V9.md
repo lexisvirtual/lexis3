@@ -1,5 +1,7 @@
 # Sistema de Automação de Imagens e Conteúdo Lexis3 (v9.1)
 
+> **Nota Estratégica:** Este documento é subordinado à [VISÃO DO PROJETO (V9.1)](PROJECT_VISION.md). Nenhuma diretriz aqui contida deve contradizer a Linha Lógica (Pedagogia -> Marketing -> Técnico) definida no documento mestre.
+
 Este documento resume as melhorias e a arquitetura do sistema de publicação da Lexis Academy implementadas em Fevereiro de 2026.
 
 ## 1. Arquitetura de Imagens (Self-Hosted)
