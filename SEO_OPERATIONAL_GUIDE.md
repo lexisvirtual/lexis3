@@ -1,5 +1,7 @@
 # GUIA OPERACIONAL — IA DE CONTEÚDO SEO AUTÔNOMA (LEXIS)
 
+Este guia detalha a execução técnica da **Escala e Governança** conforme estabelecido em [PROJECT_VISION.md](./PROJECT_VISION.md).
+
 ## OBJETIVO DO SISTEMA
 Criar uma máquina de SEO programático que:
 - publique conteúdo automaticamente

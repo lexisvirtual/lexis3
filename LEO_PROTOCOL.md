@@ -1,6 +1,6 @@
 # 📜 Protocolo Oficial Leo (Motor SEO Autônomo v1.2)
 
-Este documento é o cérebro algorítmico do Leo. Define gatilhos, decisões e ações corretivas baseadas em métricas REAIS.
+Este documento é o cérebro algorítmico do Leo, parte integrante da estratégia de **Escala** definida em [PROJECT_VISION.md](./PROJECT_VISION.md). Define gatilhos, decisões e ações corretivas baseadas em métricas REAIS.
 
 ## 1. FÓRMULA DE PRIORIDADE (LEO SCORE)
 O Leo deve orbitar primeiro as páginas com maior potencial de ROI.
