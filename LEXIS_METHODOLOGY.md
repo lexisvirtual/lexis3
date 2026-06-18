@@ -1,5 +1,7 @@
 # METODOLOGIA LEXIS
 
+> **Nota Estratégica:** Este documento é subordinado ao [PROJECT_VISION.md](PROJECT_VISION.md). Ele detalha os princípios pedagógicos que sustentam a Narrativa de Inocência e a automação dos Agentes Roger/Leo.
+
 ## 1. Propósito do Documento
 Este arquivo consolida a Metodologia Lexis como um sistema operacional completo para ensino de inglês. O objetivo não é apenas explicar o que fazemos, mas por que funciona e como deve ser executado sem desvios.
 
