@@ -1,5 +1,7 @@
 # 📜 Protocolo Oficial Leo (Motor SEO Autônomo v1.2)
 
+> **Nota Estratégica:** Este documento é subordinado ao [PROJECT_VISION.md](PROJECT_VISION.md). Ele define a execução técnica da Etapa de Escala e Governança do projeto.
+
 Este documento é o cérebro algorítmico do Leo. Define gatilhos, decisões e ações corretivas baseadas em métricas REAIS.
 
 ## 1. FÓRMULA DE PRIORIDADE (LEO SCORE)
