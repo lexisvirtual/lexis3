@@ -1,5 +1,7 @@
 # METODOLOGIA LEXIS
 
+> **Nota Estratégica:** Este documento está subordinado à [VISÃO ESTRATÉGICA LEXIS V9.1](PROJECT_VISION.md). Nenhuma alteração aqui deve violar a Linha Lógica (Pedagogia -> Marketing -> Técnico) ou as Etapas de Raciocínio lá definidas.
+
 ## 1. Propósito do Documento
 Este arquivo consolida a Metodologia Lexis como um sistema operacional completo para ensino de inglês. O objetivo não é apenas explicar o que fazemos, mas por que funciona e como deve ser executado sem desvios.
 
