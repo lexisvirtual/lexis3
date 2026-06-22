@@ -1,5 +1,7 @@
 # GUIA OPERACIONAL — IA DE CONTEÚDO SEO AUTÔNOMA (LEXIS)
 
+> **NOTA ESTRATÉGICA (V9.1):** Este guia detalha a execução técnica e governança subordinada ao [PROJECT_VISION.md](PROJECT_VISION.md). O foco é a alocação de páginas em gaps semânticos para escalar a Narrativa de Inocência.
+
 ## OBJETIVO DO SISTEMA
 Criar uma máquina de SEO programático que:
 - publique conteúdo automaticamente

@@ -1,5 +1,7 @@
 # Sistema de Automação de Imagens e Conteúdo Lexis3 (v9.1)
 
+> **NOTA ESTRATÉGICA (V9.1):** Este sistema garante a persistência técnica e integridade visual subordinada ao [PROJECT_VISION.md](PROJECT_VISION.md). Ele resolve o risco de dependência de APIs externas via persistência binária local.
+
 Este documento resume as melhorias e a arquitetura do sistema de publicação da Lexis Academy implementadas em Fevereiro de 2026.
 
 ## 1. Arquitetura de Imagens (Self-Hosted)
