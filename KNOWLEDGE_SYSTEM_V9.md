@@ -1,3 +1,5 @@
+> **Nota Estratégica**: Este documento é subordinado ao [PROJECT_VISION.md](./PROJECT_VISION.md), que detém a "Golden Thread" (Pedagogia -> Marketing -> Técnico) e a visão mestre do projeto Lexis V9.1.
+
 # Sistema de Automação de Imagens e Conteúdo Lexis3 (v9.1)
 
 Este documento resume as melhorias e a arquitetura do sistema de publicação da Lexis Academy implementadas em Fevereiro de 2026.
