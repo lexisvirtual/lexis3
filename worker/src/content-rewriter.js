@@ -28,6 +28,11 @@ const GET_DIRECTOR_PROMPT = (topic, directives = "", feedback = null, previousCo
 
 SUA MISSÃO: Produzir um Workshop de Elite que maximize o IPL (Indicador de Performance Linguística) seguindo o **Apple Executive Design Standard** (Minimalismo, Impacto e Autoridade).
 
+🚨 PRINCÍPIO EDITORIAL (NARRATIVA DE INOCÊNCIA):
+- Remova a culpa do aluno pelo fracasso anterior. Atribua o problema ao "Método Tradicional" (excessivamente teórico).
+- Posicione o Inglês como Habilidade Motora (treino), não matéria acadêmica (estudo).
+- Axioma: "O problema não é você, é o método."
+
 🚨 MÉTRICAS IPL OBRIGATÓRIAS (VERSÃO 3.7 - APPLE STYLE):
 1. DNA DE TREINO (60/40): 60% Inglês Funcional / 40% Português Instrucional.
 2. ESTILO APPLE (NOVO): 
@@ -45,27 +50,30 @@ ${ELITE_SCENARIOS}
    - Logo no início: Inclua 1 Link Externo (markdown básico) para uma fonte de autoridade (ex: BBC Learning English, Cambridge Dictionary, HBR) validando o tema.
    - Logo no final: Inclua 1-2 Links Internos para outros workshops da Lexis Academy ou para a página de Imersão (/imersao).
 
-🚨 ESTRUTURA CONTRATUAL OBRIGATÓRIA:
-[TITLE] Coloque aqui o título real e estratégico do workshop (ex: OpenAI no Pentágono) [/TITLE]
-## Resposta Rápida (Quick Answer) | Executive Summary
-   - Resumo técnico em PT + 2 frases de poder em EN (Action Items).
-## Anatomia da Fluência (ROI Cognitivo)
-   - Por que este treinamento gera retorno imediato na carreira.
-## Tabela de Performance: AMADOR vs ELITE
+🚨 ESTRUTURA CONTRATUAL OBRIGATÓRIA (9 SEÇÕES):
+[TITLE] Título Híbrido [Título PT | Authority Hook EN] [/TITLE]
+
+1. ## Resposta Rápida (Quick Answer) | Executive Summary
+   - Aplique a Narrativa de Inocência. Resumo técnico em PT + 2 frases de poder em EN.
+2. ## Anatomia da Fluência (ROI Cognitivo)
+   - Por que o método tradicional falha aqui e por que o treino procedural funciona.
+3. ## Tabela de Performance: AMADOR vs ELITE
    - Contraste frases "Safe/Genéricas" vs "Strategic/High-Impact".
-## ⚡ O Treino Lexis: (O coração do workshop)
-   - Aquecimento (Mapping PT/EN)
-   - Nível 1 (10+ Chunks & Vocabulary C1)
-   - Nível 2 (Cenário de Alta Pressão | **Negrite os termos ancorados**)
-   - Nível 3 (Missão Final / Roleplay | **Negrite os termos ancorados**)
-## Erros Comuns | Avoiding Amateur Pitfalls
-   - Explicação PT + Tabela "Don't say / Say instead".
-## Plano de Treino 7 Dias (Drill)
-## FAQ de Mentoria | Executive Q&A
-   - Perguntas em PT / Respostas Curtas e Diretas em EN.
+4. ## Aquecimento (Mapping PT/EN)
+   - Lista de 5+ termos-chave bilíngues.
+5. ## Nível 1: Chunks & Vocabulary C1
+   - 10+ expressões de elite com frases exemplo.
+6. ## Nível 2: Cenário de Alta Pressão
+   - Aplicação em contexto real. **Negrite os termos ancorados do Nível 1**.
+7. ## Nível 3: Missão Final / Roleplay
+   - Prática ativa em cenário executivo. **Negrite os termos ancorados**.
+8. ## Erros Comuns | Avoiding Amateur Pitfalls
+   - Tabela "Don't say / Say instead".
+9. ## Plano de Treino 7 Dias (Drill) & FAQ
+   - Cronograma prático + 2-3 FAQs executivos.
 
 🚨 OBRIGATÓRIO (FIM DO POST):
-Gere o bloco IPL_SELF_CHECK com o percentual real de inglês e contagem de termos ancorados. Inclua aqui os links internos de SEO.
+Gere o bloco IPL_SELF_CHECK com o percentual real de inglês e contagem de termos ancorados. Inclua links internos de SEO.
 
 Este conteúdo será auditado pelo Roger 3.5. Seja implacável na tensão, fiel na ancoragem e estratégico nos links.`;
 
