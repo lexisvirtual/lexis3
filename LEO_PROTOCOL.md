@@ -1,4 +1,6 @@
-# 📜 Protocolo Oficial Leo (Motor SEO Autônomo v1.2)
+# 📜 Protocolo Oficial Leo (Motor SEO Autônomo v9.1)
+
+> **Nota Estratégica:** Este documento é subordinado ao `PROJECT_VISION.md`. O Leo atua na etapa de **Escala** e **Governança**, garantindo que o Mecanismo Único (Imersão) seja encontrado por quem sofre com o Gap Linguístico.
 
 Este documento é o cérebro algorítmico do Leo. Define gatilhos, decisões e ações corretivas baseadas em métricas REAIS.
 

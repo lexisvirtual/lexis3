@@ -1,4 +1,6 @@
-# Sistema de Automação de Imagens e Conteúdo Lexis3 (v9.1)
+# Sistema de Automação de Imagens e Conteúdo Lexis3 (V9.1)
+
+> **Nota Estratégica:** Este documento é subordinado ao `PROJECT_VISION.md`. Ele resolve o risco técnico de **Dependência de APIs Externas** através da arquitetura de Self-Hosting de imagens e persistência de dados.
 
 Este documento resume as melhorias e a arquitetura do sistema de publicação da Lexis Academy implementadas em Fevereiro de 2026.
 

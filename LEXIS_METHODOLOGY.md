@@ -1,4 +1,6 @@
-# METODOLOGIA LEXIS
+# METODOLOGIA LEXIS (V9.1)
+
+> **Nota Estratégica:** Este documento é subordinado ao `PROJECT_VISION.md` (Âncora de Estratégia V9.1). Define os parâmetros pedagógicos que o Roger (Auditor) e o Leo (SEO) devem aplicar em todo o conteúdo gerado.
 
 ## 1. Propósito do Documento
 Este arquivo consolida a Metodologia Lexis como um sistema operacional completo para ensino de inglês. O objetivo não é apenas explicar o que fazemos, mas por que funciona e como deve ser executado sem desvios.
@@ -14,8 +16,8 @@ A Lexis trata o inglês como uma habilidade cognitiva e comportamental, não com
 
 Assim como dirigir, tocar um instrumento ou praticar um esporte, o domínio surge da prática intensiva, não da teoria.
 
-## 3. Problema das Abordagens Tradicionais
-As metodologias tradicionais falham por atacarem o problema errado:
+## 3. Problema das Abordagens Tradicionais (O Vilão)
+As metodologias tradicionais falham por atacarem o problema errado, alimentando a necessidade da nossa **Narrativa de Inocência**:
 - Ênfase excessiva em gramática declarativa
 - Progressão lenta e artificial
 - Ambiente passivo (aluno espectador)
