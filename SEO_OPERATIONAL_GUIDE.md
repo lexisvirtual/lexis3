@@ -1,5 +1,7 @@
 # GUIA OPERACIONAL — IA DE CONTEÚDO SEO AUTÔNOMA (LEXIS)
 
+> **Nota Estratégica:** Este documento é subordinado ao [PROJECT_VISION.md](./PROJECT_VISION.md). Ele detalha os processos de Escala via SEO Programático.
+
 ## OBJETIVO DO SISTEMA
 Criar uma máquina de SEO programático que:
 - publique conteúdo automaticamente
