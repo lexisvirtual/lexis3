@@ -1,4 +1,6 @@
-# GUIA OPERACIONAL — IA DE CONTEÚDO SEO AUTÔNOMA (LEXIS)
+# GUIA OPERACIONAL — IA DE CONTEÚDO SEO AUTÔNOMA (LEXIS V9.1)
+
+> **Nota Estratégica:** Este documento é subordinado ao [PROJECT_VISION.md](PROJECT_VISION.md), que define a linha lógica mestre (Pedagogia -> Marketing -> Técnico).
 
 ## OBJETIVO DO SISTEMA
 Criar uma máquina de SEO programático que:

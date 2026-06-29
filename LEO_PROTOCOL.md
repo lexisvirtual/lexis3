@@ -1,4 +1,6 @@
-# 📜 Protocolo Oficial Leo (Motor SEO Autônomo v1.2)
+# 📜 Protocolo Oficial Leo (Motor SEO Autônomo v9.1)
+
+> **Nota Estratégica:** Este documento é subordinado ao [PROJECT_VISION.md](PROJECT_VISION.md), que define a linha lógica mestre (Pedagogia -> Marketing -> Técnico).
 
 Este documento é o cérebro algorítmico do Leo. Define gatilhos, decisões e ações corretivas baseadas em métricas REAIS.
 
