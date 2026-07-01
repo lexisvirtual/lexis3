@@ -1,5 +1,5 @@
 // Teste Completo - Simula geração de post com imagem
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
 const CATEGORIES = ['business', 'viagem', 'estudo', 'mindset', 'default'];
 
@@ -24,11 +24,10 @@ async function testCompleteFlow() {
     console.log(`🔍 Query Pixabay: "${QUERIES[category]}"\n`);
 
     try {
-      const url = `https://pixabay.com/api/?key=${API_KEY}&q=${encodeURIComponent(QUERIES[category])}&image_type=photo&orientation=horizontal&per_page=1`;
+      // Usar per_page=3 para evitar erro 400 da Pixabay se per_page for muito baixo (conforme memória)
+      const url = `https://pixabay.com/api/?key=${API_KEY}&q=${encodeURIComponent(QUERIES[category])}&image_type=photo&orientation=horizontal&per_page=3`;
       
-      const response = await fetch(url, {
-        signal: AbortSignal.timeout(5000)
-      });
+      const response = await fetch(url);
 
       if (response.ok) {
         const data = await response.json();
