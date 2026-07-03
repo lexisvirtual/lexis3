@@ -2,145 +2,27 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Vitória - Lexis Academy | Atendimento</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Outfit', sans-serif;
-            background: #0f172a;
-            color: #e2e8f0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+        html, body {
+            width: 100%;
+            height: 100%;
             overflow: hidden;
+            background: #0f172a;
         }
-        .glass {
-            background: rgba(255,255,255,0.04);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255,255,255,0.06);
-        }
-        .accent { color: #f59e0b; }
-        .logo {
-            font-weight: 800;
-            font-size: 1.5rem;
-            letter-spacing: -0.02em;
-        }
-        /* Loader enquanto o chat não abre */
-        .loader {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex: 1;
-            gap: 24px;
-            padding: 40px;
-        }
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top-color: #f59e0b;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .loader p {
-            color: #64748b;
-            font-size: 0.95rem;
-            font-weight: 300;
+        [data-chat-widget] {
+            width: 100% !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            border: none !important;
         }
     </style>
 </head>
 <body>
-
-    <header class="w-full py-4 px-6 flex items-center justify-between glass">
-        <div class="logo">
-            <span class="text-white">Lexis</span><span class="accent">Academy</span>
-        </div>
-    </header>
-
-    <div class="loader" id="loader">
-        <div class="spinner"></div>
-        <p>Conectando com Vitória...</p>
-    </div>
-
-    <script src="https://api.dmchamp.com/v1/chat-widget/CzLdyUYfimhm4K9zy83N"></script>
-
-    <script>
-        function tentarAbrirChat() {
-            // 1. API global DmChamp
-            if (window.DmChamp && typeof window.DmChamp.open === 'function') {
-                window.DmChamp.open();
-                ocultarLoader();
-                return true;
-            }
-            if (window.dmchamp && typeof window.dmchamp.open === 'function') {
-                window.dmchamp.open();
-                ocultarLoader();
-                return true;
-            }
-            // 2. Buscar botão/iframe do chat no DOM e clicar
-            var botoes = document.querySelectorAll(
-                'button[class*="chat"], button[class*="widget"], ' +
-                'div[class*="chat"] > button, iframe[src*="chat"], ' +
-                'div[class*="floating"], [aria-label*="chat"], ' +
-                '[aria-label*="Chat"], [data-testid*="chat"], ' +
-                'div[id*="dm"], div[class*="dm"]'
-            );
-            for (var i = 0; i < botoes.length; i++) {
-                if (botoes[i].tagName === 'BUTTON' || botoes[i].getAttribute('role') === 'button') {
-                    botoes[i].click();
-                    ocultarLoader();
-                    return true;
-                }
-            }
-            // 3. Clicar em qualquer iframe que o widget injetar
-            var iframes = document.querySelectorAll('iframe');
-            for (var j = 0; j < iframes.length; j++) {
-                var src = (iframes[j].src || '').toLowerCase();
-                if (src.indexOf('chat') !== -1 || src.indexOf('dm') !== -1 || src.indexOf('widget') !== -1) {
-                    iframes[j].click();
-                    ocultarLoader();
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        function ocultarLoader() {
-            var el = document.getElementById('loader');
-            if (el) el.style.display = 'none';
-        }
-
-        // Observer: detecta quando o widget injeta elementos no DOM
-        var observer = new MutationObserver(function() {
-            if (tentarAbrirChat()) {
-                observer.disconnect();
-            }
-        });
-        observer.observe(document.body, { childList: true, subtree: true, attributes: true });
-
-        // Polling de fallback a cada 500ms por até 10s
-        var tentativas = 0;
-        var interval = setInterval(function() {
-            tentativas++;
-            if (tentarAbrirChat() || tentativas > 20) {
-                clearInterval(interval);
-                if (tentativas > 20) ocultarLoader();
-            }
-        }, 500);
-
-        // Também tenta na carga inicial
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(tentarAbrirChat, 300);
-        });
-        window.addEventListener('load', function() {
-            setTimeout(tentarAbrirChat, 500);
-        });
-    </script>
-
+    <div data-chat-widget="CzLdyUYfimhm4K9zy83N"></div>
+    <script src="https://api.dmchamp.com/v1/chat-widget/embed.js" async></script>
 </body>
 </html>
