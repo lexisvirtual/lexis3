@@ -1,5 +1,13 @@
 # CHANGELOG.md
 
+## [2026-06-13]
+
+### Adicionado
+- `PROJECT_VISION.md` — Definida a âncora estratégica mestre (V9.1) integrando Pedagogia, Marketing e Técnica.
+
+### Alterado
+- `worker/test-complete-flow.js` — Migrado para ES Modules (ESM) para compatibilidade com o ambiente Node.js do projeto e correção de erros de dependência.
+
 ## [2026-06-12]
 
 ### Corrigido
