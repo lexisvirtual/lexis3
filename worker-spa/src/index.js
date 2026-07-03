@@ -51,7 +51,13 @@ const API_ROUTES = [
 export default {
     async fetch(request, env, ctx) {
         const url = new URL(request.url);
+        const hostname = url.hostname;
         const pathname = url.pathname;
+
+        // 0. Subdomínio vitoria.lexis.academy -> Servir página da Vitória
+        if (hostname === 'vitoria.lexis.academy') {
+            return fetchFromOrigin('/vitoria.html', request);
+        }
 
         // 1. Ignorar rotas de API (deixar para o Worker de API)
         if (API_ROUTES.some(route => pathname.startsWith(route))) {
