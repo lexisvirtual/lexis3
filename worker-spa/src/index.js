@@ -59,6 +59,11 @@ export default {
             return fetchFromOrigin('/vitoria.html', request);
         }
 
+        // 0.1 Rota /vitoria no domínio principal -> Servir página da Vitória
+        if (pathname === '/vitoria' || pathname === '/vitoria/') {
+            return fetchFromOrigin('/vitoria.html', request);
+        }
+
         // 1. Ignorar rotas de API (deixar para o Worker de API)
         if (API_ROUTES.some(route => pathname.startsWith(route))) {
             return fetch(request);
