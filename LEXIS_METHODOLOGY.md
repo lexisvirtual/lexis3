@@ -1,5 +1,7 @@
 # METODOLOGIA LEXIS
 
+> **Nota Estratégica:** Este documento é subordinado ao [PROJECT_VISION.md](PROJECT_VISION.md), que contém a âncora estratégica e a linha lógica mestre do projeto Lexis V9.1.
+
 ## 1. Propósito do Documento
 Este arquivo consolida a Metodologia Lexis como um sistema operacional completo para ensino de inglês. O objetivo não é apenas explicar o que fazemos, mas por que funciona e como deve ser executado sem desvios.
 
@@ -14,16 +16,16 @@ A Lexis trata o inglês como uma habilidade cognitiva e comportamental, não com
 
 Assim como dirigir, tocar um instrumento ou praticar um esporte, o domínio surge da prática intensiva, não da teoria.
 
-## 3. Problema das Abordagens Tradicionais
-As metodologias tradicionais falham por atacarem o problema errado:
-- Ênfase excessiva em gramática declarativa
-- Progressão lenta e artificial
-- Ambiente passivo (aluno espectador)
-- Baixa carga horária real de fala
-- Tradução mental constante
-- Falsa sensação de progresso
+## 3. Problema das Abordagens Tradicionais (O Vilão)
+As metodologias tradicionais falham por atacarem o problema errado e são o verdadeiro "Vilão" na jornada do aluno. Elas impedem o progresso ao focar na memória errada:
+- **Ênfase excessiva em gramática declarativa**: O aluno aprende *sobre* a língua, mas não a língua em si.
+- **Progressão lenta e artificial**: Ignora a necessidade de densidade para a automação neural.
+- **Ambiente passivo (aluno espectador)**: O cérebro não é treinado para a tomada de decisão em tempo real.
+- **Baixa carga horária real de fala**: Insuficiente para criar caminhos procedurais.
+- **Tradução mental constante**: Resultado direto do foco em regras em vez de chunks.
+- **Falsa sensação de progresso**: O aluno passa em testes escritos, mas trava na vida real.
 
-**Resultado típico:** alunos com anos de estudo, vocabulário passivo e incapacidade de falar.
+**Resultado típico:** alunos com anos de estudo, vocabulário passivo e incapacidade de falar. A Lexis utiliza a **Narrativa de Inocência** para deixar claro que a falha não é do aluno, mas deste sistema arcaico.
 
 ## 4. Fundamentos da Metodologia Lexis
 A Lexis foi desenhada para produzir resposta automática em inglês. Fundamentos inegociáveis:
@@ -59,10 +61,13 @@ Técnicas não são o método, são ferramentas:
 - Gamificação aplicada
 - Grupos operativos
 
-## 8. Estrutura de Imersão
-- Duração: 2 semanas
-- Carga horária: 120h presenciais
-- Ritmo: 10h/dia
+## 8. Estrutura de Imersão (Mecanismo Único)
+O **Mecanismo Único Lexis** é a Imersão de 120 horas, desenhada para forçar a transição da memória declarativa para a procedural.
+- **Duração**: 2 semanas
+- **Carga horária**: 120h presenciais
+- **Ritmo**: 10h/dia
+- **Objetivo**: Esmagar a tradução mental através da saturação e prática deliberada.
+
 *Essa densidade equivale a meses ou anos de cursos tradicionais.*
 
 ## 9. Papel do Professor Lexis
