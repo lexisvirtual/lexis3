@@ -1,5 +1,7 @@
 # GUIA OPERACIONAL — IA DE CONTEÚDO SEO AUTÔNOMA (LEXIS)
 
+> **Nota Estratégica:** Este documento é subordinado ao [PROJECT_VISION.md](PROJECT_VISION.md), que contém a âncora estratégica e a linha lógica mestre do projeto Lexis V9.1.
+
 ## OBJETIVO DO SISTEMA
 Criar uma máquina de SEO programático que:
 - publique conteúdo automaticamente
@@ -155,13 +157,13 @@ Após publicação:
 
 ---
 
-## ETAPA 10 — RECICLAGEM (SEO DEFENSIVO)
-Rotina semanal do Worker:
-1. cruza posts antigos × novas queries
-2. identifica gaps semânticos
-3. atualiza Markdown existente (novo commit, data atualizada)
+## ETAPA 10 — RECICLAGEM E GOVERNANÇA (ROGER AGENT)
+Rotina semanal do Worker e Auditoria de Qualidade:
+1. **Auditoria IPL**: Roger Agent verifica se os posts mantêm o padrão de performance linguística.
+2. **Reciclagem**: Cruza posts antigos × novas queries e identifica gaps semânticos.
+3. **Atualização**: Atualiza Markdown existente (novo commit, data atualizada) para manter autoridade topical.
 
-*Você não cria mais conteúdo. Você domina os mesmos termos continuamente.*
+*Você não cria mais conteúdo. Você domina os mesmos termos continuamente e garante a qualidade via IPL.*
 
 ---
 
