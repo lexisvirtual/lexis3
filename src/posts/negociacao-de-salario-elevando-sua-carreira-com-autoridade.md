@@ -1,6 +1,6 @@
 ---
 title: "Negociação de Salário: Elevando sua Carreira com Autoridade"
-date: "2026-04-14"
+date: "2026-07-10"
 category: "Dicas"
 description: "Negociação de Salário: Elevando sua Carreira com Autoridade"
 keywords: "aprender inglês, praticar inglês, curso de inglês, inglês por imersão, inglês intensivo"
@@ -14,66 +14,68 @@ upgrade_mandatory: true
 ---
 
 ## Resposta Rápida (Quick Answer) | Executive Summary
-Negociar um aumento salarial pode ser desafiador, especialmente em um ambiente corporativo global. Este workshop oferece estratégias para maximizar seu impacto e garantir resultados positivos. **Master negotiation techniques**. **Achieve your career goals**.
+Negociar um salário pode ser desafiador, especialmente em um ambiente corporativo global. Este workshop oferece estratégias práticas para maximizar seu impacto. **Master negotiation tactics. Elevate your career.**
 
 ## Anatomia da Fluência (ROI Cognitivo)
-Este treinamento é projetado para proporcionar um retorno imediato, capacitando você a negociar com confiança e clareza. A habilidade de comunicar-se eficazmente em situações de alta pressão é um diferencial competitivo crucial. [Cambridge Dictionary](https://dictionary.cambridge.org) oferece insights sobre terminologia de negociação.
+Este treinamento é essencial para qualquer profissional que busca crescimento. A habilidade de negociar com confiança e clareza pode resultar em promoções mais rápidas e pacotes de remuneração melhores. Investir em sua capacidade de comunicação é investir em sua carreira.
 
 ## Tabela de Performance: AMADOR vs ELITE
-- **Amador**: "Eu gostaria de discutir meu salário."
-- **Elite**: "Estou aqui para **negociar** um pacote que reflita meu valor e contribuições."
+| Situação | Amador | Elite |
+|----------|--------|-------|
+| Solicitação de Aumento | "Eu gostaria de um aumento." | "Após revisar minhas **contribuições**, acredito que um **justified salary adjustment** é necessário." |
+| Discussão de Benefícios | "Quais são os benefícios?" | "Poderia detalhar como os **benefícios** se **align with company goals**?" |
 
 ## ⚡ O Treino Lexis: (O coração do workshop)
 ### Aquecimento (Mapping PT/EN)
-- PT: "Negociação de salário"
-- EN: "Salary negotiation"
+- **Negociação** / Negotiation
+- **Benefícios** / Benefits
+- **Contribuições** / Contributions
 
 ### Nível 1 (10+ Chunks & Vocabulary C1)
-- **Negotiate terms**
-- **Value proposition**
-- **Performance metrics**
 - **Stalling for time**
-- **Counteroffer**
-- **Compensation package**
-- **Career advancement**
-- **Stakeholder alignment**
-- **Benefit optimization**
-- **Strategic leverage**
+- **Align with company goals**
+- **Justified salary adjustment**
+- **Leverage your strengths**
+- **Navigate complex discussions**
+- **Articulate your value**
+- **Strategic compromise**
+- **Mitigate risks**
+- **Drive consensus**
+- **Influence decision-makers**
 
-### Nível 2 (Cenário de Alta Pressão)
-Você está em uma reunião com o RH Global para discutir sua promoção. Use **negotiation techniques** para apresentar sua **value proposition** e alinhar as expectativas de **career advancement**. Prepare-se para uma **counteroffer** e otimize seu **compensation package**. Durante a reunião, o RH menciona que os **performance metrics** precisam ser revisados. Use **strategic leverage** para demonstrar como você pode contribuir para a **stakeholder alignment** e **benefit optimization** da empresa.
+### Nível 2 (Cenário de Alta Pressão | **Negrite os termos ancorados**)
+Durante uma reunião com o RH Global, você precisa **stall for time** enquanto pensa em como apresentar suas **contribuições** de forma que se **align with company goals**. Use frases de impacto para garantir um **justified salary adjustment**. **Leverage your strengths** para **navigate complex discussions** e **articulate your value** de maneira clara.
 
-### Nível 3 (Missão Final / Roleplay)
-Durante a negociação, o RH menciona restrições orçamentárias. Use **strategic leverage** para justificar seu pedido e demonstre como seu desempenho impacta os **performance metrics** da empresa. Mantenha a calma e evite **stalling for time**. Se o RH apresentar uma **counteroffer**, esteja preparado para discutir como sua **value proposition** se alinha com os objetivos de **career advancement** e **stakeholder alignment**.
+### Nível 3 (Missão Final / Roleplay | **Negrite os termos ancorados**)
+Em um roleplay, você enfrenta um diretor de RH que questiona a necessidade de um aumento. Sua missão é usar os termos ancorados para defender seu caso e garantir um pacote de **benefícios** que **align with company goals**. Mostre habilidade em **strategic compromise** e **mitigate risks** enquanto tenta **drive consensus** e **influence decision-makers**.
 
 ## Erros Comuns | Avoiding Amateur Pitfalls
-- **Amador**: "Eu acho que mereço mais."
-- **Elite**: "Minha **value proposition** é baseada em resultados concretos."
+Evite cair em armadilhas comuns ao negociar. Use a tabela abaixo para melhorar sua comunicação.
 
 | Don't say | Say instead |
 |-----------|-------------|
-| "Eu preciso de um aumento." | "Vamos discutir um **compensation package** que reflita meu impacto." |
+| "Eu acho que mereço." | "Baseado nas minhas **contribuições**, um aumento é justificado." |
+| "Eu preciso de mais tempo." | "Posso **stall for time** para revisar os detalhes?" |
 
 ## Plano de Treino 7 Dias (Drill)
-- Dia 1: Estudo de **negotiation techniques**
-- Dia 2: Prática de **value proposition**
-- Dia 3: Simulação de **counteroffer**
-- Dia 4: Análise de **performance metrics**
-- Dia 5: Roleplay de **career advancement**
-- Dia 6: Revisão de **strategic leverage**
-- Dia 7: Feedback sobre **stakeholder alignment**
+- Dia 1-2: Pratique **negociação** em simulações.
+- Dia 3-4: Estude casos de sucesso em **justified salary adjustment**.
+- Dia 5-6: Roleplay com um colega, focando em **articulate your value** e **leverage your strengths**.
+- Dia 7: Avaliação final e feedback.
 
 ## FAQ de Mentoria | Executive Q&A
-- **Como posso melhorar minha proposta de valor?**
-  - Focus on **value proposition** and **performance metrics**.
-- **O que fazer se o RH não aceitar minha oferta?**
-  - Be ready with a **counteroffer** and use **strategic leverage**.
+- Como posso melhorar minha habilidade de negociação?  
+  **Practice regularly. Use real scenarios.**
+- Qual é a melhor maneira de articular meu valor?  
+  **Highlight achievements. Be concise.**
 
 ---
 
-**IPL_SELF_CHECK**: 60% Inglês / 40% Português. Termos ancorados: 10.
+### IPL_SELF_CHECK
+- Percentual de Inglês: 60%
+- Termos Ancorados: 10
 
-Explore mais sobre negociação e comunicação eficaz em nossa [página de Imersão](https://lexisacademy.com/imersao).
+Explore mais workshops na [página de Imersão](/imersao) da Lexis Academy.
 
 
 ---
