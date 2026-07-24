@@ -1,0 +1,23 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "ollama/qwen3-coder:latest",
+  "provider": {
+    "ollama": {
+      "options": {
+        "baseURL": "http://localhost:11434/v1"
+      }
+    }
+  },
+  "mcp": {
+    "governanca": {
+      "type": "local",
+      "command": ["node", "C:\\Users\\aderv\\lexis3\\mcp-governanca\\dist\\server.js"],
+      "enabled": true
+    },
+    "lsp": {
+      "type": "local",
+      "command": ["node", "C:\\Users\\aderv\\lexis3\\mcp-lsp\\dist\\server.js"],
+      "enabled": true
+    }
+  }
+}
