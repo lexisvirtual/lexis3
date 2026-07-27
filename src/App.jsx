@@ -13,6 +13,7 @@ import BlogPost from './pages/blog/BlogPost';
 import BlogPauta from './pages/blog/BlogPauta';
 import LeoInsights from './pages/LeoInsights';
 import Aplicacao from './pages/Aplicacao';
+import Demo from './pages/Demo';
 import FloatingWhatsAppButton from './components/FloatingWhatsAppButton';
 
 const App = () => {
@@ -32,6 +33,7 @@ const App = () => {
                     <Route path="/blog/:slug" element={<BlogPost />} />
                     <Route path="/leo-insights" element={<LeoInsights />} />
                     <Route path="/aplicacao" element={<Aplicacao />} />
+                    <Route path="/demo" element={<Demo />} />
                 </Routes>
                 <FloatingWhatsAppButton phoneE164="5519988197383" message="Quero mais informações" />
             </BrowserRouter>

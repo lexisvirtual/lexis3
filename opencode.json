@@ -18,6 +18,28 @@
       "type": "local",
       "command": ["node", "C:\\Users\\aderv\\lexis3\\mcp-lsp\\dist\\server.js"],
       "enabled": true
+    },
+    "firecrawl": {
+      "type": "local",
+      "command": ["npx", "-y", "firecrawl-mcp"],
+      "env": {
+        "FIRECRAWL_API_KEY": "fc-78bf1ea0e41241c4ace549c81b71846f"
+      },
+      "enabled": true
+    },
+    "google-search-console": {
+      "type": "local",
+      "command": ["npx", "-y", "google-searchconsole-mcp"],
+      "enabled": true
+    },
+    "google-analytics": {
+      "type": "local",
+      "command": ["npx", "-y", "mcp-google-analytics"],
+      "env": {
+        "GA_PROPERTY_ID": "PREENCHER_COM_PROPERTY_ID",
+        "GA_SERVICE_ACCOUNT_JSON": "PREENCHER_COM_CAMINHO_OU_JSON"
+      },
+      "enabled": false
     }
   }
 }
