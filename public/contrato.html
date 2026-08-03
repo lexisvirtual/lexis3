@@ -57,63 +57,16 @@
                 </div>
             </div>
 
-            <!-- 2. Nome do Cliente -->
-            <div>
-                <label class="block text-sm font-bold text-gray-700 mb-1">👤 Nome do Cliente (aluno)</label>
-                <input type="text" id="nomeCliente" required class="block w-full px-3 py-2 bg-blue-50 text-blue-700 border border-blue-300 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="Ex: João da Silva Barbosa" oninput="verificarFormulario()">
-            </div>
-
-            <!-- 3. Template do Contrato -->
+            <!-- 2. Template do Contrato -->
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-1">📄 Qual tipo de contrato?</label>
-                <select id="templateId" required class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm" onchange="carregarTurmas()">
+                <select id="templateId" required onchange="carregarCamposTemplate()" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm">
                     <option value="" disabled selected>⏳ Buscando Templates...</option>
                 </select>
             </div>
 
-            <!-- 3.1 Turma (opcional - aparece se template tiver campo Turma) -->
-            <div id="turmaContainer" class="hidden">
-                <label class="block text-sm font-bold text-gray-700 mb-1">📅 Turma</label>
-                <select id="turma" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm">
-                    <option value="">Nenhuma turma selecionada</option>
-                </select>
-            </div>
-
-            <!-- 4. Curso/Produto -->
-            <div>
-                <label class="block text-sm font-bold text-gray-700 mb-1">🎓 Curso / Produto</label>
-                <select id="curso" required class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm">
-                    <option value="" disabled selected>⏳ Buscando Produtos...</option>
-                </select>
-            </div>
-
-            <!-- 4. Valor do Contrato -->
-            <div>
-                <label class="block text-sm font-bold text-gray-700 mb-1">💰 Valor do Contrato (R$)</label>
-                <input type="number" id="valor" required min="1" step="0.01" class="font-bold text-lg block w-full px-3 py-2 bg-green-50 text-green-700 border border-green-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500" placeholder="Ex: 5000.00">
-            </div>
-
-            <!-- 5. Forma de Pagamento -->
-            <div>
-                <label class="block text-sm font-bold text-gray-700 mb-2">Forma de Pagamento</label>
-                <div class="grid grid-cols-3 gap-2">
-                    <label id="labelPix" class="flex flex-col items-center justify-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-black transition-all" onclick="selecionarPagamento('Pix')">
-                        <span class="text-xl mb-1">⚡</span>
-                        <span class="text-xs font-bold text-gray-700">Pix</span>
-                        <input type="radio" name="formaPagamento" value="Pix" class="hidden" required>
-                    </label>
-                    <label id="labelCartao" class="flex flex-col items-center justify-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-black transition-all" onclick="selecionarPagamento('Cartão')">
-                        <span class="text-xl mb-1">💳</span>
-                        <span class="text-xs font-bold text-gray-700">Cartão</span>
-                        <input type="radio" name="formaPagamento" value="Cartão" class="hidden" required>
-                    </label>
-                    <label id="labelBoleto" class="flex flex-col items-center justify-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-black transition-all" onclick="selecionarPagamento('Boleto')">
-                        <span class="text-xl mb-1">📄</span>
-                        <span class="text-xs font-bold text-gray-700">Boleto</span>
-                        <input type="radio" name="formaPagamento" value="Boleto" class="hidden" required>
-                    </label>
-                </div>
-            </div>
+            <!-- 3. Campos dinâmicos do template -->
+            <div id="camposContainer" class="space-y-4"></div>
 
             <button id="btnSubmit" type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors opacity-50 cursor-not-allowed" disabled>
                 📄 Aguarde Carregamento...
@@ -131,54 +84,20 @@
     </div>
 
     <script>
-        const CUSTOS_LEXIS = {};
         const WORKER_URL = 'https://api-lexis.lexis-english-account.workers.dev';
-        let formaSelecionada = null;
-
-        function selecionarPagamento(forma) {
-            formaSelecionada = forma;
-            document.getElementById('labelPix').style.borderColor = forma === 'Pix' ? 'black' : '#e5e7eb';
-            document.getElementById('labelCartao').style.borderColor = forma === 'Cartão' ? 'black' : '#e5e7eb';
-            document.getElementById('labelBoleto').style.borderColor = forma === 'Boleto' ? 'black' : '#e5e7eb';
-            document.querySelector('input[name="formaPagamento"][value="' + forma + '"]').checked = true;
-            verificarFormulario();
-        }
-
-        function verificarFormulario() {
-            const licenciado = document.getElementById('licenciadoId').value;
-            const template = document.getElementById('templateId').value;
-            const curso = document.getElementById('curso').value;
-            const valor = document.getElementById('valor').value;
-            const nomeCliente = document.getElementById('nomeCliente').value.trim();
-            const pinOk = document.getElementById('pinInput').dataset.valido === 'true';
-            const preenchido = pinOk && licenciado && template && curso && valor && formaSelecionada && nomeCliente;
-            
-            const btn = document.getElementById('btnSubmit');
-            btn.disabled = !preenchido;
-            btn.style.opacity = preenchido ? 1 : 0.5;
-            btn.innerHTML = preenchido ? '📄 Criar Contrato' : '📄 Preencha todos os campos';
-        }
+        const CROVE_KEY = '2b3df222c09dd5bd0a462c3450cb727a568017d212b94f94826e312effccae81';
+        let camposTemplate = [];
 
         async function init() {
             try {
-                const [resLic, resTpl, resCur] = await Promise.all([
-                    fetch(WORKER_URL),
-                    fetch(WORKER_URL + '/templates'),
-                    fetch(WORKER_URL)
-                ]);
-
+                const resLic = await fetch(WORKER_URL);
                 const dataLic = await resLic.json();
+                
                 const selLic = document.getElementById('licenciadoId');
                 selLic.innerHTML = '<option value="" disabled selected>Selecione seu nome</option>';
                 dataLic.licenciados.forEach(l => selLic.add(new Option(l.nome, l.id)));
 
-                const selCur = document.getElementById('curso');
-                selCur.innerHTML = '<option value="" disabled selected>Selecione o Curso</option>';
-                dataLic.cursos.forEach(c => {
-                    CUSTOS_LEXIS[c.id] = c.custo;
-                    selCur.add(new Option(c.nome, c.id));
-                });
-
+                const resTpl = await fetch(WORKER_URL + '/templates');
                 if (resTpl.ok) {
                     const dataTpl = await resTpl.json();
                     const selTpl = document.getElementById('templateId');
@@ -195,39 +114,103 @@
         }
         init();
 
-        async function carregarTurmas() {
+        async function carregarCamposTemplate() {
             const templateId = document.getElementById('templateId').value;
-            const container = document.getElementById('turmaContainer');
-            const selectTurma = document.getElementById('turma');
-            
+            const container = document.getElementById('camposContainer');
+            container.innerHTML = '';
+            camposTemplate = [];
+
             if (!templateId) {
-                container.classList.add('hidden');
+                verificarFormulario();
                 return;
             }
 
+            container.innerHTML = '<div class="text-center text-sm text-gray-500">⏳ Carregando campos...</div>';
+
             try {
                 const res = await fetch(`https://api.crove.app/api/external/v2/templates/${templateId}`, {
-                    headers: { 'X-Api-Key': '2b3df222c09dd5bd0a462c3450cb727a568017d212b94f94826e312effccae81' }
+                    headers: { 'X-Api-Key': CROVE_KEY }
                 });
                 
                 if (!res.ok) throw new Error('Erro ao buscar template');
                 
                 const template = await res.json();
-                const turmaField = template.fields?.find(f => f.name === 'Turma');
-                
-                if (turmaField && turmaField.options && turmaField.options.length > 0) {
-                    selectTurma.innerHTML = '<option value="">Nenhuma turma selecionada</option>';
-                    turmaField.options.forEach(opt => {
-                        selectTurma.add(new Option(opt, opt));
-                    });
-                    container.classList.remove('hidden');
-                } else {
-                    container.classList.add('hidden');
-                }
+                const camposEditaveis = (template.fields || []).filter(f => 
+                    f.type !== 'checkbox' && f.type !== 'signature' && f.name !== 'Consultor'
+                );
+
+                container.innerHTML = '';
+
+                camposEditaveis.forEach(campo => {
+                    const div = document.createElement('div');
+                    
+                    const label = document.createElement('label');
+                    label.className = 'block text-sm font-bold text-gray-700 mb-1';
+                    label.textContent = campo.label || campo.name;
+                    if (campo.required) {
+                        const req = document.createElement('span');
+                        req.className = 'text-red-500 ml-1';
+                        req.textContent = '*';
+                        label.appendChild(req);
+                    }
+                    div.appendChild(label);
+
+                    let input;
+                    if (campo.options && campo.options.length > 0) {
+                        input = document.createElement('select');
+                        input.className = 'block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm';
+                        input.innerHTML = '<option value="">Selecione...</option>';
+                        campo.options.forEach(opt => {
+                            input.add(new Option(opt, opt));
+                        });
+                    } else if (campo.type === 'date') {
+                        input = document.createElement('input');
+                        input.type = 'date';
+                        input.className = 'block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm';
+                    } else {
+                        input = document.createElement('input');
+                        input.type = 'text';
+                        input.className = 'block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm';
+                    }
+                    
+                    input.id = `campo_${campo.name}`;
+                    input.dataset.fieldName = campo.name;
+                    if (campo.required) input.required = true;
+                    input.addEventListener('input', verificarFormulario);
+                    input.addEventListener('change', verificarFormulario);
+                    
+                    div.appendChild(input);
+                    container.appendChild(div);
+                    
+                    camposTemplate.push(campo.name);
+                });
+
+                verificarFormulario();
             } catch (e) {
-                console.error('Erro ao carregar turmas:', e);
-                container.classList.add('hidden');
+                console.error('Erro ao carregar campos:', e);
+                container.innerHTML = '<div class="text-center text-sm text-red-500">❌ Erro ao carregar campos do template</div>';
             }
+        }
+
+        function verificarFormulario() {
+            const pinOk = document.getElementById('pinInput').dataset.valido === 'true';
+            const licenciado = document.getElementById('licenciadoId').value;
+            const template = document.getElementById('templateId').value;
+            
+            let todosCamposPreenchidos = true;
+            camposTemplate.forEach(nome => {
+                const input = document.getElementById(`campo_${nome}`);
+                if (input && input.required && !input.value.trim()) {
+                    todosCamposPreenchidos = false;
+                }
+            });
+
+            const preenchido = pinOk && licenciado && template && todosCamposPreenchidos;
+            
+            const btn = document.getElementById('btnSubmit');
+            btn.disabled = !preenchido;
+            btn.style.opacity = preenchido ? 1 : 0.5;
+            btn.innerHTML = preenchido ? '📄 Criar Contrato' : '📄 Preencha todos os campos';
         }
 
         function onLicenciadoChange() {
@@ -238,55 +221,76 @@
             travarForm(true);
         }
 
-        function travarForm(t) {
-            document.getElementById('btnSubmit').disabled = t;
-            document.getElementById('btnSubmit').style.opacity = t ? 0.5 : 1;
-            document.getElementById('nomeCliente').disabled = t;
-            document.getElementById('templateId').disabled = t;
-            document.getElementById('curso').disabled = t;
-            document.getElementById('valor').disabled = t;
-        }
-
-        function verificarPin() {
+        async function verificarPin() {
             const pin = document.getElementById('pinInput').value;
-            const pinReal = document.getElementById('licenciadoId').value;
-            if (pin === pinReal) {
+            const lId = document.getElementById('licenciadoId').value;
+            if (pin.length < 3) return;
+
+            try {
+                const res = await fetch(`${WORKER_URL}/status/${lId}?pin=${pin}`);
+                const data = await res.json();
+                
+                if (data.erro) {
+                    document.getElementById('pinErro').classList.remove('hidden');
+                    document.getElementById('pinInput').dataset.valido = 'false';
+                    travarForm(true);
+                    return;
+                }
+
+                document.getElementById('pinErro').classList.add('hidden');
                 document.getElementById('pinInput').dataset.valido = 'true';
                 travarForm(false);
-                carregarStatusMeta();
-            } else {
+                mostrarMetas(data);
+            } catch(e) {
+                document.getElementById('pinErro').classList.remove('hidden');
                 document.getElementById('pinInput').dataset.valido = 'false';
-                travarForm(true);
             }
         }
 
-        async function carregarStatusMeta() {
-            const licId = document.getElementById('licenciadoId').value;
-            document.getElementById('painelMeta').classList.remove('hidden');
-            try {
-                const res = await fetch(WORKER_URL + '/status?id=' + licId);
-                const s = await res.json();
-                const fmt = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
-                document.getElementById('metaAcumulado').innerText = fmt.format(s.acumulado);
-                
-                const barra = document.getElementById('metaBarra');
-                if (s.proximaMeta) {
-                    const base = s.metaAtingida || 0;
-                    const prog = Math.min(100, ((s.acumulado - base) / (s.proximaMeta - base)) * 100);
-                    barra.style.width = prog + '%';
-                    document.getElementById('metaFaltaTexto').innerText = 'Falta ' + fmt.format(s.faltaParaProxima);
-                    document.getElementById('metaProximaTexto').innerText = 'Próxima: ' + s.proximoDesconto + '% em ' + fmt.format(s.proximaMeta);
-                } else {
-                    barra.style.width = '100%';
-                    document.getElementById('metaFaltaTexto').innerText = 'Nível Máximo!';
-                }
+        function travarForm(t) {
+            document.getElementById('btnSubmit').disabled = t;
+            document.getElementById('btnSubmit').style.opacity = t ? 0.5 : 1;
+            camposTemplate.forEach(nome => {
+                const input = document.getElementById(`campo_${nome}`);
+                if (input) input.disabled = t;
+            });
+            verificarFormulario();
+        }
 
-                if (s.descontoAtual > 0) {
-                    document.getElementById('metaBadge').innerText = '✅ ' + s.descontoAtual + '% Off';
-                    document.getElementById('metaDescontoValor').innerText = s.descontoAtual + '%';
-                    document.getElementById('metaDescontoLinha').classList.remove('hidden');
-                }
-            } catch(e) {}
+        async function mostrarMetas(dados) {
+            document.getElementById('painelMeta').classList.remove('hidden');
+            const m = dados.metas || {};
+            
+            document.getElementById('metaAcumulado').innerText = 'R$ ' + (m.acumulado30 || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2});
+            
+            const pct = m.pctMeta || 0;
+            const barra = document.getElementById('metaBarra');
+            barra.style.width = Math.min(pct, 100) + '%';
+            
+            if (pct >= 100) {
+                barra.style.background = 'linear-gradient(90deg,#22c55e,#16a34a)';
+                document.getElementById('metaBadge').innerText = '🔥 TOP';
+                document.getElementById('metaBadge').className = 'px-2 py-0.5 rounded-full text-xs font-bold bg-green-400 text-white';
+            } else if (pct >= 70) {
+                barra.style.background = 'linear-gradient(90deg,#f59e0b,#d97706)';
+                document.getElementById('metaBadge').innerText = '🚀 Quase lá!';
+            } else {
+                barra.style.background = 'linear-gradient(90deg,#f59e0b,#d97706)';
+                document.getElementById('metaBadge').innerText = 'Calculando...';
+            }
+
+            if (m.proximaMeta) {
+                const falta = m.proximaMeta.valor - (m.acumulado30 || 0);
+                document.getElementById('metaFaltaTexto').innerText = `Faltam R$ ${Math.max(0, falta).toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
+                document.getElementById('metaProximaTexto').innerText = `Próxima: ${m.proximaMeta.nome}`;
+                document.getElementById('metaProximaLinha').classList.remove('hidden');
+            }
+
+            if (m.descontoAtual > 0) {
+                document.getElementById('metaBadge').innerText = '✅ ' + m.descontoAtual + '% Off';
+                document.getElementById('metaDescontoValor').innerText = m.descontoAtual + '%';
+                document.getElementById('metaDescontoLinha').classList.remove('hidden');
+            }
         }
 
         document.getElementById('contratoForm').addEventListener('submit', async (e) => {
@@ -295,19 +299,22 @@
             btn.innerHTML = "⏳ Criando Contrato...";
             btn.disabled = true;
 
+            const values = {};
+            camposTemplate.forEach(nome => {
+                const input = document.getElementById(`campo_${nome}`);
+                if (input && input.value.trim()) {
+                    values[nome] = input.value.trim();
+                }
+            });
+
+            const licenciadoId = document.getElementById('licenciadoId').value;
+            const templateId = document.getElementById('templateId').value;
+
             try {
                 const res = await fetch(WORKER_URL + '/contrato', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        templateId: document.getElementById('templateId').value,
-                        licenciadoId: document.getElementById('licenciadoId').value,
-                        nomeCliente: document.getElementById('nomeCliente').value.trim(),
-                        curso: document.getElementById('curso').options[document.getElementById('curso').selectedIndex].text,
-                        turma: document.getElementById('turma').value || undefined,
-                        valor: document.getElementById('valor').value,
-                        formaPagamento: formaSelecionada
-                    })
+                    body: JSON.stringify({ templateId, licenciadoId, values })
                 });
                 const data = await res.json();
                 if (data.erro) {
@@ -326,11 +333,16 @@
         });
 
         function copiarLink() {
-            const linkField = document.getElementById('linkContrato');
-            linkField.select();
-            document.execCommand('copy');
-            alert('Link copiado! Envie para o cliente preencher seus dados e assinar.');
+            const input = document.getElementById('linkContrato');
+            input.select();
+            navigator.clipboard.writeText(input.value).then(() => {
+                const btn = event.target;
+                const original = btn.innerHTML;
+                btn.innerHTML = "✅ Copiado!";
+                setTimeout(() => btn.innerHTML = original, 2000);
+            });
         }
     </script>
+
 </body>
 </html>
