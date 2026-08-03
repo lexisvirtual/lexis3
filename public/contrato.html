@@ -119,12 +119,6 @@
                     const label = document.createElement('label');
                     label.className = 'block text-sm font-bold text-gray-700 mb-1';
                     label.textContent = campo.label || campo.name;
-                    if (campo.required) {
-                        const req = document.createElement('span');
-                        req.className = 'text-red-500 ml-1';
-                        req.textContent = '*';
-                        label.appendChild(req);
-                    }
                     div.appendChild(label);
 
                     let input;
@@ -147,7 +141,6 @@
                     
                     input.id = `campo_${campo.name}`;
                     input.dataset.fieldName = campo.name;
-                    if (campo.required) input.required = true;
                     input.addEventListener('input', verificarFormulario);
                     input.addEventListener('change', verificarFormulario);
                     
@@ -168,21 +161,13 @@
             const pinOk = document.getElementById('pinInput').dataset.valido === 'true';
             const licenciado = document.getElementById('licenciadoId').value;
             const template = document.getElementById('templateId').value;
-            
-            let todosCamposPreenchidos = true;
-            camposTemplate.forEach(nome => {
-                const input = document.getElementById(`campo_${nome}`);
-                if (input && input.required && !input.value.trim()) {
-                    todosCamposPreenchidos = false;
-                }
-            });
 
-            const preenchido = pinOk && licenciado && template && todosCamposPreenchidos;
+            const preenchido = pinOk && licenciado && template;
             
             const btn = document.getElementById('btnSubmit');
             btn.disabled = !preenchido;
             btn.style.opacity = preenchido ? 1 : 0.5;
-            btn.innerHTML = preenchido ? '📄 Criar Contrato' : '📄 Preencha todos os campos';
+            btn.innerHTML = preenchido ? '📄 Criar Contrato' : '📄 Selecione template e licenciado';
         }
 
         function onLicenciadoChange() {
