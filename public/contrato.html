@@ -85,7 +85,6 @@
 
     <script>
         const WORKER_URL = 'https://api-lexis.lexis-english-account.workers.dev';
-        const CROVE_KEY = '2b3df222c09dd5bd0a462c3450cb727a568017d212b94f94826e312effccae81';
         let camposTemplate = [];
 
         async function init() {
@@ -128,9 +127,7 @@
             container.innerHTML = '<div class="text-center text-sm text-gray-500">⏳ Carregando campos...</div>';
 
             try {
-                const res = await fetch(`https://api.crove.app/api/external/v2/templates/${templateId}`, {
-                    headers: { 'X-Api-Key': CROVE_KEY }
-                });
+                const res = await fetch(`${WORKER_URL}/templates/${templateId}`);
                 
                 if (!res.ok) throw new Error('Erro ao buscar template');
                 
