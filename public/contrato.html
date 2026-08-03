@@ -107,10 +107,9 @@
                 if (!res.ok) throw new Error('Erro ao buscar template');
                 
                 const template = await res.json();
-                const camposConsultor = ['Turma', 'Valor', 'Forma_de_pagamento', 'Modelo_de_Curso', 'Coordenador', 'Prazo_Contrato', 'Dia_de_pagamento', 'Valor_Matricula', 'Valor_Mensalidade', 'Pagamento_Anual'];
                 const camposEditaveis = (template.fields || []).filter(f => 
-                    camposConsultor.includes(f.name)
-                ).sort((a, b) => camposConsultor.indexOf(a.name) - camposConsultor.indexOf(b.name));
+                    f.type !== 'checkbox' && f.type !== 'signature' && f.name !== 'Consultor'
+                );
 
                 container.innerHTML = '';
 
