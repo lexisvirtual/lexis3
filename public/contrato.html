@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lexis - Gerador de Contratos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen font-sans p-4">
+
+    <div class="bg-white p-8 rounded-2xl shadow-lg max-w-sm w-full border-t-4 border-black">
+        <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">Gerador de Contratos</h2>
+        
+        <form id="contratoForm" class="space-y-5">
+            
+            <!-- 1. Identificação -->
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Quem é você?</label>
+                <select id="licenciadoId" required onchange="onLicenciadoChange()" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm">
+                    <option value="" disabled selected>⏳ Buscando Licenciados...</option>
+                </select>
+            </div>
+
+            <!-- PIN de segurança -->
+            <div id="pinDiv" class="hidden">
+                <label class="block text-sm font-bold text-gray-700 mb-1">🔐 Sua senha (3 dígitos)</label>
+                <div class="flex gap-2">
+                    <input type="password" id="pinInput" maxlength="3" inputmode="numeric" pattern="[0-9]*"
+                        class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm tracking-widest text-center text-xl font-bold"
+                        placeholder="···" oninput="verificarPin()">
+                </div>
+                <p id="pinErro" class="hidden mt-1 text-xs text-red-500 font-semibold">❌ Senha incorreta. Tente novamente.</p>
+            </div>
+
+            <!-- 🏆 PAINEL DE METAS LEXIS 🏆 -->
+            <div id="painelMeta" class="hidden rounded-xl border border-gray-200 overflow-hidden">
+                <div id="metaCabecalho" class="px-4 py-3 text-white text-sm font-bold flex justify-between items-center" style="background: linear-gradient(90deg,#1a1a2e,#16213e)">
+                    <span>🏆 Metas Lexis</span>
+                    <span id="metaBadge" class="px-2 py-0.5 rounded-full text-xs font-bold bg-yellow-400 text-black">Calculando...</span>
+                </div>
+                <div class="p-4 bg-gray-50 space-y-3">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500">Acumulado (30 dias)</span>
+                        <span id="metaAcumulado" class="font-bold text-gray-800">R$ 0,00</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-3">
+                        <div id="metaBarra" class="h-3 rounded-full transition-all duration-700" style="width:0%;background:linear-gradient(90deg,#f59e0b,#d97706)"></div>
+                    </div>
+                    <div id="metaProximaLinha" class="flex justify-between text-xs text-gray-500">
+                        <span id="metaFaltaTexto">—</span>
+                        <span id="metaProximaTexto">—</span>
+                    </div>
+                    <div id="metaDescontoLinha" class="hidden mt-1 p-2 rounded-lg bg-green-50 border border-green-200 text-center">
+                        <p class="text-xs text-green-700">Desconto ativo no Custo Lexis</p>
+                        <p id="metaDescontoValor" class="text-2xl font-black text-green-600">0%</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Nome do Cliente -->
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">👤 Nome do Cliente (aluno)</label>
+                <input type="text" id="nomeCliente" required class="block w-full px-3 py-2 bg-blue-50 text-blue-700 border border-blue-300 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="Ex: João da Silva Barbosa" oninput="verificarFormulario()">
+            </div>
+
+            <!-- 3. Template do Contrato -->
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">📄 Qual tipo de contrato?</label>
+                <select id="templateId" required class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm">
+                    <option value="" disabled selected>⏳ Buscando Templates...</option>
+                </select>
+            </div>
+
+            <!-- 3. Curso/Produto -->
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">🎓 Curso / Produto</label>
+                <select id="curso" required class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm">
+                    <option value="" disabled selected>⏳ Buscando Produtos...</option>
+                </select>
+            </div>
+
+            <!-- 4. Valor do Contrato -->
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">💰 Valor do Contrato (R$)</label>
+                <input type="number" id="valor" required min="1" step="0.01" class="font-bold text-lg block w-full px-3 py-2 bg-green-50 text-green-700 border border-green-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500" placeholder="Ex: 5000.00">
+            </div>
+
+            <!-- 5. Forma de Pagamento -->
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Forma de Pagamento</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <label id="labelPix" class="flex flex-col items-center justify-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-black transition-all" onclick="selecionarPagamento('Pix')">
+                        <span class="text-xl mb-1">⚡</span>
+                        <span class="text-xs font-bold text-gray-700">Pix</span>
+                        <input type="radio" name="formaPagamento" value="Pix" class="hidden" required>
+                    </label>
+                    <label id="labelCartao" class="flex flex-col items-center justify-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-black transition-all" onclick="selecionarPagamento('Cartão')">
+                        <span class="text-xl mb-1">💳</span>
+                        <span class="text-xs font-bold text-gray-700">Cartão</span>
+                        <input type="radio" name="formaPagamento" value="Cartão" class="hidden" required>
+                    </label>
+                    <label id="labelBoleto" class="flex flex-col items-center justify-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-black transition-all" onclick="selecionarPagamento('Boleto')">
+                        <span class="text-xl mb-1">📄</span>
+                        <span class="text-xs font-bold text-gray-700">Boleto</span>
+                        <input type="radio" name="formaPagamento" value="Boleto" class="hidden" required>
+                    </label>
+                </div>
+            </div>
+
+            <button id="btnSubmit" type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors opacity-50 cursor-not-allowed" disabled>
+                📄 Aguarde Carregamento...
+            </button>
+        </form>
+
+        <!-- Resultado -->
+        <div id="resultado" class="hidden mt-6 p-4 bg-green-50 border border-green-200 rounded-lg text-center">
+            <h3 class="text-green-800 font-bold mb-2">✅ Contrato Criado!</h3>
+            <p id="resultadoNome" class="text-xs text-green-700 font-bold mb-2"></p>
+            <p class="text-xs text-green-600 mb-3">Envie este link para o cliente preencher seus dados pessoais e assinar.</p>
+            <input type="text" id="linkContrato" readonly class="w-full text-sm p-3 rounded border border-green-300 bg-white font-mono text-black mb-3 text-center" />
+            <button onclick="copiarLink()" class="w-full bg-green-600 text-white font-bold py-2 rounded-lg hover:bg-green-700 text-sm">📋 Copiar Link do Contrato</button>
+        </div>
+    </div>
+
+    <script>
+        const CUSTOS_LEXIS = {};
+        const WORKER_URL = 'https://api-lexis.lexis-english-account.workers.dev';
+        let formaSelecionada = null;
+
+        function selecionarPagamento(forma) {
+            formaSelecionada = forma;
+            document.getElementById('labelPix').style.borderColor = forma === 'Pix' ? 'black' : '#e5e7eb';
+            document.getElementById('labelCartao').style.borderColor = forma === 'Cartão' ? 'black' : '#e5e7eb';
+            document.getElementById('labelBoleto').style.borderColor = forma === 'Boleto' ? 'black' : '#e5e7eb';
+            document.querySelector('input[name="formaPagamento"][value="' + forma + '"]').checked = true;
+            verificarFormulario();
+        }
+
+        function verificarFormulario() {
+            const licenciado = document.getElementById('licenciadoId').value;
+            const template = document.getElementById('templateId').value;
+            const curso = document.getElementById('curso').value;
+            const valor = document.getElementById('valor').value;
+            const nomeCliente = document.getElementById('nomeCliente').value.trim();
+            const pinOk = document.getElementById('pinInput').dataset.valido === 'true';
+            const preenchido = pinOk && licenciado && template && curso && valor && formaSelecionada && nomeCliente;
+            
+            const btn = document.getElementById('btnSubmit');
+            btn.disabled = !preenchido;
+            btn.style.opacity = preenchido ? 1 : 0.5;
+            btn.innerHTML = preenchido ? '📄 Criar Contrato' : '📄 Preencha todos os campos';
+        }
+
+        async function init() {
+            try {
+                const [resLic, resTpl, resCur] = await Promise.all([
+                    fetch(WORKER_URL),
+                    fetch(WORKER_URL + '/templates'),
+                    fetch(WORKER_URL)
+                ]);
+
+                const dataLic = await resLic.json();
+                const selLic = document.getElementById('licenciadoId');
+                selLic.innerHTML = '<option value="" disabled selected>Selecione seu nome</option>';
+                dataLic.licenciados.forEach(l => selLic.add(new Option(l.nome, l.id)));
+
+                const selCur = document.getElementById('curso');
+                selCur.innerHTML = '<option value="" disabled selected>Selecione o Curso</option>';
+                dataLic.cursos.forEach(c => {
+                    CUSTOS_LEXIS[c.id] = c.custo;
+                    selCur.add(new Option(c.nome, c.id));
+                });
+
+                if (resTpl.ok) {
+                    const dataTpl = await resTpl.json();
+                    const selTpl = document.getElementById('templateId');
+                    selTpl.innerHTML = '<option value="" disabled selected>Selecione o tipo de contrato</option>';
+                    dataTpl.templates.forEach(t => selTpl.add(new Option(t.name, t.id)));
+                } else {
+                    document.getElementById('templateId').innerHTML = '<option value="" disabled selected>❌ Erro ao buscar templates</option>';
+                }
+
+                document.getElementById('btnSubmit').innerHTML = "📄 Criar Contrato";
+            } catch(e) {
+                console.error('Erro ao carregar dados:', e);
+            }
+        }
+        init();
+
+        function onLicenciadoChange() {
+            document.getElementById('pinDiv').classList.remove('hidden');
+            document.getElementById('pinInput').value = '';
+            document.getElementById('pinInput').dataset.valido = 'false';
+            document.getElementById('painelMeta').classList.add('hidden');
+            travarForm(true);
+        }
+
+        function travarForm(t) {
+            document.getElementById('btnSubmit').disabled = t;
+            document.getElementById('btnSubmit').style.opacity = t ? 0.5 : 1;
+            document.getElementById('nomeCliente').disabled = t;
+            document.getElementById('templateId').disabled = t;
+            document.getElementById('curso').disabled = t;
+            document.getElementById('valor').disabled = t;
+        }
+
+        function verificarPin() {
+            const pin = document.getElementById('pinInput').value;
+            const pinReal = document.getElementById('licenciadoId').value;
+            if (pin === pinReal) {
+                document.getElementById('pinInput').dataset.valido = 'true';
+                travarForm(false);
+                carregarStatusMeta();
+            } else {
+                document.getElementById('pinInput').dataset.valido = 'false';
+                travarForm(true);
+            }
+        }
+
+        async function carregarStatusMeta() {
+            const licId = document.getElementById('licenciadoId').value;
+            document.getElementById('painelMeta').classList.remove('hidden');
+            try {
+                const res = await fetch(WORKER_URL + '/status?id=' + licId);
+                const s = await res.json();
+                const fmt = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+                document.getElementById('metaAcumulado').innerText = fmt.format(s.acumulado);
+                
+                const barra = document.getElementById('metaBarra');
+                if (s.proximaMeta) {
+                    const base = s.metaAtingida || 0;
+                    const prog = Math.min(100, ((s.acumulado - base) / (s.proximaMeta - base)) * 100);
+                    barra.style.width = prog + '%';
+                    document.getElementById('metaFaltaTexto').innerText = 'Falta ' + fmt.format(s.faltaParaProxima);
+                    document.getElementById('metaProximaTexto').innerText = 'Próxima: ' + s.proximoDesconto + '% em ' + fmt.format(s.proximaMeta);
+                } else {
+                    barra.style.width = '100%';
+                    document.getElementById('metaFaltaTexto').innerText = 'Nível Máximo!';
+                }
+
+                if (s.descontoAtual > 0) {
+                    document.getElementById('metaBadge').innerText = '✅ ' + s.descontoAtual + '% Off';
+                    document.getElementById('metaDescontoValor').innerText = s.descontoAtual + '%';
+                    document.getElementById('metaDescontoLinha').classList.remove('hidden');
+                }
+            } catch(e) {}
+        }
+
+        document.getElementById('contratoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmit');
+            btn.innerHTML = "⏳ Criando Contrato...";
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(WORKER_URL + '/contrato', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        templateId: document.getElementById('templateId').value,
+                        licenciadoId: document.getElementById('licenciadoId').value,
+                        nomeCliente: document.getElementById('nomeCliente').value.trim(),
+                        curso: document.getElementById('curso').options[document.getElementById('curso').selectedIndex].text,
+                        valor: document.getElementById('valor').value,
+                        formaPagamento: formaSelecionada
+                    })
+                });
+                const data = await res.json();
+                if (data.erro) {
+                    alert('Erro: ' + data.erro);
+                } else {
+                    document.getElementById('linkContrato').value = data.linkDocumento;
+                    document.getElementById('resultadoNome').textContent = data.nome;
+                    document.getElementById('resultado').classList.remove('hidden');
+                }
+            } catch (error) {
+                alert("Erro de rede. Tente novamente.");
+            } finally {
+                btn.innerHTML = "📄 Criar Contrato";
+                btn.disabled = false;
+            }
+        });
+
+        function copiarLink() {
+            const linkField = document.getElementById('linkContrato');
+            linkField.select();
+            document.execCommand('copy');
+            alert('Link copiado! Envie para o cliente preencher seus dados e assinar.');
+        }
+    </script>
+</body>
+</html>
