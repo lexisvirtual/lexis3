@@ -66,12 +66,20 @@
             <!-- 3. Template do Contrato -->
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-1">📄 Qual tipo de contrato?</label>
-                <select id="templateId" required class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm">
+                <select id="templateId" required class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm" onchange="carregarTurmas()">
                     <option value="" disabled selected>⏳ Buscando Templates...</option>
                 </select>
             </div>
 
-            <!-- 3. Curso/Produto -->
+            <!-- 3.1 Turma (opcional - aparece se template tiver campo Turma) -->
+            <div id="turmaContainer" class="hidden">
+                <label class="block text-sm font-bold text-gray-700 mb-1">📅 Turma</label>
+                <select id="turma" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm">
+                    <option value="">Nenhuma turma selecionada</option>
+                </select>
+            </div>
+
+            <!-- 4. Curso/Produto -->
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-1">🎓 Curso / Produto</label>
                 <select id="curso" required class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-black focus:border-black text-sm">
@@ -187,6 +195,41 @@
         }
         init();
 
+        async function carregarTurmas() {
+            const templateId = document.getElementById('templateId').value;
+            const container = document.getElementById('turmaContainer');
+            const selectTurma = document.getElementById('turma');
+            
+            if (!templateId) {
+                container.classList.add('hidden');
+                return;
+            }
+
+            try {
+                const res = await fetch(`https://api.crove.app/api/external/v2/templates/${templateId}`, {
+                    headers: { 'X-Api-Key': '2b3df222c09dd5bd0a462c3450cb727a568017d212b94f94826e312effccae81' }
+                });
+                
+                if (!res.ok) throw new Error('Erro ao buscar template');
+                
+                const template = await res.json();
+                const turmaField = template.fields?.find(f => f.name === 'Turma');
+                
+                if (turmaField && turmaField.options && turmaField.options.length > 0) {
+                    selectTurma.innerHTML = '<option value="">Nenhuma turma selecionada</option>';
+                    turmaField.options.forEach(opt => {
+                        selectTurma.add(new Option(opt, opt));
+                    });
+                    container.classList.remove('hidden');
+                } else {
+                    container.classList.add('hidden');
+                }
+            } catch (e) {
+                console.error('Erro ao carregar turmas:', e);
+                container.classList.add('hidden');
+            }
+        }
+
         function onLicenciadoChange() {
             document.getElementById('pinDiv').classList.remove('hidden');
             document.getElementById('pinInput').value = '';
@@ -261,6 +304,7 @@
                         licenciadoId: document.getElementById('licenciadoId').value,
                         nomeCliente: document.getElementById('nomeCliente').value.trim(),
                         curso: document.getElementById('curso').options[document.getElementById('curso').selectedIndex].text,
+                        turma: document.getElementById('turma').value || undefined,
                         valor: document.getElementById('valor').value,
                         formaPagamento: formaSelecionada
                     })
