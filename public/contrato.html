@@ -107,9 +107,14 @@
                 if (!res.ok) throw new Error('Erro ao buscar template');
                 
                 const template = await res.json();
+                const fieldOrder = ['Consultor','Coordenador','Turma','Valor','Nome','Email','Telefone','CPF','RG','Nascimento','Rua','Numero','Complemento','Bairro','Cidade','Estado','CEP','Forma_de_pagamento','Modelo_de_Curso','Prazo_Contrato','Dia_de_pagamento','Valor_Matricula','Valor_Mensalidade','Pagamento_Anual','Aluno','Assinatura'];
                 const camposEditaveis = (template.fields || []).filter(f => 
-                    f.type !== 'checkbox' && f.type !== 'signature' && f.name !== 'Consultor'
-                );
+                    f.type !== 'checkbox' && f.type !== 'signature'
+                ).sort((a, b) => {
+                    const ia = fieldOrder.indexOf(a.name);
+                    const ib = fieldOrder.indexOf(b.name);
+                    return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+                });
 
                 container.innerHTML = '';
 
