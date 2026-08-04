@@ -61,6 +61,14 @@
     <script>
         const WORKER_URL = 'https://api-lexis.lexis-english-account.workers.dev';
         let camposTemplate = [];
+        const templatesPermitidos = [
+            'ecbc9097-0b5a-4464-bb17-46f8cfb6632a',
+            'ffc6cc28-368d-4678-817b-8ce9765a099e',
+            'af103cbc-93f9-46df-b427-ae6c84cede4f',
+            '90d659d7-5ce3-4a78-8811-12a22a35713f',
+            'a7f05c1d-263c-4e02-9fb0-41d7703e57be',
+            'ecdf5a12-51d1-4e87-a257-dbd5f823b1a6'
+        ];
 
         async function init() {
             try {
@@ -76,7 +84,9 @@
                     const dataTpl = await resTpl.json();
                     const selTpl = document.getElementById('templateId');
                     selTpl.innerHTML = '<option value="" disabled selected>Selecione o tipo de contrato</option>';
-                    dataTpl.templates.forEach(t => selTpl.add(new Option(t.name, t.id)));
+                    dataTpl.templates
+                        .filter(t => templatesPermitidos.includes(t.id))
+                        .forEach(t => selTpl.add(new Option(t.name, t.id)));
                 } else {
                     document.getElementById('templateId').innerHTML = '<option value="" disabled selected>❌ Erro ao buscar templates</option>';
                 }
