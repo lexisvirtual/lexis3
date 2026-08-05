@@ -113,7 +113,7 @@
             document.getElementById('resultados').innerHTML = '';
 
             try {
-                mostrarStatus('buscando', 'Buscando... (lote 1 de 25)');
+                mostrarStatus('buscando', 'Buscando em todos os contratos...');
 
                 const res = await fetch(API, {
                     method: 'POST',
