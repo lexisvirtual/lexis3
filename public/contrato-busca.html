@@ -52,10 +52,53 @@
         <div id="status" class="hidden mb-4 p-3 rounded-lg text-sm"></div>
 
         <div id="resultados" class="space-y-3"></div>
+
+        <hr class="my-6 border-gray-200">
+
+        <h2 class="text-base font-bold text-gray-800 mb-3">🗑️ Limpeza de Rascunhos</h2>
+        <p class="text-sm text-gray-500 mb-4">Apaga rascunhos com <b>mais de 30 dias</b> e não preenchidos. Rascunhos recentes nunca são tocados.</p>
+
+        <div class="flex gap-2 mb-4">
+            <button
+                id="btnClearDraft"
+                onclick="limparRascunhos()"
+                class="flex-1 px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors"
+            >
+                🧹 Clear Draft
+            </button>
+            <button
+                id="btnSimular"
+                onclick="simularLimpeza()"
+                class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition-colors"
+            >
+                Ver quantos
+            </button>
+        </div>
+
+        <details class="mt-4 border border-gray-200 rounded-lg p-3">
+            <summary class="text-sm font-semibold text-gray-700 cursor-pointer">🔑 Sessão do Crove (cookies)</summary>
+            <p class="text-xs text-gray-500 mt-2 mb-3">
+                Logado no Crove? F12 → Application → Cookies → api.crove.app → copie <code>crovesession</code> e
+                <code>csrftoken</code>. Vale por ~2 semanas.
+            </p>
+            <div class="space-y-2">
+                <input type="text" id="cookieSession" placeholder="crovesession" class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-black">
+                <input type="text" id="cookieToken" placeholder="csrftoken" class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-black">
+                <input type="password" id="cookiePin" placeholder="PIN mestre" class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-black">
+                <div class="flex gap-2">
+                    <button onclick="salvarSessao()" class="px-4 py-2 bg-black hover:bg-gray-800 text-white text-sm font-medium rounded-lg transition-colors">Salvar sessão</button>
+                    <button onclick="checarSessao()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition-colors">Status</button>
+                </div>
+                <div id="sessaoInfo" class="text-xs text-gray-600 hidden"></div>
+            </div>
+        </details>
     </div>
 
     <script>
         const API = 'https://api-lexis.lexis-english-account.workers.dev/contrato/rename';
+        const API_SESSAO = 'https://api-lexis.lexis-english-account.workers.dev/contrato/sessao';
+        const API_STATUS = 'https://api-lexis.lexis-english-account.workers.dev/contrato/sessao/status';
+        const API_CLEANUP = 'https://api-lexis.lexis-english-account.workers.dev/contrato/cleanup';
         let searching = false;
 
         function mostrarStatus(tipo, msg) {
@@ -179,6 +222,99 @@
                 `;
                 container.appendChild(card);
             });
+        }
+
+        // ── Limpeza de rascunhos ──────────────────────────────────────────────
+        function sessaoInfo(tipo, msg) {
+            const el = document.getElementById('sessaoInfo');
+            el.classList.remove('hidden');
+            const cores = {
+                ok: 'text-green-700',
+                erro: 'text-red-700',
+                info: 'text-gray-600'
+            };
+            el.className = `text-xs ${cores[tipo] || cores.info}`;
+            el.textContent = msg;
+        }
+
+        async function salvarSessao() {
+            const crovesession = document.getElementById('cookieSession').value.trim();
+            const csrftoken = document.getElementById('cookieToken').value.trim();
+            const pin = document.getElementById('cookiePin').value.trim();
+            if (!crovesession || !csrftoken) { sessaoInfo('erro', 'Preencha os dois cookies.'); return; }
+            sessaoInfo('info', 'Validando sessão no Crove...');
+            try {
+                const res = await fetch(API_SESSAO, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pin, crovesession, csrftoken })
+                });
+                const data = await res.json();
+                if (!data.ok) { sessaoInfo('erro', data.erro || 'Erro ao salvar.'); return; }
+                sessaoInfo('ok', 'Sessão salva e validada. Vale por ~2 semanas.');
+            } catch (e) { sessaoInfo('erro', 'Erro de conexão.'); }
+        }
+
+        async function checarSessao() {
+            const pin = document.getElementById('cookiePin').value.trim();
+            sessaoInfo('info', 'Checando...');
+            try {
+                const res = await fetch(`${API_STATUS}?pin=${encodeURIComponent(pin)}`);
+                const data = await res.json();
+                if (!data.configurada) { sessaoInfo('erro', 'Sessão não configurada. Cole os cookies e salve.'); return; }
+                if (data.valid) { sessaoInfo('ok', `Sessão válida (salva em ${data.savedAt ? data.savedAt.slice(0, 10) : '?'}).`); }
+                else { sessaoInfo('erro', `Sessão expirada (HTTP ${data.httpStatus}). Atualize os cookies.`); }
+            } catch (e) { sessaoInfo('erro', 'Erro de conexão.'); }
+        }
+
+        async function simularLimpeza() {
+            const pin = prompt('PIN mestre:');
+            if (!pin) return;
+            mostrarStatus('buscando', 'Contando rascunhos antigos...');
+            try {
+                const res = await fetch(API_CLEANUP, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pin, dryRun: true })
+                });
+                const data = await res.json();
+                if (!data.ok) { mostrarStatus('erro', data.erro || 'Erro.'); return; }
+                mostrarStatus('sucesso', `Simulação: ${data.alvos} rascunho(s) antigo(s) (>${data.dias} dias) a apagar. ${data.recentes} recente(s) serão mantidos.`);
+            } catch (e) { mostrarStatus('erro', 'Erro de conexão.'); }
+        }
+
+        async function limparRascunhos() {
+            const pin = prompt('PIN mestre:');
+            if (!pin) return;
+            const confirma = confirm('ATENÇÃO: isso apagará PERMANENTEMENTE todos os rascunhos antigos (>30 dias). Continuar?');
+            if (!confirma) return;
+
+            document.getElementById('btnClearDraft').disabled = true;
+            mostrarStatus('buscando', 'Verificando sessão...');
+            try {
+                let data = null;
+                for (let tentativa = 0; tentativa < 200; tentativa++) {
+                    const res = await fetch(API_CLEANUP, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ pin, batchSize: 100, reset: tentativa === 0 })
+                    });
+                    data = await res.json();
+                    if (data.code === 'SEM_SESSAO' || data.code === 'SESSAO_EXPIRADA') {
+                        mostrarStatus('erro', data.erro);
+                        return;
+                    }
+                    if (!data.ok) { mostrarStatus('erro', data.erro || 'Erro.'); return; }
+                    mostrarStatus('buscando', `Apagando rascunhos... ${data.deleted}/${data.total} apagados (${data.failed} falhas)`);
+                    if (data.done) break;
+                }
+                if (!data || !data.done) { mostrarStatus('erro', 'Não terminou a tempo. Reabra a página e clique de novo para continuar.'); return; }
+                mostrarStatus('sucesso', `Limpeza concluída! Apagados: ${data.deleted} | Falhas: ${data.failed} | Total de antigos: ${data.total}`);
+            } catch (e) {
+                mostrarStatus('erro', 'Erro de conexão. Se já apagou parte, clique de novo para continuar.');
+            } finally {
+                document.getElementById('btnClearDraft').disabled = false;
+            }
         }
     </script>
 </body>
