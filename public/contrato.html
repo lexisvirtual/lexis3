@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lexis - Gerador de Contratos</title>
+    <title>Lexis - Gerador de link de Contrato</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen font-sans p-4">
 
     <div class="bg-white p-8 rounded-2xl shadow-lg max-w-sm w-full border-t-4 border-black">
-        <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">Gerador de Contratos</h2>
+        <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">Gerador de link de Contrato</h2>
         
         <form id="contratoForm" class="space-y-5">
             
@@ -43,7 +43,7 @@
             <!-- 3. Campos dinâmicos do template -->
             <div id="camposContainer" class="hidden space-y-4"></div>
 
-            <button id="btnSubmit" type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors opacity-50 cursor-not-allowed" disabled>
+            <button id="btnSubmit" type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors opacity-50 cursor-pointer" disabled>
                 📄 Aguarde Carregamento...
             </button>
         </form>
@@ -66,9 +66,116 @@
             'ffc6cc28-368d-4678-817b-8ce9765a099e',
             'af103cbc-93f9-46df-b427-ae6c84cede4f',
             '90d659d7-5ce3-4a78-8811-12a22a35713f',
-            'a7f05c1d-263c-4e02-9fb0-41d7703e57be',
-            'ecdf5a12-51d1-4e87-a257-dbd5f823b1a6'
+            'c0669a08-6de1-48b8-a167-ba655bbd0a9b',
+            'ecdf5a12-51d1-4e87-a257-dbd5f823b1a6',
+            '51d3281d-fea5-4cd0-b171-ca3fee46c1a2',
+            '54c62cca-afa1-4ac8-8671-f43daa67104d',
+            '31ff1c8f-0328-4c66-bf19-459430cb2891'
         ];
+
+        // Ordem visual do editor do Crove. Campos adicionais ficam depois do modelo.
+        const ordemCamposPorTemplate = {
+            'ffc6cc28-368d-4678-817b-8ce9765a099e': [
+                'Turma',
+                'Valor',
+                'Nome',
+                'Email',
+                'Telefone',
+                'Aluno'
+            ],
+            'c0669a08-6de1-48b8-a167-ba655bbd0a9b': [
+                'Turma',
+                'Modelo_de_Curso',
+                'Valor_da_Matricula',
+                'Valor',
+                'Nome',
+                'Email',
+                'Telefone',
+                'Forma_de_pagamento'
+            ],
+            'af103cbc-93f9-46df-b427-ae6c84cede4f': [
+                'Turma',
+                'Valor',
+                'Nome',
+                'Email',
+                'Telefone'
+            ],
+            'ecdf5a12-51d1-4e87-a257-dbd5f823b1a6': [
+                'Nome',
+                'Email',
+                'Telefone',
+                'Horas_semanais',
+                'Valor_mensalidade',
+                'Forma_pagamento',
+                'Data_primeiro_pagamento',
+                'ContratoInicia'
+            ],
+            '51d3281d-fea5-4cd0-b171-ca3fee46c1a2': [
+                'Nome',
+                'Email',
+                'Telefone',
+                'Pacote_de_horas',
+                'Valor_pacote',
+                'Forma_pagamento',
+                'Data_pagamento',
+                'ContratoInicia'
+            ],
+            '90d659d7-5ce3-4a78-8811-12a22a35713f': [
+                'Informe',
+                'Nome',
+                'Telefone',
+                'Email'
+            ],
+            '54c62cca-afa1-4ac8-8671-f43daa67104d': [
+                'Turma',
+                'Valor',
+                'Nome',
+                'Email',
+                'Telefone'
+            ],
+            '31ff1c8f-0328-4c66-bf19-459430cb2891': [
+                'Valor',
+                'Forma_de_pagamento',
+                'Nome',
+                'Email',
+                'Telefone'
+            ],
+            '8111433f-a8f7-497d-8bff-0c662f431914': [
+                'Valor',
+                'Forma_de_pagamento',
+                'Nome',
+                'Email',
+                'Telefone'
+            ],
+            'ecbc9097-0b5a-4464-bb17-46f8cfb6632a': [
+                'Valor',
+                'Forma_de_pagamento',
+                'Nome',
+                'Email',
+                'Telefone'
+            ]
+        };
+
+        function ordenarCamposTemplate(templateId, campos) {
+            const camposExcluidos = new Set(['Consultor', 'Coordenador', 'CPF', 'RG', 'Nascimento', 'Rua', 'Numero', 'Complemento', 'Bairro', 'Cidade', 'Estado', 'CEP']);
+            const camposFiltrados = campos.filter(c => !camposExcluidos.has(c.name));
+            const ordem = ordemCamposPorTemplate[templateId];
+            if (!ordem) return camposFiltrados;
+
+            const ranking = new Map(ordem.map((nome, index) => [nome, index]));
+
+            return camposFiltrados
+                .filter(campo => ranking.has(campo.name))
+                .sort((a, b) => ranking.get(a.name) - ranking.get(b.name));
+        }
+
+        function atualizarEstadoBotaoSubmit(disabled) {
+            const btn = document.getElementById('btnSubmit');
+            btn.disabled = disabled;
+            btn.classList.toggle('cursor-not-allowed', disabled);
+            btn.classList.toggle('cursor-pointer', !disabled);
+            btn.style.opacity = disabled ? 0.5 : 1;
+        }
 
         async function init() {
             try {
@@ -79,7 +186,7 @@
                 selLic.innerHTML = '<option value="" disabled selected>Selecione seu nome</option>';
                 dataLic.licenciados.forEach(l => selLic.add(new Option(l.nome, l.id)));
 
-                const resTpl = await fetch(WORKER_URL + '/templates');
+                const resTpl = await fetch(WORKER_URL + '/templates?refresh=true');
                 if (resTpl.ok) {
                     const dataTpl = await resTpl.json();
                     const selTpl = document.getElementById('templateId');
@@ -117,8 +224,9 @@
                 if (!res.ok) throw new Error('Erro ao buscar template');
                 
                 const template = await res.json();
-                const camposEditaveis = (template.fields || []).filter(f => 
-                    f.type !== 'checkbox' && f.type !== 'signature'
+                const camposEditaveis = ordenarCamposTemplate(
+                    templateId,
+                    (template.fields || []).filter(f => f.type !== 'signature' && f.type !== 'checkbox')
                 );
 
                 container.innerHTML = '';
@@ -171,12 +279,13 @@
             const pinOk = document.getElementById('pinInput').dataset.valido === 'true';
             const licenciado = document.getElementById('licenciadoId').value;
             const template = document.getElementById('templateId').value;
+            const nomeInput = document.getElementById('campo_Nome');
+            const nomePreenchido = nomeInput && nomeInput.value.trim();
 
-            const preenchido = pinOk && licenciado && template;
+            const preenchido = pinOk && licenciado && template && nomePreenchido;
             
             const btn = document.getElementById('btnSubmit');
-            btn.disabled = !preenchido;
-            btn.style.opacity = preenchido ? 1 : 0.5;
+            atualizarEstadoBotaoSubmit(!preenchido);
             btn.innerHTML = preenchido ? '📄 Criar Contrato' : '📄 Selecione template e licenciado';
         }
 
@@ -215,8 +324,7 @@
         }
 
         function travarForm(t) {
-            document.getElementById('btnSubmit').disabled = t;
-            document.getElementById('btnSubmit').style.opacity = t ? 0.5 : 1;
+            atualizarEstadoBotaoSubmit(t);
             camposTemplate.forEach(nome => {
                 const input = document.getElementById(`campo_${nome}`);
                 if (input) input.disabled = t;
@@ -228,12 +336,14 @@
             e.preventDefault();
             const btn = document.getElementById('btnSubmit');
             btn.innerHTML = "⏳ Criando Contrato...";
-            btn.disabled = true;
+            atualizarEstadoBotaoSubmit(true);
 
             const values = {};
             camposTemplate.forEach(nome => {
                 const input = document.getElementById(`campo_${nome}`);
-                if (input && input.value.trim()) {
+                if (!input) return;
+
+                if (input.value.trim()) {
                     values[nome] = input.value.trim();
                 }
             });
@@ -259,7 +369,7 @@
                 alert("Erro de rede. Tente novamente.");
             } finally {
                 btn.innerHTML = "📄 Criar Contrato";
-                btn.disabled = false;
+                atualizarEstadoBotaoSubmit(false);
             }
         });
 
