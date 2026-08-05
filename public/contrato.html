@@ -159,7 +159,7 @@
 
         function ordenarCamposTemplate(templateId, campos) {
             const camposExcluidos = new Set(['Consultor', 'Coordenador', 'CPF', 'RG', 'Nascimento', 'Rua', 'Numero', 'Complemento', 'Bairro', 'Cidade', 'Estado', 'CEP']);
-            const camposFiltrados = campos.filter(c => !camposExcluidos.has(c.name));
+            const camposFiltrados = campos.filter(c => !camposExcluidos.has(c.name) && c.label !== 'Text 20');
             const ordem = ordemCamposPorTemplate[templateId];
             if (!ordem) return camposFiltrados;
 
