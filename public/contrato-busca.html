@@ -75,6 +75,27 @@
             </button>
         </div>
 
+        <h2 class="text-base font-bold text-gray-800 mt-8 mb-3">✏️ Renomear Contratos Concluídos</h2>
+        <p class="text-sm text-gray-500 mb-4">Adiciona o nome do aluno ao título de contratos <b>concluídos</b> sem
+            "| Nome" (ex: <code>Contrato The Way</code> → <code>Contrato The Way | Wagner Dorneles Mariano</code>).</p>
+
+        <div class="flex gap-2 mb-4">
+            <button
+                id="btnRename"
+                onclick="renomearContratos()"
+                class="flex-1 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+            >
+                ✏️ Renomear Concluídos
+            </button>
+            <button
+                id="btnSimularRename"
+                onclick="simularRename()"
+                class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition-colors"
+            >
+                Ver quantos
+            </button>
+        </div>
+
         <details class="mt-4 border border-gray-200 rounded-lg p-3">
             <summary class="text-sm font-semibold text-gray-700 cursor-pointer">🔑 Sessão do Crove (cookies)</summary>
             <p class="text-xs text-gray-500 mt-2 mb-3">
@@ -99,6 +120,7 @@
         const API_SESSAO = 'https://api-lexis.lexis-english-account.workers.dev/contrato/sessao';
         const API_STATUS = 'https://api-lexis.lexis-english-account.workers.dev/contrato/sessao/status';
         const API_CLEANUP = 'https://api-lexis.lexis-english-account.workers.dev/contrato/cleanup';
+        const API_RENAME = 'https://api-lexis.lexis-english-account.workers.dev/contrato/rename-completos';
         let searching = false;
 
         function mostrarStatus(tipo, msg) {
@@ -314,6 +336,60 @@
                 mostrarStatus('erro', 'Erro de conexão. Se já apagou parte, clique de novo para continuar.');
             } finally {
                 document.getElementById('btnClearDraft').disabled = false;
+            }
+        }
+
+        async function simularRename() {
+            const pin = prompt('PIN mestre:');
+            if (!pin) return;
+            mostrarStatus('buscando', 'Contando contratos concluídos sem nome...');
+            try {
+                const res = await fetch(API_RENAME, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pin, dryRun: true })
+                });
+                const data = await res.json();
+                if (data.code === 'SEM_SESSAO' || data.code === 'SESSAO_EXPIRADA') {
+                    mostrarStatus('erro', data.erro);
+                    return;
+                }
+                if (!data.ok) { mostrarStatus('erro', data.erro || 'Erro.'); return; }
+                mostrarStatus('sucesso', `Simulação: ${data.alvos} contrato(s) concluído(s) seriam renomeados (de ${data.total} concluídos).`);
+            } catch (e) { mostrarStatus('erro', 'Erro de conexão.'); }
+        }
+
+        async function renomearContratos() {
+            const pin = prompt('PIN mestre:');
+            if (!pin) return;
+            const confirma = confirm('Isso adicionará "| Nome do aluno" ao título de todos os contratos concluídos sem nome (ex: "Contrato The Way" → "Contrato The Way | Nome"). Continuar?');
+            if (!confirma) return;
+
+            document.getElementById('btnRename').disabled = true;
+            mostrarStatus('buscando', 'Verificando sessão...');
+            try {
+                let data = null;
+                for (let tentativa = 0; tentativa < 400; tentativa++) {
+                    const res = await fetch(API_RENAME, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ pin, batchSize: 50, reset: tentativa === 0 })
+                    });
+                    data = await res.json();
+                    if (data.code === 'SEM_SESSAO' || data.code === 'SESSAO_EXPIRADA') {
+                        mostrarStatus('erro', data.erro);
+                        return;
+                    }
+                    if (!data.ok) { mostrarStatus('erro', data.erro || 'Erro.'); return; }
+                    mostrarStatus('buscando', `Renomeando... ${data.renamed}/${data.total} (${data.failed} sem nome)`);
+                    if (data.done) break;
+                }
+                if (!data || !data.done) { mostrarStatus('erro', 'Não terminou a tempo. Reabra a página e clique de novo para continuar.'); return; }
+                mostrarStatus('sucesso', `Renomeação concluída! Renomeados: ${data.renamed} | Sem nome (ignorados): ${data.failed} | Total: ${data.total}`);
+            } catch (e) {
+                mostrarStatus('erro', 'Erro de conexão. Se já renomeou parte, clique de novo para continuar.');
+            } finally {
+                document.getElementById('btnRename').disabled = false;
             }
         }
     </script>
