@@ -1,5 +1,7 @@
 # Sistema de Automação de Imagens e Conteúdo Lexis3 (v9.1)
 
+> **REFERÊNCIA ESTRATÉGICA:** A infraestrutura técnica aqui descrita suporta a execução da [VISÃO DO PROJETO (PROJECT_VISION.md)](./PROJECT_VISION.md), garantindo resiliência e autonomia ao ecossistema Lexis.
+
 Este documento resume as melhorias e a arquitetura do sistema de publicação da Lexis Academy implementadas em Fevereiro de 2026.
 
 ## 1. Arquitetura de Imagens (Self-Hosted)
