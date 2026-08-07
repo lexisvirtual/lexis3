@@ -4,6 +4,8 @@
  * Imagem otimizada → commit em public/img/posts/
  */
 
+import { extractAndOptimizeImage } from './image-source-extractor.js';
+
 export async function publishPostsToGitHub(env, maxPosts = 3) {
   const rewrittenList = await env.LEXIS_REWRITTEN_POSTS.list({ prefix: 'post:', limit: maxPosts });
   const publishedPosts = [];
@@ -46,6 +48,34 @@ export async function publishPostsToGitHub(env, maxPosts = 3) {
         stringToBase64(markdown),
         `feat(blog): ${post.title}`
       );
+
+      // 3.1 Geração e Commit da Imagem (Self-Hosting V9.1)
+      try {
+        console.log(`[PUBLISH] 🎨 Iniciando captura de imagem para: ${post.slug}`);
+        const imageResult = await extractAndOptimizeImage(env, post);
+
+        if (imageResult && imageResult.url) {
+          console.log(`[PUBLISH] 📥 Baixando imagem otimizada de wsrv.nl...`);
+          const imageRes = await fetch(imageResult.url);
+          if (imageRes.ok) {
+            const imageBuffer = await imageRes.arrayBuffer();
+            const imageBase64 = arrayBufferToBase64(imageBuffer);
+
+            await commitFileToGitHub(
+              env,
+              `public/img/posts/${post.slug}.webp`,
+              imageBase64,
+              `chore(image): self-hosted image for ${post.slug}`
+            );
+            console.log(`[PUBLISH] ✅ Imagem persistida localmente: public/img/posts/${post.slug}.webp`);
+          } else {
+            console.warn(`[PUBLISH] ⚠️ Falha ao baixar imagem otimizada: ${imageRes.status}`);
+          }
+        }
+      } catch (imgError) {
+        console.error(`[PUBLISH] ❌ Erro no pipeline de imagem: ${imgError.message}`);
+        // Não falha a publicação do post se a imagem falhar
+      }
 
       // 3.5 REMOÇÃO IMEDIATA DA FILA (Crítico para evitar duplicatas em caso de timeout de build posterior)
       // Fazemos isso logo após o commit ser aceito pelo GitHub
@@ -123,6 +153,7 @@ function buildMarkdown(post) {
   // Garante data da postagem real (Hoje) e não a data de quando foi triado
   const date = new Date().toISOString().split('T')[0];
   const content = post.content || '';
+  const image = `/img/posts/${post.slug}.webp`;
   const keywords = post.keywords || 'aprender inglês, praticar inglês, curso de inglês, inglês por imersão, inglês intensivo';
 
   const aiSnippet = post.seo?.ai_snippet || '';
@@ -150,6 +181,7 @@ function buildMarkdown(post) {
 title: "${title}"
 date: "${date}"
 category: "${category}"
+image: "${image}"
 description: "${description}"
 keywords: "${keywords}"
 author: "Lexis Academy"
