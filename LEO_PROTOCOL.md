@@ -1,5 +1,7 @@
 # 📜 Protocolo Oficial Leo (Motor SEO Autônomo v1.2)
 
+> **NOTA ESTRATÉGICA (V9.1):** Este protocolo é o braço executor da "Escala de Aquisição" definida no [PROJECT_VISION.md](PROJECT_VISION.md). O Leo opera para dominar clusters semânticos e garantir o ROI do SEO Programático.
+
 Este documento é o cérebro algorítmico do Leo. Define gatilhos, decisões e ações corretivas baseadas em métricas REAIS.
 
 ## 1. FÓRMULA DE PRIORIDADE (LEO SCORE)
