@@ -36,4 +36,10 @@ O Leo opera em um modelo descentralizado:
    - Reporta o sucesso no Log do Insights Center.
 
 ---
-*Protocolo v1.2: Hub de Comando Ativo e Monitorado.*
+
+## 5. PAPEL ESTRATÉGICO (VISÃO V9.1)
+O Leo Protocol não é apenas uma ferramenta de SEO; é o braço de **Escala** e **Governança** da Lexis:
+- **Escala:** Garante que a "Narrativa de Inocência" alcance o maior número de pessoas através da ocupação de Gaps Semânticos no Google.
+- **Governança:** Mantém a autoridade topical do domínio, reciclando conteúdos que não perfomam ou que desviaram do tom de voz oficial.
+
+*Protocolo v1.2: Hub de Comando Ativo e Monitorado. Alinhado com PROJECT_VISION.md.*
