@@ -1,5 +1,7 @@
 # Sistema de Automação de Imagens e Conteúdo Lexis3 (v9.1)
 
+> **Nota Estratégica**: Este documento é subordinado à [PROJECT_VISION.md](PROJECT_VISION.md). Ele detalha a infraestrutura técnica de Governança e Automação de Imagens.
+
 Este documento resume as melhorias e a arquitetura do sistema de publicação da Lexis Academy implementadas em Fevereiro de 2026.
 
 ## 1. Arquitetura de Imagens (Self-Hosted)
@@ -10,6 +12,7 @@ Para evitar links quebrados e dependência de APIs externas (Unsplash/Pixabay), 
 2. **Otimização Externa**: Utiliza o serviço `wsrv.nl` para redimensionar (1200px), converter para `WebP` e otimizar qualidade (80%).
 3. **Persistência**: O Worker baixa o binário otimizado e faz o commit diretamente no repositório GitHub em `public/img/posts/[slug].webp`.
 4. **Frontmatter**: O post é gerado com o link local `/img/posts/[slug].webp`.
+5. **Auditoria Roger**: Antes do commit final, o Roger Agent valida se a imagem condiz com o contexto cultural brasileiro e se o frontmatter segue o padrão V9.1.
 
 ### Banco de Fallback (`worker/src/fallback_images.js`)
 - Contém um pool genérico de imagens de alta qualidade (Pessoas conversando, escritório, rua, lifestyle).

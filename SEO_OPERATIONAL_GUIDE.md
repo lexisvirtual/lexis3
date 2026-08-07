@@ -1,5 +1,7 @@
 # GUIA OPERACIONAL — IA DE CONTEÚDO SEO AUTÔNOMA (LEXIS)
 
+> **Nota Estratégica**: Este documento é subordinado à [PROJECT_VISION.md](PROJECT_VISION.md). Ele define a Governança e o fluxo de produção de conteúdo sob a ótica do SEO Programático.
+
 ## OBJETIVO DO SISTEMA
 Criar uma máquina de SEO programático que:
 - publique conteúdo automaticamente
