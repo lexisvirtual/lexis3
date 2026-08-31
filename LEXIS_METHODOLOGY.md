@@ -14,16 +14,13 @@ A Lexis trata o inglês como uma habilidade cognitiva e comportamental, não com
 
 Assim como dirigir, tocar um instrumento ou praticar um esporte, o domínio surge da prática intensiva, não da teoria.
 
-## 3. Problema das Abordagens Tradicionais
-As metodologias tradicionais falham por atacarem o problema errado:
-- Ênfase excessiva em gramática declarativa
-- Progressão lenta e artificial
-- Ambiente passivo (aluno espectador)
-- Baixa carga horária real de fala
-- Tradução mental constante
-- Falsa sensação de progresso
+## 3. O Vilão: Abordagens Tradicionais
+As metodologias tradicionais falham por atacarem o problema errado, focando em gramática declarativa em vez de performance procedural. Isso cria a "frustração do aluno eterno".
 
-**Resultado típico:** alunos com anos de estudo, vocabulário passivo e incapacidade de falar.
+### 3.1 Narrativa de Inocência do Aluno
+É fundamental estabelecer que a culpa do não-aprendizado não é do aluno.
+- **O Álibi:** O cérebro humano não foi desenhado para aprender línguas via regras gramaticais isoladas, mas via imersão e necessidade.
+- **A Verdade:** O aluno foi vítima de um método ineficiente que prioriza a venda de mensalidades longas em vez de resultados rápidos.
 
 ## 4. Fundamentos da Metodologia Lexis
 A Lexis foi desenhada para produzir resposta automática em inglês. Fundamentos inegociáveis:
@@ -59,11 +56,12 @@ Técnicas não são o método, são ferramentas:
 - Gamificação aplicada
 - Grupos operativos
 
-## 8. Estrutura de Imersão
-- Duração: 2 semanas
-- Carga horária: 120h presenciais
-- Ritmo: 10h/dia
-*Essa densidade equivale a meses ou anos de cursos tradicionais.*
+## 8. O Mecanismo Único: Estrutura de Imersão
+A imersão de 120h é o único mecanismo capaz de romper a barreira da tradução mental através da saturação cognitiva.
+- **Duração:** 2 semanas (O "Atalho Científico").
+- **Carga horária:** 120h presenciais.
+- **Ritmo:** 10h/dia.
+*Essa densidade força a migração do conhecimento da memória de curto prazo (declarativa) para a memória de longo prazo (procedural).*
 
 ## 9. Papel do Professor Lexis
 O professor não é expositor. É **treinador**.
