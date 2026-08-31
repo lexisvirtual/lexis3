@@ -1,5 +1,7 @@
 # GUIA OPERACIONAL — IA DE CONTEÚDO SEO AUTÔNOMA (LEXIS)
 
+> **Nota Estratégica:** Este documento é subordinado ao `PROJECT_VISION.md`. Ele detalha a estratégia de marketing e alocação de páginas da linha lógica Lexis.
+
 ## OBJETIVO DO SISTEMA
 Criar uma máquina de SEO programático que:
 - publique conteúdo automaticamente
