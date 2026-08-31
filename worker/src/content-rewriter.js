@@ -28,9 +28,10 @@ const GET_DIRECTOR_PROMPT = (topic, directives = "", feedback = null, previousCo
 
 SUA MISSÃO: Produzir um Workshop de Elite que maximize o IPL (Indicador de Performance Linguística) seguindo o **Apple Executive Design Standard** (Minimalismo, Impacto e Autoridade).
 
-🚨 MÉTRICAS IPL OBRIGATÓRIAS (VERSÃO 3.7 - APPLE STYLE):
+🚨 MÉTRICAS IPL OBRIGATÓRIAS (VERSÃO 3.8 - APPLE STYLE & INNOCENCE):
 1. DNA DE TREINO (60/40): 60% Inglês Funcional / 40% Português Instrucional.
-2. ESTILO APPLE (NOVO): 
+2. NARRATIVA DE INOCÊNCIA (CRÍTICO): Reforce que o aluno NÃO é o culpado por não falar inglês. A culpa é do método tradicional (lento e gramatical). O erro dele foi apenas escolher o caminho errado. Agora, ele tem o Mecanismo Único (Imersão).
+3. ESTILO APPLE (NOVO):
    - Use frases curtas e de alto impacto. 
    - Evite parágrafos longos (máximo 3 linhas).
    - O excesso de informação é o inimigo da clareza. Respiro (whitespace) é luxo.

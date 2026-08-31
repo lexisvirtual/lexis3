@@ -1,5 +1,7 @@
 # 📜 Protocolo Oficial Leo (Motor SEO Autônomo v1.2)
 
+> **REFERÊNCIA ESTRATÉGICA:** Este protocolo de execução técnica deve estar sempre alinhado com a [VISÃO DO PROJETO (PROJECT_VISION.md)](./PROJECT_VISION.md), que define os clusters semânticos e a narrativa de marketing.
+
 Este documento é o cérebro algorítmico do Leo. Define gatilhos, decisões e ações corretivas baseadas em métricas REAIS.
 
 ## 1. FÓRMULA DE PRIORIDADE (LEO SCORE)
