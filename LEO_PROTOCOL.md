@@ -1,5 +1,7 @@
 # 📜 Protocolo Oficial Leo (Motor SEO Autônomo v1.2)
 
+> **FONTE DE VERDADE ESTRATÉGICA:** Este documento é uma extensão técnica da [PROJECT_VISION.md](PROJECT_VISION.md). Em caso de conflito de diretrizes, a PROJECT_VISION prevalece como a âncora estratégica do ecossistema Lexis.
+
 Este documento é o cérebro algorítmico do Leo. Define gatilhos, decisões e ações corretivas baseadas em métricas REAIS.
 
 ## 1. FÓRMULA DE PRIORIDADE (LEO SCORE)
