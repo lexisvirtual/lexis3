@@ -189,6 +189,7 @@ const Home = () => {
             <Navbar onOpenModal={openModal} />
             <LeadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} defaultCourse={selectedCourse} />
 
+            <main>
             {/* HERO SECTION */}
             <header id="inicio" className="relative pt-60 pb-48 px-6 overflow-hidden bg-[#0f172a] hero-focus-shift">
                 <div className="bg-mesh opacity-40"></div>
@@ -307,7 +308,7 @@ const Home = () => {
                                 <div className="text-[#fbd24c] text-5xl font-black mb-8 opacity-20 group-hover:opacity-100 transition-opacity">
                                     {item.step}
                                 </div>
-                                <h4 className="text-2xl font-black mb-4 uppercase tracking-tight text-white group-hover:text-[#fbd24c] transition-colors">{item.t}</h4>
+                                <h3 className="text-2xl font-black mb-4 uppercase tracking-tight text-white group-hover:text-[#fbd24c] transition-colors">{item.t}</h3>
                                 <p className="text-[#94a3b8] text-sm leading-relaxed font-medium">{item.d}</p>
                             </div>
                         ))}
@@ -438,6 +439,7 @@ const Home = () => {
                     </div>
                 </div>
             </section>
+            </main>
 
             <Footer />
         </div >
