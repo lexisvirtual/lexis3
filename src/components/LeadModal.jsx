@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getUtmParams } from '../utils/utm';
 
 const LEADS_WEBAPP_URL = import.meta.env.VITE_LEADS_WEBAPP_URL;
 const MAKE_WEBHOOK_URL = 'https://hook.us1.make.com/vsph8qu2r1guvhz6vnqy4ko4t81wt4iw';
@@ -34,7 +35,8 @@ const LeadModal = ({ isOpen, onClose, defaultCourse = "", mode = "course" }) => 
             whatsapp: formData.phone,
             email: formData.email,
             nivel: formData.course,
-            idade: mode === 'level' ? formData.ageRange : ''
+            idade: mode === 'level' ? formData.ageRange : '',
+            ...getUtmParams()
         };
 
         const sheetsPromise = LEADS_WEBAPP_URL

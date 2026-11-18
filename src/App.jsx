@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
+import { captureUtmParams } from './utils/utm';
 import Home from './pages/Home';
 import Imersao from './pages/Imersao';
 import PilarImersao from './pages/PilarImersao';
@@ -17,6 +18,10 @@ import Demo from './pages/Demo';
 import FloatingWhatsAppButton from './components/FloatingWhatsAppButton';
 
 const App = () => {
+    useEffect(() => {
+        captureUtmParams();
+    }, []);
+
     return (
         <HelmetProvider>
             <BrowserRouter>
