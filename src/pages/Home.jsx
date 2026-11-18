@@ -156,9 +156,9 @@ const Home = () => {
                 button { transition: transform 0.2s var(--premium-easing), filter 0.2s ease; }
                 button:hover { transform: translateY(-2px); filter: brightness(1.03); }
 
-                .section-alt:nth-child(odd) { padding: 160px 0; }
-                .section-alt:nth-child(even) { padding: 112px 0; }
-                .divider-v { width: 1px; height: 50px; background: rgba(255,255,255,0.08); margin: 60px auto; }
+                .section-alt:nth-child(odd) { padding: 100px 0; }
+                .section-alt:nth-child(even) { padding: 80px 0; }
+                .divider-v { width: 1px; height: 40px; background: rgba(255,255,255,0.08); margin: 32px auto; }
 
                 @media (max-width: 768px) {
                     .section-alt:nth-child(odd), .section-alt:nth-child(even) { padding: 48px 0; }
@@ -191,7 +191,7 @@ const Home = () => {
 
             <main>
             {/* HERO SECTION */}
-            <header id="inicio" className="relative pt-28 pb-20 md:pt-60 md:pb-48 px-6 overflow-hidden bg-[#0f172a] hero-focus-shift">
+            <header id="inicio" className="relative pt-28 pb-20 md:pt-40 md:pb-24 px-6 overflow-hidden bg-[#0f172a] hero-focus-shift">
                 <div className="bg-mesh opacity-40"></div>
                 <div className="max-w-6xl mx-auto text-center relative z-10">
                     <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-[5.8rem] font-extrabold mb-10 leading-[1.05] tracking-tight text-white ana-heading hero-focus-shift">
