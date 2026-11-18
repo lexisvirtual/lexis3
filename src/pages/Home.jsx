@@ -161,8 +161,8 @@ const Home = () => {
                 .divider-v { width: 1px; height: 50px; background: rgba(255,255,255,0.08); margin: 60px auto; }
 
                 @media (max-width: 768px) {
-                    .section-alt:nth-child(odd), .section-alt:nth-child(even) { padding: 60px 0; }
-                    .divider-v { margin: 30px auto; height: 30px; }
+                    .section-alt:nth-child(odd), .section-alt:nth-child(even) { padding: 48px 0; }
+                    .divider-v { margin: 16px auto; height: 20px; }
                 }
 
                 .ana-heading { letter-spacing: -0.015em; line-height: 1.05; }
@@ -191,7 +191,7 @@ const Home = () => {
 
             <main>
             {/* HERO SECTION */}
-            <header id="inicio" className="relative pt-60 pb-48 px-6 overflow-hidden bg-[#0f172a] hero-focus-shift">
+            <header id="inicio" className="relative pt-28 pb-20 md:pt-60 md:pb-48 px-6 overflow-hidden bg-[#0f172a] hero-focus-shift">
                 <div className="bg-mesh opacity-40"></div>
                 <div className="max-w-6xl mx-auto text-center relative z-10">
                     <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-[5.8rem] font-extrabold mb-10 leading-[1.05] tracking-tight text-white ana-heading hero-focus-shift">
@@ -335,7 +335,7 @@ const Home = () => {
             </section>
 
             {/* MODALIDADES */}
-            <section id="modalidades" className="py-32 px-6 bg-[#020617] scroll-mt-20 relative overflow-hidden text-white">
+            <section id="modalidades" className="py-16 md:py-32 px-6 bg-[#020617] scroll-mt-20 relative overflow-hidden text-white">
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px]"></div>
                 <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#fbd24c]/5 rounded-full blur-[120px]"></div>
 
@@ -394,7 +394,7 @@ const Home = () => {
             </section>
 
             {/* DEPOIMENTOS */}
-            <section id="depoimentos" className="py-32 px-6 bg-[#0f172a] scroll-mt-20 relative overflow-hidden">
+            <section id="depoimentos" className="py-16 md:py-32 px-6 bg-[#0f172a] scroll-mt-20 relative overflow-hidden">
                 <div className="max-w-6xl mx-auto relative z-10">
                     <SectionHeader
                         tag="Resultados Reais"
@@ -425,7 +425,7 @@ const Home = () => {
             </section>
 
             {/* PERGUNTAS FREQUENTES */}
-            <section id="faq" className="py-32 px-6 bg-[#020617] relative">
+            <section id="faq" className="py-16 md:py-32 px-6 bg-[#020617] relative">
                 <div className="max-w-3xl mx-auto">
                     <div className="text-center mb-16 reveal">
                         <h2 className="text-3xl font-black text-white mb-6">Dúvida Técnica (Lab)</h2>
