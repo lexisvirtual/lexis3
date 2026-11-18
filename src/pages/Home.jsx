@@ -115,8 +115,8 @@ const Home = () => {
                     animation: focusShift 1s var(--premium-easing) forwards;
                 }
                 @keyframes focusShift {
-                    from { filter: blur(2px); opacity: 0; }
-                    to { filter: blur(0); opacity: 1; }
+                    from { opacity: 0; }
+                    to { opacity: 1; }
                 }
 
                 /* 5. Word-by-Word Authority Shift (H1) */
