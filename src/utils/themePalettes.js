@@ -23,8 +23,8 @@ export const palettes = {
     black_friday: {
         c1: [0.01, 0.01, 0.01],
         c2: [0.05, 0.05, 0.08],
-        acc: [0.0, 0.6, 1.0],   // Electric Blue
-        hexAcc: '#3b82f6'
+        acc: [0.549, 0.329, 0.078],   // Warm Brown/Gold (brand)
+        hexAcc: '#8c5414'
     },
     valentine: {
         c1: [0.15, 0.01, 0.05],

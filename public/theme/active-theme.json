@@ -13,9 +13,9 @@
   "palette": {
     "primary": "#020202",
     "secondary": "#080810",
-    "accent": "#3b82f6",
+    "accent": "#8c5414",
     "background": "#010101",
-    "hexAcc": "#3b82f6"
+    "hexAcc": "#8c5414"
   },
   "webgl": {
     "enabled": true,
