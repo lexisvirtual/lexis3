@@ -30,7 +30,7 @@ const Navbar = ({ onOpenModal }) => {
                 <Link to="/" className="flex items-center gap-3 group cursor-pointer z-50" onClick={(e) => handleAnchorClick(e, 'inicio')}>
                     <picture>
                         <source srcSet="/logo.webp" type="image/webp" />
-                        <img src="/logo.png" alt="Logo Lexis Academy" className="w-10 h-10 object-contain group-hover:rotate-12 transition-transform duration-300" loading="eager" />
+                        <img src="/logo.png" alt="Logo Lexis Academy" className="w-10 h-10 object-contain group-hover:rotate-12 transition-transform duration-300" loading="eager" fetchPriority="high" />
                     </picture>
                     <span className="font-extrabold text-lg tracking-tighter hidden sm:block group-hover:text-[#fbd24c] transition-colors uppercase text-white">Lexis Academy</span>
                 </Link>
