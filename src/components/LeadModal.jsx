@@ -35,6 +35,7 @@ const LeadModal = ({ isOpen, onClose, defaultCourse = "", mode = "course" }) => 
             whatsapp: formData.phone,
             email: formData.email,
             nivel: formData.course,
+            caminho: formData.course,
             idade: mode === 'level' ? formData.ageRange : '',
             ...getUtmParams()
         };
@@ -48,9 +49,10 @@ const LeadModal = ({ isOpen, onClose, defaultCourse = "", mode = "course" }) => 
             })
             : Promise.resolve();
 
+        // mode 'no-cors' força o Content-Type para text/plain, fazendo o Make
+        // receber o body como string única em vez de JSON com campos separados.
         const makePromise = fetch(MAKE_WEBHOOK_URL, {
             method: 'POST',
-            mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(leadPayload)
         }).catch(() => null);
