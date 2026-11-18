@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const LEADS_WEBAPP_URL = import.meta.env.VITE_LEADS_WEBAPP_URL;
+const MAKE_WEBHOOK_URL = 'https://hook.us1.make.com/vsph8qu2r1guvhz6vnqy4ko4t81wt4iw';
 
 const LeadModal = ({ isOpen, onClose, defaultCourse = "", mode = "course" }) => {
     const [isVisible, setIsVisible] = useState(false);
@@ -45,7 +46,14 @@ const LeadModal = ({ isOpen, onClose, defaultCourse = "", mode = "course" }) => 
             })
             : Promise.resolve();
 
-        await Promise.race([sheetsPromise, new Promise(resolve => setTimeout(resolve, 1500))]).catch(() => null);
+        const makePromise = fetch(MAKE_WEBHOOK_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(leadPayload)
+        }).catch(() => null);
+
+        await Promise.race([Promise.all([sheetsPromise, makePromise]), new Promise(resolve => setTimeout(resolve, 1500))]).catch(() => null);
 
         setIsSubmitting(false);
         handleClose();
